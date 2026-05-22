@@ -1,5 +1,7 @@
-import React from 'react';
-import { socialsData } from '../../data/socials';
+"use client";
+
+import React from "react";
+import { socialsData } from "../../data/socials";
 
 export default function ContactSection() {
   return (
@@ -9,9 +11,12 @@ export default function ContactSection() {
     >
       <div className="max-w-3xl w-full space-y-12">
         <div className="text-center space-y-4">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Get In Touch</h2>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            Get In Touch
+          </h2>
           <p className="text-gray-600 dark:text-zinc-400 max-w-xl mx-auto">
-            Tertarik untuk bekerja sama atau ingin tahu lebih banyak? Hubungi saya melalui media sosial atau kirim email.
+            Tertarik untuk bekerja sama atau ingin tahu lebih banyak? Hubungi
+            saya melalui media sosial atau kirim email.
           </p>
         </div>
 
@@ -22,19 +27,27 @@ export default function ContactSection() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400">@</span>
+                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                    @
+                  </span>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400">Email</p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400">
+                    Email
+                  </p>
                   <p className="font-medium">abdul.aziz@example.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                  <span className="text-sm font-bold text-purple-600 dark:text-purple-400">📱</span>
+                  <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
+                    📱
+                  </span>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400">WhatsApp</p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400">
+                    WhatsApp
+                  </p>
                   <p className="font-medium">+62 812-3456-7890</p>
                 </div>
               </div>
