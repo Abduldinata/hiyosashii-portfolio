@@ -2,25 +2,94 @@
 
 import React, { useState } from "react";
 
-const programmingSkills = [
-  { name: "HTML", icon: "/assets/icons/html.png", fallback: "HTML" },
-  { name: "CSS", icon: "/assets/icons/css.png", fallback: "CSS" },
-  { name: "JavaScript", icon: "/assets/icons/javascript.png", fallback: "JS" },
-  { name: "PHP", icon: "/assets/icons/php.png", fallback: "PHP" },
-  { name: "Python", icon: "/assets/icons/python.png", fallback: "PY" },
-  { name: "Dart", icon: "/assets/icons/dart.png", fallback: "DART" },
-  { name: "C", icon: "/assets/icons/c.png", fallback: "C" },
-  { name: "C++", icon: "/assets/icons/c++.png", fallback: "C++" },
-  { name: "Go", icon: "/assets/icons/golang.png", fallback: "GO" },
+const webAppSkills = [
+  {
+    name: "HTML",
+    icon: "/assets/icons/html.png",
+    fallback: "HTML",
+    level: "Familiar",
+  },
+  {
+    name: "CSS",
+    icon: "/assets/icons/css.png",
+    fallback: "CSS",
+    level: "Familiar",
+  },
+  {
+    name: "JavaScript",
+    icon: "/assets/icons/javascript.png",
+    fallback: "JS",
+    level: "Basic",
+  },
+  {
+    name: "Flutter",
+    icon: "/assets/icons/flutter.png",
+    fallback: "FLUT",
+    level: "Basic",
+  },
+  {
+    name: "Go",
+    icon: "/assets/icons/golang.png",
+    fallback: "GO",
+    level: "Basic",
+  },
+  {
+    name: "C",
+    icon: "/assets/icons/c.png",
+    fallback: "C",
+    level: "Basic",
+  },
+  {
+    name: "C++",
+    icon: "/assets/icons/c++.png",
+    fallback: "C++",
+    level: "Learning",
+  },
 ];
 
-const backendSkills = [
-  { name: "PostgreSQL", icon: "/assets/icons/postgres.png", fallback: "SQL" },
-  { name: "Node.js", icon: "/assets/icons/nodejs.png", fallback: "NODE" },
-  { name: "XAMPP", icon: "/assets/icons/xampp.png", fallback: "XAMPP" },
-  { name: "Supabase", icon: "/assets/icons/supabase.png", fallback: "SUPA" },
-  { name: "Firebase", icon: "/assets/icons/firebase.png", fallback: "FIRE" },
-  { name: "Vercel", icon: "/assets/icons/vercel.png", fallback: "VC" },
+const toolDeploymentSkills = [
+  {
+    name: "GitHub",
+    icon: "/assets/icons/github.jpeg",
+    fallback: "GH",
+    level: "Repository",
+  },
+  {
+    name: "Vercel",
+    icon: "/assets/icons/vercel.png",
+    fallback: "VC",
+    level: "Deployment",
+  },
+  {
+    name: "Supabase",
+    icon: "/assets/icons/supabase.png",
+    fallback: "SUPABASE",
+    level: "Database",
+  },
+  {
+    name: "PostgreSQL",
+    icon: "/assets/icons/postgres.png",
+    fallback: "SQL",
+    level: "Database",
+  },
+  {
+    name: "Node.js",
+    icon: "/assets/icons/nodejs.png",
+    fallback: "NODE",
+    level: "Backend",
+  },
+  {
+    name: "Firebase",
+    icon: "/assets/icons/firebase.png",
+    fallback: "FIRE",
+    level: "Backend",
+  },
+  {
+    name: "XAMPP",
+    icon: "/assets/icons/xampp.png",
+    fallback: "XAMPP",
+    level: "Local Server",
+  },
 ];
 
 const editingSkills = [
@@ -28,107 +97,170 @@ const editingSkills = [
     name: "After Effects",
     icon: "/assets/icons/aftereffects.png",
     fallback: "AE",
+    level: "Familiar",
   },
-  { name: "CapCut", icon: "/assets/icons/capcut.png", fallback: "CapCut" },
+  {
+    name: "CapCut",
+    icon: "/assets/icons/capcut.png",
+    fallback: "CapCut",
+    level: "Familiar",
+  },
   {
     name: "Alight Motion",
     icon: "/assets/icons/alight-motion.png",
     fallback: "AM",
+    level: "Familiar",
   },
-  { name: "Blender", icon: "/assets/icons/blender.png", fallback: "BLEND" },
-  { name: "Unity", icon: "/assets/icons/unity.png", fallback: "UNITY" },
+  {
+    name: "Unity",
+    icon: "/assets/icons/unity.png",
+    fallback: "UNITY",
+    level: "Basic",
+  },
+  {
+    name: "Blender",
+    icon: "/assets/icons/blender.png",
+    fallback: "BLEND",
+    level: "Learning",
+  },
 ];
 
 const designSkills = [
-  { name: "Photoshop", icon: "/assets/icons/photoshop.png", fallback: "PS" },
   {
-    name: "Alight Motion",
-    icon: "/assets/icons/alight-motion.png",
-    fallback: "AM",
+    name: "Photoshop",
+    icon: "/assets/icons/photoshop.png",
+    fallback: "PS",
+    level: "Familiar",
   },
-  { name: "Canva", icon: "/assets/icons/canva.png", fallback: "CANVA" },
-  { name: "Figma", icon: "/assets/icons/figma.png", fallback: "FIGMA" },
+  {
+    name: "Canva",
+    icon: "/assets/icons/canva.png",
+    fallback: "CANVA",
+    level: "Basic",
+  },
+  {
+    name: "Figma",
+    icon: "/assets/icons/figma.png",
+    fallback: "FIGMA",
+    level: "Learning",
+  },
 ];
 
 function SkillIcon({ skill }) {
+  const [hasError, setHasError] = useState(false);
+  const label = skill.name || skill.label || skill.title || "Skill";
+  const fallbackText = skill.fallback || label.slice(0, 2).toUpperCase();
+
   return (
-    <div className="flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]">
-      <div className="relative flex h-[64px] w-[64px] items-center justify-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/70">
-        <span className="absolute inset-0 flex items-center justify-center px-1 text-center text-[11px] font-black uppercase leading-tight text-[#1F6FAE]">
-          {skill.fallback}
-        </span>
-        <img
-          src={skill.icon}
-          alt={skill.name}
-          className="relative z-10 max-h-[48px] max-w-[48px] object-contain"
-          onError={(event) => {
-            event.currentTarget.style.display = "none";
-          }}
-        />
+    <div className="group flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]">
+      <div className="hiyo-hover-icon relative flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/70 before:pointer-events-none before:absolute before:inset-x-[-45%] before:top-[-60%] before:h-[70%] before:rotate-12 before:bg-white/30 before:blur-sm before:transition-transform before:duration-300 group-hover:before:translate-y-[135%] group-active:scale-95">
+        {skill.icon && !hasError ? (
+          <img
+            src={skill.icon}
+            alt={label}
+            className="relative z-10 max-h-[48px] max-w-[48px] bg-white/70 object-contain transition-transform duration-300 group-hover:scale-[1.08]"
+            onError={() => setHasError(true)}
+          />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center px-1 text-center text-[11px] font-black uppercase leading-tight text-[#1F6FAE]">
+            {fallbackText}
+          </span>
+        )}
       </div>
-      <span className="text-[12px] font-bold leading-tight text-[#134E7D] sm:text-[13px]">
-        {skill.name}
+      <span className="text-[12px] font-bold leading-tight text-[#134E7D] transition-colors group-hover:text-[#1E8DDE] sm:text-[13px]">
+        {label}
       </span>
+      {skill.level && (
+        <span className="text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#3d6f93]/75">
+          {skill.level}
+        </span>
+      )}
     </div>
   );
 }
 
-function SkillGroup({ title, skills }) {
+function SkillGroup({ title, subtitle, skills }) {
   return (
-    <div className="rounded-[1.75rem] bg-[#b8d7ef]/90 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/60 sm:px-8 sm:py-6">
-      <h3 className="mb-5 text-center text-2xl font-black uppercase tracking-[-0.035em] text-[#2D8FE3] sm:text-3xl lg:text-[2rem]">
-        {title}
-      </h3>
+    <div className="hiyo-hover-card rounded-[1.75rem] border border-white/60 bg-white/45 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/50 backdrop-blur-sm sm:px-8 sm:py-6">
+      <div className="mb-5 text-center">
+        <h3 className="text-2xl font-black tracking-[-0.035em] text-[#2D8FE3] sm:text-3xl lg:text-[2rem]">
+          {title}
+        </h3>
+        <p className="mx-auto mt-1.5 max-w-[520px] text-sm font-semibold leading-snug text-[#134E7D]/75 sm:text-base">
+          {subtitle}
+        </p>
+      </div>
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-5 sm:gap-x-8">
-        {skills.map((skill) => (
-          <SkillIcon key={skill.name} skill={skill} />
-        ))}
+        {Array.isArray(skills) &&
+          skills.map((skill) => (
+            <SkillIcon
+              key={skill.name || skill.label || skill.title}
+              skill={{
+                ...skill,
+                name: skill.name || skill.label || skill.title || "Skill",
+              }}
+            />
+          ))}
       </div>
     </div>
   );
 }
 
-export default function SkillsSection() {
-  const [mode, setMode] = useState("tech");
-  const isTech = mode === "tech";
+export default function SkillsSection({ mode = "tech", onModeChange }) {
+  const isCreative = mode === "creative";
+  const isTech = !isCreative;
   const skillGroups = isTech
     ? [
-        { title: "PROGRAMMING LANGUAGE :", skills: programmingSkills },
-        { title: "DATABASE & BACKEND :", skills: backendSkills },
+        {
+          title: "Web/App Foundation",
+          subtitle:
+            "Dasar pengembangan web dan app yang saya gunakan untuk project digital.",
+          skills: webAppSkills,
+        },
+        {
+          title: "Tools & Deployment",
+          subtitle:
+            "Tools pendukung untuk testing, database dasar, dan publikasi project.",
+          skills: toolDeploymentSkills,
+        },
       ]
     : [
-        { title: "EDITING & 3D SOFTWARE :", skills: editingSkills },
-        { title: "DESIGN SOFTWARE :", skills: designSkills },
+        {
+          title: "Editing & Motion",
+          subtitle:
+            "Tools utama untuk editing video, motion, AMV, dan eksplorasi visual.",
+          skills: editingSkills,
+        },
+        {
+          title: "Design & Content",
+          subtitle: "Tools untuk desain visual, content design, dan layout UI.",
+          skills: designSkills,
+        },
       ];
 
   return (
     <section
       id="skills"
-      className="relative min-h-[calc(100vh-88px)] overflow-hidden bg-[#f1f2f2] px-6 py-10 sm:px-8 lg:px-12"
+      className="relative min-h-[calc(100vh-88px)] overflow-hidden bg-transparent px-6 py-20 sm:px-8 lg:px-12"
     >
-      {/* Layer 1: Background image */}
-      <img
-        src="/assets/backgrounds/bg-skills.png"
-        alt=""
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-      />
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1150px] flex-col justify-center gap-8">
+        <div key={mode} className="hiyo-section-reveal flex flex-col gap-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-black tracking-[-0.045em] text-[#123E63] sm:text-5xl">
+              {isTech ? "Tech & AI-Assisted Workflow" : "Creative Skills"}
+            </h2>
+            <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-relaxed text-[#134E7D]/80 sm:text-base">
+              {isTech
+                ? "Tech stack ini saya gunakan sebagai pendukung proses pembuatan project digital, terutama melalui eksplorasi, prompting, testing, dan AI-assisted development."
+                : "Creative skills ini menjadi fokus utama saya dalam editing video, motion/AMV, desain visual, content design, dan eksplorasi UI layout untuk kebutuhan publikasi digital."}
+            </p>
+          </div>
 
-      {/* Layer 2: Subtle panel contrast overlay */}
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-white/5" />
-
-      {/* Layer 3: Top fade transition from Profile */}
-      <div className="pointer-events-none absolute left-0 right-0 top-0 z-[2] h-[110px] bg-gradient-to-b from-[#f1f2f2] to-transparent" />
-
-      {/* Layer 4: Bottom fade transition to Portfolio */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[2] h-[100px] bg-gradient-to-b from-transparent to-[#e7edf2]" />
-
-      {/* Layer 5: Content */}
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-168px)] max-w-[1150px] flex-col justify-center gap-8">
-        <div className="flex flex-col gap-8 transition-opacity duration-300">
           {skillGroups.map((group) => (
             <SkillGroup
               key={group.title}
               title={group.title}
+              subtitle={group.subtitle}
               skills={group.skills}
             />
           ))}
@@ -139,8 +271,8 @@ export default function SkillsSection() {
         >
           <button
             type="button"
-            onClick={() => setMode(isTech ? "creative" : "tech")}
-            className="rounded-full border-2 border-white bg-[#1E8DDE] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-[#1E8DDE]/20 transition-transform duration-300 hover:scale-105 sm:text-sm"
+            onClick={() => onModeChange?.(isCreative ? "tech" : "creative")}
+            className="hiyo-primary-button rounded-full border-2 border-white bg-[#1E8DDE] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-[#1E8DDE]/20 sm:text-sm"
           >
             {isTech ? "Switch to Creative →" : "← Switch to Tech"}
           </button>
