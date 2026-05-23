@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { SITE_CONFIG } from '../../constants/site';
+import React, { useEffect, useState } from "react";
+import { SITE_CONFIG } from "../../constants/site";
 
 export default function SideNavigation() {
-  const [activeSection, setActiveSection] = useState('profile');
+  const [activeSection, setActiveSection] = useState("profile");
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = SITE_CONFIG.navItems.map(item => document.getElementById(item.id));
+      const sections = SITE_CONFIG.navItems.map((item) =>
+        document.getElementById(item.id),
+      );
       const scrollPosition = window.scrollY + window.innerHeight / 3;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -20,10 +22,10 @@ export default function SideNavigation() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     // Initial check
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -45,8 +47,8 @@ export default function SideNavigation() {
             <span
               className={`w-3 h-3 rounded-full transition-all duration-300 border ${
                 isActive
-                  ? 'bg-blue-600 border-blue-600 scale-125'
-                  : 'bg-transparent border-gray-400 dark:border-zinc-600 hover:border-blue-500'
+                  ? "bg-black dark:bg-white border-black dark:border-white scale-125"
+                  : "bg-transparent border-gray-400 dark:border-zinc-600 hover:border-primary-blue"
               }`}
             />
           </a>
