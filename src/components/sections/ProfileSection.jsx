@@ -9,45 +9,22 @@ export default function ProfileSection() {
   return (
     <section
       id="profile"
-      className={`relative min-h-[calc(100vh-88px)] overflow-hidden ${
-        isStudent ? "bg-[#f1f2f2]" : "bg-[#1E8DDE]"
-      }`}
+      className="relative min-h-[calc(100vh-88px)] overflow-hidden bg-[#f1f2f2]"
     >
-      {/* Layer 1: Base background */}
-
-      {/* Layer 2: Shape overlay */}
+      {/* Layer 1: Background image */}
       <img
-        src={
-          isStudent
-            ? "/assets/profile/shape-student.png"
-            : "/assets/profile/shape-creator.png"
-        }
+        src="/assets/backgrounds/bg-profile.png"
         alt=""
-        className="pointer-events-none absolute inset-0 z-[2] h-full w-full object-cover opacity-50"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
       />
 
-      {/* Layer 3: Right diagonal panel */}
-      <div
-        className={`pointer-events-none absolute inset-y-0 right-0 z-[3] ${
-          isStudent ? "bg-[#1E8DDE]" : "bg-[#f1f2f2]"
-        }`}
-        style={{
-          width: "43%",
-          clipPath: "polygon(28% 0, 100% 0, 100% 100%, 0 100%)",
-        }}
-      />
+      {/* Layer 2: Subtle contrast overlay */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-white/5" />
 
-      {/* Layer 4: Paper texture */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[4] opacity-80"
-        style={{
-          backgroundImage: "url('/assets/textures/papper.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      {/* Layer 3: Bottom fade transition to Skills */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[2] h-[110px] bg-gradient-to-b from-transparent to-[#f1f2f2]" />
 
-      {/* Layer 5: Main content */}
+      {/* Layer 4: Main content */}
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-7xl items-center px-8 py-12 lg:px-12">
         <div className="grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_430px]">
           {/* Left content */}
