@@ -49,6 +49,18 @@ const itemMotion = {
 
 const filters = ["All", "Certificate", "Experience", "Event"];
 
+const achievementPrimaryButtonClass =
+  "group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
+
+const achievementSecondaryButtonClass =
+  "group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
+
+const achievementTextButtonClass =
+  "group inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-black tracking-wide text-[#185987] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-[#1E8DDE] active:scale-95";
+
+const arrowClass =
+  "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
+
 function getPreviewLabel(item) {
   if (item.category === "Certificate") return "Certificate Preview";
   if (item.category === "Event") return "Event Highlight";
@@ -135,12 +147,12 @@ export default function AchievementSection() {
                   key={filter}
                   type="button"
                   onClick={() => handleFilterChange(filter)}
-                  whileHover={{ y: -3, scale: 1.04 }}
+                  whileHover={{ y: -4, scale: 1.04 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-colors sm:text-xs ${
+                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.26)] active:scale-95 sm:text-xs ${
                     isActive
-                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.18)]"
-                      : "bg-white/55 text-[#1f4f7a] ring-1 ring-white/60 hover:bg-white/75"
+                      ? "bg-[#185987] text-white shadow-[0_14px_34px_rgba(24,89,135,0.24)]"
+                      : "border border-white/70 bg-white/75 text-[#185987]"
                   }`}
                 >
                   {filter}
@@ -186,7 +198,7 @@ export default function AchievementSection() {
                         ease: [0.22, 1, 0.36, 1],
                         delay: Math.min(index * 0.03, 0.14),
                       }}
-                      whileHover={{ y: -3, scale: 1.004 }}
+                      whileHover={{ y: -4, scale: 1.01 }}
                       whileTap={{ scale: 0.985 }}
                       className="relative"
                     >
@@ -201,7 +213,7 @@ export default function AchievementSection() {
                       <button
                         type="button"
                         onClick={() => setSelectedId(item.id)}
-                        className={`block w-full rounded-[22px] border p-4 text-left shadow-[0_10px_24px_rgba(31,79,122,0.08)] transition-colors ${
+                        className={`block w-full rounded-[22px] border p-4 text-left shadow-[0_10px_24px_rgba(31,79,122,0.08)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:border-[#1E8DDE]/50 hover:shadow-[0_18px_46px_rgba(30,141,222,0.16)] ${
                           isSelected
                             ? "border-[#9fc3da] bg-white/95 ring-2 ring-[#d8eaf6]"
                             : "border-white/65 bg-white/80 hover:bg-white/90"
@@ -250,10 +262,10 @@ export default function AchievementSection() {
             viewport={{ once: false, amount: 0.14, margin: "-6% 0px -6% 0px" }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{
-              y: -3,
-              scale: 1.004,
+              y: -5,
+              scale: 1.006,
             }}
-            className="rounded-[28px] border border-white/75 bg-white/80 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.14)] backdrop-blur-[3px] sm:p-6"
+            className="rounded-[28px] border border-white/75 bg-white/80 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.14)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] backdrop-blur-[3px] sm:p-6"
           >
             <div className="flex h-full min-h-[420px] flex-col justify-between rounded-[24px] border border-white/75 bg-[#f8fbff]/80 p-5 shadow-inner">
               <div>
@@ -309,10 +321,10 @@ export default function AchievementSection() {
                       key={link.url}
                       href={link.url}
                       target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center rounded-full bg-[#1f4f7a] px-4 py-2 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(31,79,122,0.18)] transition-transform hover:-translate-y-0.5"
+                      rel="noopener noreferrer"
+                      className={achievementSecondaryButtonClass}
                     >
-                      {link.label} <span className="ml-1">→</span>
+                      {link.label}
                     </a>
                   ))}
                 </div>
