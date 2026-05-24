@@ -20,16 +20,18 @@ export const portfolioData = [
     ],
     links: [
       {
-        label: "Instagram KKN",
+        label: "Instagram",
         url: "https://www.instagram.com/kknt.7.banyusri.udb.25/",
+        type: "primary",
       },
       {
-        label: "TikTok KKN",
+        label: "TikTok",
         url: "https://www.tiktok.com/@udb.kkn.banyusri25",
+        type: "secondary",
       },
     ],
     primaryAction: {
-      label: "Open Gallery",
+      label: "Lihat Detail",
       url: null,
     },
     secondaryActions: [],
@@ -76,10 +78,12 @@ export const portfolioData = [
       {
         label: "Instagram",
         url: "https://www.instagram.com/nxta.div",
+        type: "primary",
       },
       {
         label: "YouTube",
         url: "https://www.youtube.com/@AbdulAzizDinata",
+        type: "secondary",
       },
     ],
     primaryAction: {
