@@ -1,6 +1,32 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.42,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.04,
+      delayChildren: 0.06,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+  },
+};
 
 const webAppSkills = [
   {
@@ -152,7 +178,13 @@ function SkillIcon({ skill }) {
   const fallbackText = skill.fallback || label.slice(0, 2).toUpperCase();
 
   return (
-    <div className="group flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]">
+    <motion.div
+      initial={{ opacity: 0, y: 16, scale: 0.92 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, amount: 0.25 }}
+      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+      className="group flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]"
+    >
       <div className="hiyo-hover-icon relative flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/70 before:pointer-events-none before:absolute before:inset-x-[-45%] before:top-[-60%] before:h-[70%] before:rotate-12 before:bg-white/30 before:blur-sm before:transition-transform before:duration-300 group-hover:before:translate-y-[135%] group-active:scale-95">
         {skill.icon && !hasError ? (
           <img
@@ -175,13 +207,20 @@ function SkillIcon({ skill }) {
           {skill.level}
         </span>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 function SkillGroup({ title, subtitle, skills }) {
   return (
-    <div className="hiyo-hover-card rounded-[1.75rem] border border-white/60 bg-white/45 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/50 backdrop-blur-sm sm:px-8 sm:py-6">
+    <motion.div
+      initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: false, amount: 0.15 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -4, scale: 1.004 }}
+      className="rounded-[1.75rem] border border-white/60 bg-white/45 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/50 backdrop-blur-sm sm:px-8 sm:py-6"
+    >
       <div className="mb-5 text-center">
         <h3 className="text-2xl font-black tracking-[-0.035em] text-[#2D8FE3] sm:text-3xl lg:text-[2rem]">
           {title}
@@ -202,7 +241,7 @@ function SkillGroup({ title, subtitle, skills }) {
             />
           ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -241,11 +280,24 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
   return (
     <section
       id="skills"
-      className="relative min-h-[calc(100vh-88px)] overflow-hidden bg-transparent px-6 py-20 sm:px-8 lg:px-12"
+      className="hiyo-section-surface relative min-h-[calc(100vh-88px)] scroll-mt-24 overflow-visible bg-transparent px-6 py-20 sm:px-8 lg:px-12"
     >
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1150px] flex-col justify-center gap-8">
-        <div key={mode} className="hiyo-section-reveal flex flex-col gap-8">
-          <div className="text-center">
+        <motion.div
+          key={mode}
+          className="flex flex-col gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.15 }}
+          variants={sectionVariants}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 28, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: false, amount: 0.22 }}
+            transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center"
+          >
             <h2 className="text-4xl font-black tracking-[-0.045em] text-[#123E63] sm:text-5xl">
               {isTech ? "Tech & AI-Assisted Workflow" : "Creative Skills"}
             </h2>
@@ -254,7 +306,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
                 ? "Tech stack ini saya gunakan sebagai pendukung proses pembuatan project digital, terutama melalui eksplorasi, prompting, testing, dan AI-assisted development."
                 : "Creative skills ini menjadi fokus utama saya dalam editing video, motion/AMV, desain visual, content design, dan eksplorasi UI layout untuk kebutuhan publikasi digital."}
             </p>
-          </div>
+          </motion.div>
 
           {skillGroups.map((group) => (
             <SkillGroup
@@ -264,19 +316,48 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
               skills={group.skills}
             />
           ))}
-        </div>
+        </motion.div>
 
-        <div
+        <motion.div
+          variants={itemVariants}
           className={`flex pt-0 ${isTech ? "justify-end" : "justify-start"}`}
         >
-          <button
+          <motion.button
+            key={isTech ? "switch-creative" : "switch-tech"}
             type="button"
             onClick={() => onModeChange?.(isCreative ? "tech" : "creative")}
-            className="hiyo-primary-button rounded-full border-2 border-white bg-[#1E8DDE] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-[#1E8DDE]/20 sm:text-sm"
+            initial={{ opacity: 0, y: 18, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{
+              duration: 0.36,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={{
+              y: -5,
+              scale: 1.045,
+              boxShadow: "0 18px 44px rgba(30, 141, 222, 0.34)",
+            }}
+            whileTap={{ scale: 0.94 }}
+            className="group rounded-full border-2 border-[#1E8DDE] bg-white/10 px-8 py-3 text-xs font-black uppercase tracking-[0.18em] text-[#1E8DDE] shadow-sm backdrop-blur-sm transition-colors duration-300 ease-out hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_44px_rgba(30,141,222,0.34)] sm:text-sm"
           >
-            {isTech ? "Switch to Creative →" : "← Switch to Tech"}
-          </button>
-        </div>
+            {isTech ? (
+              <>
+                Switch to Creative
+                <span className="ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="mr-3 inline-block transition-transform duration-300 group-hover:-translate-x-1">
+                  ←
+                </span>
+                Switch to Tech
+              </>
+            )}
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );
