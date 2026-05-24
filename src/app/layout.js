@@ -1,9 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-main",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const geistMono = Geist_Mono({
@@ -14,16 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Hiyosashii Portfolio - Abdul Aziz Dinata",
   description:
-    "Portfolio interaktif dual-identitas Abdul Aziz Dinata sebagai Mahasiswa/Tech dan Content Creator/Creative.",
+    "Creative Digital Portfolio — Editing, Design, UI/UX, and AI-Assisted Development.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="id"
+      className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );
 }

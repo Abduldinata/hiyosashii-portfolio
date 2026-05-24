@@ -4,6 +4,9 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import SideNavigation from "@/components/layout/SideNavigation";
 import Footer from "@/components/layout/Footer";
+import ScrollRevealClient from "@/components/layout/ScrollRevealClient";
+import BackgroundDepthClient from "@/components/layout/BackgroundDepthClient";
+import IntroSection from "@/components/sections/IntroSection";
 import ProfileSection from "@/components/sections/ProfileSection";
 import SkillsSection from "@/components/sections/SkillsSection";
 import PortfolioSection from "@/components/sections/PortfolioSection";
@@ -17,7 +20,9 @@ export default function Home() {
     <>
       <Navbar />
       <SideNavigation />
-      <main className="relative min-h-screen overflow-hidden bg-[#eef3f7] pt-16">
+      <main className="relative isolate min-h-screen overflow-x-hidden bg-[#eef3f7] pt-16">
+        <ScrollRevealClient />
+        <BackgroundDepthClient />
         <div className="hiyo-global-bg" aria-hidden="true">
           <div className="hiyo-bg-paper" />
           <div className="hiyo-bg-shape hiyo-bg-shape-a" />
@@ -28,7 +33,8 @@ export default function Home() {
           <div className="hiyo-bg-glow hiyo-bg-glow-b" />
         </div>
 
-        <div className="relative z-10">
+        <div className="relative z-20">
+          <IntroSection />
           <ProfileSection mode={identityMode} onModeChange={setIdentityMode} />
           <SkillsSection
             mode={identityMode === "student" ? "tech" : "creative"}

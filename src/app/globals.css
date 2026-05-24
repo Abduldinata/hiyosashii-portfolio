@@ -9,6 +9,10 @@
     --light-gray: #f3f4f6;
     --border-color: #e5e7eb;
     --card-bg: #ffffff;
+    --hiyo-scroll-progress: 0;
+    --hiyo-bg-depth-scale: calc(1 + (var(--hiyo-scroll-progress) * 0.025));
+    --hiyo-bg-depth-y: calc(var(--hiyo-scroll-progress) * -10px);
+    --hiyo-bg-depth-x: calc(var(--hiyo-scroll-progress) * 8px);
 }
 
 @theme inline {
@@ -20,7 +24,7 @@
     --color-light-gray: var(--light-gray);
     --color-border: var(--border-color);
     --color-card-bg: var(--card-bg);
-    --font-sans: var(--font-geist-sans);
+    --font-sans: var(--font-main);
     --font-mono: var(--font-geist-mono);
 }
 
@@ -33,11 +37,94 @@
     }
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-main), "Helvetica Neue", Arial, sans-serif;
     scroll-behavior: smooth;
+}
+
+.hiyo-section-surface {
+    position: relative;
+    isolation: isolate;
+}
+
+.hiyo-section-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            circle at 18% 82%,
+            rgba(30, 141, 222, 0.08),
+            transparent 34%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0)
+        );
+}
+
+.hiyo-section-bridge,
+.hiyo-section-bridge::before,
+.hiyo-section-bridge::after,
+.hiyo-section-bridge-blue,
+.hiyo-section-bridge-blue::before {
+    display: none !important;
+}
+
+.hiyo-section-bridge {
+    position: relative;
+    height: 96px;
+    margin-top: -48px;
+    margin-bottom: -48px;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.hiyo-section-bridge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(244, 248, 250, 0),
+        rgba(244, 248, 250, 0.72),
+        rgba(244, 248, 250, 0)
+    );
+    backdrop-filter: blur(2px);
+}
+
+.hiyo-section-bridge::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(30, 141, 222, 0.22),
+        transparent
+    );
+}
+
+.hiyo-section-bridge-blue::before {
+    background: linear-gradient(
+        180deg,
+        rgba(30, 141, 222, 0),
+        rgba(30, 141, 222, 0.08),
+        rgba(30, 141, 222, 0)
+    );
 }
 
 .hiyo-global-bg {
@@ -46,13 +133,64 @@ body {
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
+    background:
+        radial-gradient(
+            circle at 12% 78%,
+            rgba(30, 141, 222, 0.16) 0,
+            rgba(30, 141, 222, 0.08) 18%,
+            transparent 34%
+        ),
+        linear-gradient(
+            115deg,
+            #f4f7f8 0%,
+            #edf4f8 46%,
+            #d8e8f1 70%,
+            #0f5f95 100%
+        );
+}
+
+.hiyo-global-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: min(44vw, 760px);
+    height: 100%;
     background: linear-gradient(
-        120deg,
-        #f4f7f8 0%,
-        #edf4f8 42%,
-        #d9eaf6 58%,
-        #0f4d78 100%
+        145deg,
+        rgba(30, 141, 222, 0.84),
+        rgba(13, 77, 120, 0.94)
     );
+    clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 0.92;
+    transform: translate3d(var(--hiyo-bg-depth-x), var(--hiyo-bg-depth-y), 0)
+        scale(var(--hiyo-bg-depth-scale));
+    transform-origin: center right;
+    transition: none;
+    will-change: transform;
+}
+
+.hiyo-global-bg::after {
+    content: "";
+    position: absolute;
+    top: -8%;
+    left: 22%;
+    width: 16vw;
+    height: 116%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(255, 255, 255, 0.03)
+    );
+    transform: skewX(-14deg)
+        translate3d(
+            calc(var(--hiyo-scroll-progress) * -8px),
+            calc(var(--hiyo-scroll-progress) * -4px),
+            0
+        )
+        scale(calc(1 + (var(--hiyo-scroll-progress) * 0.015)));
+    opacity: 0.08;
+    pointer-events: none;
 }
 
 .hiyo-bg-paper {
@@ -61,11 +199,13 @@ body {
     background-image: url("/assets/textures/papper.png");
     background-size: cover;
     background-position: center;
-    opacity: 0.42;
+    opacity: 0.2;
     mix-blend-mode: multiply;
+    transform: none;
 }
 
 .hiyo-bg-shape {
+    display: block;
     position: absolute;
     border: 1px solid rgba(255, 255, 255, 0.35);
     backdrop-filter: blur(2px);
@@ -74,69 +214,79 @@ body {
 }
 
 .hiyo-bg-shape-a {
-    top: -10vh;
-    right: -6vw;
-    width: 42vw;
-    height: 120vh;
-    opacity: 0.9;
+    top: 0;
+    right: 0;
+    width: min(42vw, 720px);
+    height: 100vh;
+    opacity: 0.72;
+    border: none;
+    backdrop-filter: none;
     background: linear-gradient(
-        180deg,
-        rgba(15, 77, 120, 0.96),
-        rgba(30, 141, 222, 0.74)
+        145deg,
+        rgba(30, 141, 222, 0.78),
+        rgba(13, 77, 120, 0.92)
     );
-    transform: skewX(-14deg);
+    clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%);
+    --hiyo-bg-transform: none;
+    animation: none;
 }
 
 .hiyo-bg-shape-b {
-    top: -20vh;
-    left: 20vw;
-    width: 30vw;
-    height: 130vh;
-    opacity: 0.25;
+    top: -10vh;
+    left: 18vw;
+    width: min(18vw, 300px);
+    height: 120vh;
+    opacity: 0.08;
+    border: none;
+    backdrop-filter: none;
     background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.82),
-        rgba(255, 255, 255, 0.18)
+        rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0.08)
     );
-    transform: skewX(-14deg) rotate(2deg);
-    animation-duration: 18s;
+    --hiyo-bg-transform: skewX(-14deg);
+    animation-duration: 24s;
 }
 
 .hiyo-bg-shape-c {
-    left: -8vw;
-    bottom: -12vh;
-    width: 40vw;
-    height: 55vh;
+    left: -14vw;
+    bottom: -24vh;
+    width: clamp(260px, 26vw, 480px);
+    height: 42vh;
     border-radius: 42% 58% 52% 48% / 46% 42% 58% 54%;
-    opacity: 0.35;
+    opacity: 0.16;
+    border: none;
+    backdrop-filter: none;
     background: linear-gradient(
         135deg,
-        rgba(30, 141, 222, 0.46),
-        rgba(255, 255, 255, 0.38)
+        rgba(30, 141, 222, 0.28),
+        rgba(255, 255, 255, 0.28)
     );
-    transform: skewX(-8deg) rotate(-8deg);
-    animation-duration: 16s;
+    --hiyo-bg-transform: rotate(-8deg);
+    animation-duration: 22s;
 }
 
 .hiyo-bg-stripes {
     position: absolute;
     inset: 0;
-    opacity: 0.18;
+    opacity: 0.025;
     background: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 255, 0.22) 0,
-        rgba(255, 255, 255, 0.22) 1px,
+        rgba(255, 255, 255, 0.12) 0,
+        rgba(255, 255, 255, 0.12) 1px,
         transparent 1px,
-        transparent 28px
+        transparent 42px
     );
-    animation: hiyoBgDrift 18s linear infinite alternate;
+    animation: none;
+    transform: none;
 }
 
 .hiyo-bg-glow {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(46px);
+    filter: blur(60px);
     animation: hiyoBgPulse 12s ease-in-out infinite alternate;
+    will-change: transform, opacity;
 }
 
 .hiyo-bg-glow-a {
@@ -144,10 +294,11 @@ body {
     left: 8vw;
     width: 28vw;
     height: 28vw;
+    opacity: 0.45;
     background: radial-gradient(
         circle,
-        rgba(93, 190, 245, 0.28),
-        transparent 68%
+        rgba(93, 190, 245, 0.18),
+        transparent 70%
     );
 }
 
@@ -156,21 +307,32 @@ body {
     bottom: 8vh;
     width: 24vw;
     height: 24vw;
+    opacity: 0.38;
     background: radial-gradient(
         circle,
-        rgba(255, 255, 255, 0.38),
-        rgba(30, 141, 222, 0.12) 46%,
-        transparent 72%
+        rgba(255, 255, 255, 0.24),
+        rgba(30, 141, 222, 0.08) 46%,
+        transparent 74%
     );
     animation-duration: 15s;
 }
 
+.hiyo-bg-shape,
+.hiyo-bg-shape-a,
+.hiyo-bg-shape-b,
+.hiyo-bg-shape-c,
+.hiyo-bg-glow,
+.hiyo-bg-glow-a,
+.hiyo-bg-glow-b {
+    display: none !important;
+}
+
 @keyframes hiyoBgFloat {
     from {
-        translate: 0 0;
+        transform: translate3d(0, 0, 0) var(--hiyo-bg-transform, none);
     }
     to {
-        translate: 18px -22px;
+        transform: translate3d(8px, -10px, 0) var(--hiyo-bg-transform, none);
     }
 }
 
@@ -179,19 +341,71 @@ body {
         background-position: 0 0;
     }
     to {
-        background-position: 72px 48px;
+        background-position: 36px 24px;
     }
 }
 
 @keyframes hiyoBgPulse {
     from {
         transform: translate3d(0, 0, 0) scale(1);
-        opacity: 0.72;
+        opacity: 0.48;
     }
     to {
-        transform: translate3d(14px, -12px, 0) scale(1.08);
-        opacity: 1;
+        transform: translate3d(8px, -7px, 0) scale(1.04);
+        opacity: 0.74;
     }
+}
+
+.hiyo-scroll-section {
+    position: relative;
+    transform-origin: center top;
+}
+
+@keyframes hiyoSectionEnter {
+    from {
+        opacity: 0;
+        transform: translateY(34px) scale(0.985);
+        filter: blur(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.hiyo-scroll-card {
+    transform-origin: center;
+}
+
+@keyframes hiyoCardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.hiyo-section-overlap {
+    margin-top: -2rem;
+}
+
+.hiyo-soft-divider {
+    height: 80px;
+    margin-top: -40px;
+    margin-bottom: -40px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(255, 255, 255, 0.26),
+        transparent
+    );
+    pointer-events: none;
 }
 
 .hiyo-pop-in {
@@ -208,6 +422,245 @@ body {
         opacity: 1;
         transform: translateY(0) scale(1);
         filter: blur(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hiyo-scroll-section,
+    .hiyo-scroll-card {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(64px) scale(0.94);
+    filter: blur(14px);
+    transition:
+        opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 900ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 900ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.reveal-card {
+    opacity: 0.65;
+    transform: translateY(56px) scale(0.965);
+    filter: blur(12px);
+    transition:
+        opacity 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        border-color 320ms ease,
+        background-color 320ms ease;
+    will-change: opacity, transform, filter;
+}
+
+.reveal-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.reveal-up {
+    opacity: 0;
+    transform: translateY(70px) scale(0.94);
+    filter: blur(8px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-down {
+    opacity: 0;
+    transform: translateY(-70px) scale(0.94);
+    filter: blur(8px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-80px) scale(0.94);
+    filter: blur(8px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(80px) scale(0.94);
+    filter: blur(8px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-pop {
+    opacity: 0;
+    transform: translateY(28px) scale(0.86);
+    filter: blur(6px);
+    transition:
+        opacity 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-zoom {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(6px);
+    transition:
+        opacity 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-up.is-visible,
+.reveal-down.is-visible,
+.reveal-left.is-visible,
+.reveal-right.is-visible,
+.reveal-pop.is-visible,
+.reveal-zoom.is-visible,
+.is-visible .reveal-up,
+.is-visible .reveal-down,
+.is-visible .reveal-left,
+.is-visible .reveal-right,
+.is-visible .reveal-pop,
+.is-visible .reveal-zoom {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0);
+}
+
+.reveal-text {
+    opacity: 0;
+    transform: translateY(42px);
+    filter: blur(10px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-text.is-visible,
+.is-visible .reveal-text {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+.reveal-text-down {
+    opacity: 0;
+    transform: translateY(-42px);
+    filter: blur(10px);
+    transition:
+        opacity 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-text-down.is-visible,
+.is-visible .reveal-text-down {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+.reveal-delay-1 {
+    transition-delay: 100ms;
+}
+.reveal-delay-2 {
+    transition-delay: 200ms;
+}
+.reveal-delay-3 {
+    transition-delay: 300ms;
+}
+.reveal-delay-4 {
+    transition-delay: 400ms;
+}
+.reveal-delay-5 {
+    transition-delay: 500ms;
+}
+.reveal-delay-6 {
+    transition-delay: 600ms;
+}
+
+.hiyo-motion-card {
+    transition:
+        transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 320ms ease,
+        background-color 320ms ease;
+}
+
+.hiyo-section-bridge,
+.hiyo-section-bridge::before,
+.hiyo-section-bridge::after,
+.hiyo-section-bridge-blue,
+.hiyo-section-bridge-blue::before {
+    display: none !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+}
+
+.hiyo-motion-card:hover {
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 28px 70px rgba(30, 141, 222, 0.22);
+}
+
+.hiyo-motion-icon {
+    transition:
+        transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 280ms ease,
+        background-color 280ms ease;
+}
+
+.hiyo-motion-icon:hover {
+    transform: translateY(-7px) scale(1.08);
+    box-shadow: 0 18px 42px rgba(30, 141, 222, 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll,
+    .reveal-on-scroll.is-visible,
+    .reveal-card,
+    .reveal-card.is-visible,
+    .reveal-up,
+    .reveal-down,
+    .reveal-left,
+    .reveal-right,
+    .reveal-pop,
+    .reveal-zoom,
+    .reveal-text,
+    .reveal-text.is-visible,
+    .reveal-text-down,
+    .reveal-text-down.is-visible,
+    .hiyo-motion-card,
+    .hiyo-motion-card:hover,
+    .hiyo-motion-icon,
+    .hiyo-motion-icon:hover {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
     }
 }
 
@@ -418,19 +871,110 @@ body {
 
 .hiyo-section-reveal,
 .hiyo-reveal {
-    animation: hiyoReveal 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0.65;
+    transform: translateY(72px) scale(0.96);
+    filter: blur(16px);
+    transition:
+        opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 900ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 900ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
 }
 
-@keyframes hiyoReveal {
+.hiyo-section-reveal.is-visible,
+.hiyo-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.hiyo-reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(10px);
+    transition:
+        opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 760ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hiyo-reveal-stagger.is-visible > *,
+.is-visible .hiyo-reveal-stagger > * {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+.hiyo-reveal-stagger.is-visible > *:nth-child(1) {
+    transition-delay: 80ms;
+}
+.hiyo-reveal-stagger.is-visible > *:nth-child(2) {
+    transition-delay: 160ms;
+}
+.hiyo-reveal-stagger.is-visible > *:nth-child(3) {
+    transition-delay: 240ms;
+}
+.hiyo-reveal-stagger.is-visible > *:nth-child(4) {
+    transition-delay: 320ms;
+}
+.hiyo-reveal-stagger.is-visible > *:nth-child(5) {
+    transition-delay: 400ms;
+}
+.hiyo-reveal-stagger.is-visible > *:nth-child(6) {
+    transition-delay: 480ms;
+}
+
+.split-reveal {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.12em;
+}
+
+.split-reveal .split-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(1.1em) rotate(2deg);
+    filter: blur(8px);
+    transition:
+        opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--word-index, 0) * 70ms);
+}
+
+.split-reveal.is-visible .split-word,
+.is-visible .split-reveal .split-word {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+    filter: blur(0);
+}
+
+.hiyo-marquee {
+    display: flex;
+    width: max-content;
+    min-width: 200%;
+    animation: hiyoMarquee 22s linear infinite;
+}
+
+@keyframes hiyoMarquee {
     from {
-        opacity: 0;
-        transform: translateY(18px) scale(0.98);
-        filter: blur(4px);
+        transform: translateX(0);
     }
     to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
+        transform: translateX(-50%);
+    }
+}
+
+.hiyo-orbit {
+    animation: hiyoOrbit 12s linear infinite;
+}
+
+@keyframes hiyoOrbit {
+    from {
+        transform: rotate(0deg) translateX(10px) rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg) translateX(10px) rotate(-360deg);
     }
 }
 
@@ -457,6 +1001,32 @@ body {
 .hiyo-hover-icon:hover {
     transform: translateY(-4px) scale(1.04);
     box-shadow: 0 14px 34px rgba(30, 141, 222, 0.22);
+}
+
+/* Profile mode switch button animation */
+button[aria-label="Switch profile mode"] {
+    transition:
+        transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 300ms ease,
+        border-color 300ms ease,
+        color 300ms ease,
+        box-shadow 300ms ease;
+}
+
+button[aria-label="Switch profile mode"]:active {
+    animation: profileSwitchSpin 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes profileSwitchSpin {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.08);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
 }
 
 .hiyo-float-slow {
@@ -495,7 +1065,25 @@ body {
     .hiyo-bg-glow,
     .hiyo-section-reveal,
     .hiyo-reveal,
-    .hiyo-float-slow {
+    .hiyo-reveal-stagger,
+    .hiyo-reveal-stagger > *,
+    .hiyo-float-slow,
+    .split-reveal .split-word {
         animation: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
     }
+}
+
+.hiyo-section-bridge,
+.hiyo-section-bridge::before,
+.hiyo-section-bridge::after,
+.hiyo-section-bridge-blue,
+.hiyo-section-bridge-blue::before {
+    display: none !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
 }
