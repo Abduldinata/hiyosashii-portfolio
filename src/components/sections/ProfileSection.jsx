@@ -76,8 +76,8 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
       id="profile"
       className="hiyo-section-surface relative min-h-[calc(100vh-88px)] scroll-mt-24 overflow-hidden bg-transparent"
     >
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-7xl items-center px-8 py-12 lg:px-12">
-        <div className="grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_430px]">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-[1200px] items-center px-8 py-12 lg:px-12">
+        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12">
           {/* Left content */}
           <motion.div
             className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7"
@@ -170,7 +170,7 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
               >
                 <a
                   href="#skills"
-                  className={`inline-flex items-center justify-center rounded-full border-2 px-10 py-4 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(30,141,222,0.24)] active:scale-[0.98] ${
+                  className={`inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(30,141,222,0.24)] active:scale-[0.98] ${
                     isStudent
                       ? "border-[#2D8FE3] text-[#2D8FE3] hover:bg-[#2D8FE3] hover:text-white"
                       : "border-[#123E63] text-[#123E63] hover:bg-white hover:text-[#1E8DDE]"

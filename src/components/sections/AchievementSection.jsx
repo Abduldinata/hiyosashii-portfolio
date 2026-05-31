@@ -215,7 +215,7 @@ export default function AchievementSection() {
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: false, amount: 0.14, margin: "-6% 0px -6% 0px" }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7"
+          className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7"
         >
           <div className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-6">
             <div className="relative space-y-4 pl-7">

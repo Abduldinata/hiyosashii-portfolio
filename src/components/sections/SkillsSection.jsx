@@ -282,7 +282,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
       id="skills"
       className="hiyo-section-surface relative min-h-[calc(100vh-88px)] scroll-mt-24 overflow-visible bg-transparent px-6 py-20 sm:px-8 lg:px-12"
     >
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1150px] flex-col justify-center gap-8">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1200px] flex-col justify-center gap-8">
         <motion.div
           key={mode}
           className="flex flex-col gap-8"
@@ -308,14 +308,16 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
             </p>
           </motion.div>
 
-          {skillGroups.map((group) => (
-            <SkillGroup
-              key={group.title}
-              title={group.title}
-              subtitle={group.subtitle}
-              skills={group.skills}
-            />
-          ))}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+            {skillGroups.map((group) => (
+              <SkillGroup
+                key={group.title}
+                title={group.title}
+                subtitle={group.subtitle}
+                skills={group.skills}
+              />
+            ))}
+          </div>
         </motion.div>
 
         <motion.div

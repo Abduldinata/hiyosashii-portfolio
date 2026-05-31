@@ -359,7 +359,7 @@ function PortfolioModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pb-8 pt-[96px] backdrop-blur-md md:pt-[104px]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pb-8 pt-20 backdrop-blur-md sm:pt-24 md:pt-[104px]">
       <div className="relative mx-auto mb-6 w-full max-w-[1120px] overflow-hidden rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] backdrop-blur-xl sm:p-5 md:p-6">
         <button
           type="button"
@@ -395,7 +395,7 @@ function PortfolioModal({
           )}
         </header>
 
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.35fr_0.95fr] lg:items-start">
+        <div className="mt-5 grid gap-5 md:grid-cols-[1.3fr_1fr] lg:grid-cols-[1.35fr_0.95fr] md:items-start lg:items-start">
           <div className="space-y-3">
             <div className="relative h-[240px] overflow-hidden rounded-[24px] bg-[#eef7fc] shadow-[0_18px_50px_rgba(31,79,122,0.12)] sm:h-[320px] lg:h-[380px]">
               <SafeImage
@@ -502,7 +502,7 @@ function PortfolioModal({
               RINGKASAN
             </h4>
 
-            <p className="mt-3 max-h-[220px] overflow-y-auto pr-2 text-sm leading-7 text-[#263B53] md:text-[15px]">
+            <p className="mt-3 text-sm leading-7 text-[#263B53] md:text-[15px]">
               {project.description}
             </p>
 

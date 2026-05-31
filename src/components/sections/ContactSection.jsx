@@ -74,16 +74,16 @@ export default function ContactSection() {
       id="contact"
       className="hiyo-section-surface relative flex min-h-[calc(100vh-88px)] w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-20 text-slate-900 sm:px-6 lg:px-8"
     >
-      <div className="relative z-10 mx-auto w-full max-w-[1160px]">
+      <div className="relative z-10 mx-auto w-full max-w-[1200px]">
         <motion.div
           initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: false, amount: 0.16 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="grid min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] sm:p-10 md:grid-cols-[1.05fr_0.95fr] lg:p-14 xl:p-16"
+          className="grid min-h-0 lg:min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] sm:p-10 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:p-12 xl:p-16"
         >
           <div>
-            <h2 className="text-[clamp(3rem,5.8vw,5.6rem)] font-black leading-[0.92] tracking-tight text-slate-900">
+            <h2 className="text-[clamp(2rem,5.8vw,5.6rem)] font-black leading-[0.92] tracking-tight text-slate-900">
               Let&rsquo;s work
               <br />
               <span className="text-[#1E8DDE]">together.</span>
@@ -126,7 +126,7 @@ export default function ContactSection() {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-[430px] md:ml-auto">
+          <div className="mx-auto w-full md:ml-auto">
             <div className="relative overflow-hidden rounded-[26px] border border-white/70 bg-white/70 p-5 shadow-[0_24px_70px_rgba(30,141,222,0.16)] backdrop-blur-md sm:p-6">
               <div className="relative z-10">
                 <p className="mb-5 text-center text-lg font-extrabold tracking-tight text-[#173d61] md:text-left">
