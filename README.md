@@ -1,69 +1,78 @@
 # Hiyosashii Portfolio
 
-Interactive portfolio website of **Abdul Aziz Dinata (Hiyosashii)**, showcasing both technical and creative journeys as a Software Engineering student, UI/UX enthusiast, content creator, and digital creative.
+A modern interactive portfolio website created by **Abdul Aziz Dinata (Hiyosashii)** to showcase technical projects, creative works, academic experiences, and personal growth as a Software Engineering student and digital creative.
 
-## Overview
+## About
 
-Hiyosashii Portfolio is a modern one-page portfolio built with Next.js and Tailwind CSS, designed to present:
+Hiyosashii Portfolio is a personal website designed to combine both **technology** and **creative media** into a single experience.
 
-* Academic and technical projects
+This portfolio highlights:
+
+* Software and web development projects
+* UI/UX design exploration
+* Mobile application concepts
 * Creative editing and visual design works
-* Experience and certificates
-* KKN-T Banyusri contributions
-* Personal development journey
-* Social and professional contacts
+* Academic achievements and certifications
+* KKN-T Banyusri community projects
+* Personal learning and development journey
 
-The website combines a clean glassmorphism-inspired interface, smooth animations, interactive portfolio galleries, and achievement previews into a single experience.
+The website emphasizes clean visual design, smooth interactions, portfolio storytelling, and a balance between technical and creative identities.
 
 ---
 
 ## Features
 
-### Intro Section
+### Intro
 
-* Animated landing section
-* Personal branding and introduction
-* Creative & Tech dual identity
+* Interactive landing section
+* Personal branding presentation
+* Creative & Tech identity introduction
 
-### Profile Section
+### Profile
 
+* Student Mode
 * Creative Mode
-* Tech Mode
-* Interactive profile switching
-* Dynamic profile presentation
+* Dynamic profile switching
+* Personal background and interests
 
-### Skills Section
+### Skills
 
-* Technical skills showcase
-* Creative tools showcase
-* Hover animations and transitions
+* Technical skill showcase
+* Creative software showcase
+* Interactive hover effects
+* Categorized skill presentation
 
-### Portfolio Section
+### Portfolio
 
-* Project filtering
-* Interactive detail modal
-* Multiple gallery previews
-* External links (GitHub, Instagram, TikTok, YouTube)
-* KKN-T Banyusri publications
-* Mobile app concepts
-* Web application projects
-* CSPB Android Xash3D FWGS porting project
+* Project filtering system
+* Interactive project detail modal
+* Multiple project gallery previews
+* External project links
+* Creative and technical project showcase
 
-### Experience & Certificates Section
+Featured portfolio categories:
 
-* Academic journey
-* Workshops
-* Seminars
-* Professional experiences
-* Certificate previews
-* Google Drive certificate integration
+* Web Development
+* Mobile Development
+* UI/UX Design
+* Content Creation
+* KKN-T Banyusri Publications
+* Android Game Porting Experiments
+
+### Experience & Certificates
+
+* Academic activities
+* Workshops and seminars
+* Internship experiences
+* Certification showcase
 * Portfolio references
+* Google Drive certificate integration
 
-### Contact Section
+### Contact
 
 * Social media links
-* Email contact
-* Professional networking access
+* Professional contact information
+* Collaboration opportunities
 
 ---
 
@@ -80,11 +89,14 @@ The website combines a clean glassmorphism-inspired interface, smooth animations
 
 * Vercel
 
-### Design Tools
+### Design & Creative Tools
 
 * Figma
 * Canva
 * Adobe Photoshop
+* Adobe After Effects
+* CapCut
+* Alight Motion
 
 ---
 
@@ -97,7 +109,7 @@ src/
 │   ├── layout/
 │   └── sections/
 ├── data/
-└── assets/
+└── utils/
 
 public/
 └── assets/
@@ -105,15 +117,18 @@ public/
     ├── portfolio/
     ├── profile/
     ├── backgrounds/
-    └── icons/
+    ├── icons/
+    └── textures/
 ```
+
+---
 
 ## Local Development
 
-Clone repository:
+Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-username/hiyosashii-portfolio.git
 ```
 
 Install dependencies:
@@ -128,27 +143,46 @@ Run development server:
 npm run dev
 ```
 
-Open:
+Open your browser:
 
 ```bash
 http://localhost:3000
+```
+
+Build production version:
+
+```bash
+npm run build
 ```
 
 ---
 
 ## Author
 
-**Abdul Aziz Dinata**
+### Abdul Aziz Dinata
 
 Software Engineering Student (TRPL)
-UI/UX Enthusiast
-Content Creator & AMV Editor
-Digital Creative
+
+Areas of Interest:
+
+* Web Development
+* Mobile Development
+* UI/UX Design
+* AI-Assisted Development
+* Content Creation
+* AMV Editing
+* Digital Creative Production
+
+---
+
+## Live Website
+
+https://hiyosashii-portfolio.vercel.app
 
 ---
 
 ## License
 
-This project is intended as a personal portfolio and showcase website.
+This repository is intended for portfolio and showcase purposes.
 
-All personal works, designs, images, and creative assets belong to their respective owners.
+Personal works, designs, images, certificates, and creative assets remain the property of their respective owners.
