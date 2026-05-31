@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { portfolioData } from "../../data/portfolioData";
 
@@ -195,7 +195,7 @@ function PortfolioThumbnail({ project, selectedImage, onSelectImage }) {
   );
 }
 
-function PortfolioCard({ project, onOpenDetails, index }) {
+function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
   const [selectedImage, setSelectedImage] = useState(project.thumbnail);
   const visibleTools = project.tools.slice(0, 4);
   const hiddenToolsCount = project.tools.length - visibleTools.length;
@@ -216,10 +216,6 @@ function PortfolioCard({ project, onOpenDetails, index }) {
         (link) => link.url !== fallbackPrimaryLink.url,
       )
     : visibleExternalLinks;
-
-  const handleOpenDetails = () => {
-    onOpenDetails(project, selectedImage);
-  };
 
   return (
     <motion.article
@@ -285,7 +281,10 @@ function PortfolioCard({ project, onOpenDetails, index }) {
           {hasDetailAction ? (
             <button
               type="button"
-              onClick={handleOpenDetails}
+              onClick={() => {
+                onOpenDetails(project);
+                setActiveImageIndex(0);
+              }}
               className={primaryActionClass}
             >
               Lihat Detail
@@ -360,44 +359,50 @@ function PortfolioModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/65 px-4 py-6 backdrop-blur-sm">
-      <div className="max-h-[85vh] w-full max-w-[1000px] overflow-y-auto rounded-[28px] border border-white/70 bg-white/95 p-4 shadow-[0_28px_80px_rgba(15,43,71,0.32)] sm:p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <CategoryPills categories={project.categories} />
-              <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#3d6f93]">
-                {project.year}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pb-8 pt-[96px] backdrop-blur-md md:pt-[104px]">
+      <div className="relative mx-auto mb-6 w-full max-w-[1120px] overflow-hidden rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] backdrop-blur-xl sm:p-5 md:p-6">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-40 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#173d61] hover:shadow-[0_16px_38px_rgba(31,79,122,0.26)] active:translate-y-0 active:scale-95"
+          aria-label="Close portfolio detail"
+        >
+          ×
+        </button>
+
+        <header className="pr-12">
+          <div className="flex flex-wrap items-center gap-2">
+            {project.categories?.slice(0, 2).map((category) => (
+              <span
+                key={category}
+                className="inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
+              >
+                {category}
               </span>
-            </div>
-            <h3 className="text-2xl font-extrabold tracking-tight text-[#173d61]">
-              {project.title}
-            </h3>
-            {project.role && (
-              <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[#1f4f7a]/75">
-                {project.role}
-              </p>
-            )}
+            ))}
+            <span className="text-[11px] font-black tracking-[0.2em] text-[#185987] md:text-xs">
+              {project.year}
+            </span>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-colors hover:bg-[#173d61]"
-            aria-label="Close portfolio detail"
-          >
-            ×
-          </button>
-        </div>
+          <h3 className="mt-3 max-w-4xl text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
+            {project.title}
+          </h3>
+          {project.role && (
+            <p className="mt-2 max-w-4xl text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
+              {project.role}
+            </p>
+          )}
+        </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-start">
-          <div>
-            <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-[22px] bg-[#eef7fc] shadow-[0_18px_50px_rgba(31,79,122,0.12)]">
+        <div className="mt-5 grid gap-5 lg:grid-cols-[1.35fr_0.95fr] lg:items-start">
+          <div className="space-y-3">
+            <div className="relative h-[240px] overflow-hidden rounded-[24px] bg-[#eef7fc] shadow-[0_18px_50px_rgba(31,79,122,0.12)] sm:h-[320px] lg:h-[380px]">
               <SafeImage
                 key={activeImage}
                 src={activeImage}
                 alt={project.title}
-                className="h-full w-full object-cover transition-all duration-300"
+                className="h-full w-full bg-[#081018] object-contain"
                 fallback={
                   <FallbackThumbnail
                     project={project}
@@ -412,7 +417,7 @@ function PortfolioModal({
                     type="button"
                     aria-label="Previous image"
                     onClick={goToPreviousImage}
-                    className="absolute left-4 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-2xl font-black text-[#123A5A] shadow-[0_12px_28px_rgba(15,77,120,0.20)] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white active:scale-95"
+                    className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
                   >
                     ‹
                   </button>
@@ -421,7 +426,7 @@ function PortfolioModal({
                     type="button"
                     aria-label="Next image"
                     onClick={goToNextImage}
-                    className="absolute right-4 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-2xl font-black text-[#123A5A] shadow-[0_12px_28px_rgba(15,77,120,0.20)] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white active:scale-95"
+                    className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] backdrop-blur-md transition-all duration-300 hover:translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
                   >
                     ›
                   </button>
@@ -429,14 +434,35 @@ function PortfolioModal({
               )}
 
               {galleryImages.length > 1 && (
-                <span className="absolute bottom-3 right-3 z-30 rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[#123A5A] shadow-sm backdrop-blur-md">
+                <span className="absolute bottom-3 right-3 z-30 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-black tracking-wide text-[#123A5A] shadow-sm backdrop-blur-md">
                   {safeActiveIndex + 1} / {galleryImages.length}
                 </span>
               )}
             </div>
 
             {galleryImages.length > 1 && (
-              <div className="mt-4 flex flex-wrap gap-2.5">
+              <div className="mt-3 flex items-center justify-center gap-2">
+                {galleryImages.map((_, index) => (
+                  <button
+                    key={`dot-${index}`}
+                    type="button"
+                    aria-label={`Go to image ${index + 1}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setActiveImageIndex(index);
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 hover:bg-[#1E8DDE] ${
+                      safeActiveIndex === index
+                        ? "w-7 bg-[#185987] shadow-[0_8px_20px_rgba(30,141,222,0.28)]"
+                        : "w-2 bg-[#BFD8EA]"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {galleryImages.length > 1 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
                 {galleryImages.map((image, index) => (
                   <button
                     type="button"
@@ -445,7 +471,7 @@ function PortfolioModal({
                       event.stopPropagation();
                       setActiveImageIndex(index);
                     }}
-                    className={`h-16 w-24 overflow-hidden rounded-xl border-2 transition-all duration-300 hover:-translate-y-1 hover:opacity-100 ${
+                    className={`group h-12 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.04] hover:opacity-100 hover:shadow-[0_12px_28px_rgba(30,141,222,0.22)] active:scale-95 md:h-14 md:w-24 ${
                       safeActiveIndex === index
                         ? "border-[#1E8DDE] opacity-100 shadow-[0_10px_26px_rgba(30,141,222,0.24)]"
                         : "border-white/70 opacity-70"
@@ -460,7 +486,7 @@ function PortfolioModal({
                           : null
                       }
                       alt=""
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       fallback={
                         <div className="h-full w-full bg-gradient-to-br from-[#e9f5ff] to-[#9fc7e3]" />
                       }
@@ -471,16 +497,20 @@ function PortfolioModal({
             )}
           </div>
 
-          <div className="rounded-[22px] border border-[#d7e5ef]/80 bg-white/70 p-4 shadow-[0_14px_34px_rgba(31,79,122,0.08)] sm:p-5">
-            <p className="text-sm leading-relaxed text-slate-600">
+          <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+              RINGKASAN
+            </h4>
+
+            <p className="mt-3 max-h-[220px] overflow-y-auto pr-2 text-sm leading-7 text-[#263B53] md:text-[15px]">
               {project.description}
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-1.5">
+            <div className="mt-4 flex flex-wrap gap-2">
               {project.tools.map((tool) => (
                 <span
                   key={tool}
-                  className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
+                  className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
                 >
                   {tool}
                 </span>
@@ -488,11 +518,11 @@ function PortfolioModal({
             </div>
 
             {project.links?.some((link) => link.url) && (
-              <div className="mt-6">
-                <h4 className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#173d61]">
+              <div className="mt-4">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
                   TAUTAN
                 </h4>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                   {project.links
                     .filter((link) => link.url)
                     .map((link) => (
@@ -501,7 +531,7 @@ function PortfolioModal({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={secondaryActionClass}
+                        className="group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-4 py-2 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95"
                       >
                         {getCleanLinkLabel(link.label)}
                       </a>
@@ -526,12 +556,6 @@ export default function PortfolioSection() {
       : portfolioData.filter((project) =>
           project.categories?.includes(activeCategory),
         );
-
-  useEffect(() => {
-    if (selectedProject) {
-      setActiveImageIndex(0);
-    }
-  }, [selectedProject?.id ?? selectedProject?.title]);
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
@@ -606,6 +630,7 @@ export default function PortfolioSection() {
                 key={`${activeCategory}-${project.id}`}
                 project={project}
                 onOpenDetails={openDetails}
+                setActiveImageIndex={setActiveImageIndex}
                 index={index}
               />
             ))

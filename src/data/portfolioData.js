@@ -1,6 +1,7 @@
 export const portfolioData = [
   {
     id: "kkn-publication",
+    slug: "kkn-banyusri-creative-publication",
     title: "KKN-T Banyusri Creative Publication",
     categories: ["Design", "Video Editing"],
     year: "2025",
@@ -39,6 +40,7 @@ export const portfolioData = [
   },
   {
     id: "expo-bazar",
+    slug: "expo-bazar-wonosegoro-2025",
     title: "Expo Bazar Wonosegoro 2025 Visual Design",
     categories: ["Design"],
     year: "2025",
@@ -51,6 +53,7 @@ export const portfolioData = [
       "/assets/portfolio/thumb-expo-bazar1.png",
       "/assets/portfolio/thumb-expo-bazar2.png",
       "/assets/portfolio/thumb-expo-bazar3.png",
+      "/assets/portfolio/thumb-expo-umkm1.png",
     ],
     links: [],
     primaryAction: {
@@ -62,6 +65,7 @@ export const portfolioData = [
   },
   {
     id: "amv-editor",
+    slug: "content-creator-amv-editor",
     title: "Content Creator / AMV Editor",
     categories: ["Video Editing"],
     year: "2019 - Present",
@@ -100,6 +104,7 @@ export const portfolioData = [
   },
   {
     id: "desa-banyusri",
+    slug: "website-profil-pengaduan-desa-banyusri",
     title: "Website Profil & Pengaduan Desa Banyusri",
     categories: ["Web"],
     year: "2025",
@@ -115,8 +120,12 @@ export const portfolioData = [
     ],
     description:
       "Website profil dan sistem pengaduan Desa Banyusri untuk mendukung digitalisasi desa pada kegiatan KKN-T Kelompok 22 Periode 7. Fokus kontribusi berada pada struktur konten, arahan tampilan UI, penyusunan fitur, testing alur, visual refinement, dan support deployment dengan bantuan workflow AI-assisted development.",
-    thumbnail: "/assets/portfolio/thumb-desa-banyusri.png",
-    gallery: ["/assets/portfolio/thumb-desa-banyusri.png"],
+    thumbnail: "/assets/portfolio/thumb-desa-banyusri1.png",
+    gallery: [
+      "/assets/portfolio/thumb-desa-banyusri1.png",
+      "/assets/portfolio/thumb-desa-banyusri3.png",
+      "/assets/portfolio/thumb-desa-banyusri4.png",
+    ],
     links: [
       {
         label: "GitHub",
@@ -136,6 +145,7 @@ export const portfolioData = [
   },
   {
     id: "hyo-ai",
+    slug: "hyo-ai-mobile-app",
     title: "Hyo AI Mobile App",
     categories: ["App"],
     year: "2025",
@@ -143,8 +153,14 @@ export const portfolioData = [
     tools: ["Flutter", "SQLite"],
     description:
       "Eksperimen aplikasi mobile berbasis Flutter dengan konsep AI assistant. Project ini menjadi ruang eksplorasi untuk layout UI, struktur fitur dasar, testing tampilan, dan pengembangan aplikasi berbantuan AI.",
-    thumbnail: "/assets/portfolio/thumb-hyo-ai.png",
-    gallery: ["/assets/portfolio/thumb-hyo-ai.png"],
+    thumbnail: "/assets/portfolio/thumb-hyo-ai1.png",
+    gallery: [
+      "/assets/portfolio/thumb-hyo-ai1.png",
+      "/assets/portfolio/thumb-hyo-ai2.png",
+      "/assets/portfolio/thumb-hyo-ai3.png",
+      "/assets/portfolio/thumb-hyo-ai4.png",
+      "/assets/portfolio/thumb-hyo-ai5.png",
+    ],
     links: [
       {
         label: "GitHub",
@@ -160,6 +176,7 @@ export const portfolioData = [
   },
   {
     id: "pinjam-aset",
+    slug: "sistem-peminjaman-aset-kampus",
     title: "Sistem Peminjaman Aset Kampus",
     categories: ["Web"],
     year: "2025",
@@ -184,6 +201,7 @@ export const portfolioData = [
   },
   {
     id: "todolist",
+    slug: "todolist-mobile-app",
     title: "ToDoList Mobile App",
     categories: ["App"],
     year: "2025",
@@ -208,6 +226,7 @@ export const portfolioData = [
   },
   {
     id: "cspb-porting",
+    slug: "cspb-android-xash3d-fwgs-porting",
     title: "CSPB Android Xash3D FWGS Porting",
     categories: ["Game/Modding"],
     year: "2026",
@@ -216,7 +235,6 @@ export const portfolioData = [
     description:
       "Project WIP eksplorasi porting game CSPB Android dari arm32bit ke aarch64bit menggunakan Xash3D FWGS. Ditampilkan sebagai project teknis/eksperimental, bukan sebagai klaim fullstack development.",
     thumbnail: "/assets/portfolio/thumb-cspb.png",
-    fallbackThumbnail: "/assets/portfolio/thumb_cspb.png",
     gallery: ["/assets/portfolio/thumb-cspb.png"],
     links: [
       {
