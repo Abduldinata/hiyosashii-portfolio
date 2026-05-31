@@ -85,9 +85,9 @@ export default function IntroSection() {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1200px] items-center">
-        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12 xl:gap-14">
+        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12 xl:gap-14 md:pb-0 pb-6">
           <motion.div
-            className="max-w-[760px] lg:ml-8"
+            className="max-w-[760px] lg:ml-8 md:order-1 order-1"
             initial="hidden"
             whileInView="visible"
             viewport={{
@@ -154,7 +154,7 @@ export default function IntroSection() {
           </motion.div>
 
           <motion.div
-            className="relative w-full max-w-[420px] md:max-w-full justify-self-center lg:justify-self-end lg:-translate-x-4 xl:-translate-x-8"
+            className="relative w-full max-w-[420px] md:max-w-full justify-self-center lg:justify-self-end lg:-translate-x-4 xl:-translate-x-8 md:order-2 order-2 mt-2 md:mt-0"
             initial={{
               opacity: 0.84,
               x: 28,

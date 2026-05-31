@@ -133,7 +133,7 @@ export default function ContactSection() {
                   Contact me on :
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {contactData.map((contact) => (
                     <ContactIcon key={contact.label} contact={contact} />
                   ))}

@@ -77,10 +77,10 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
       className="hiyo-section-surface relative min-h-[calc(100vh-88px)] scroll-mt-24 overflow-hidden bg-transparent"
     >
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-[1200px] items-center px-8 py-12 lg:px-12">
-        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12">
+        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12 md:pb-0 pb-12">
           {/* Left content */}
           <motion.div
-            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7"
+            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.16 }}
@@ -184,7 +184,7 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
 
           {/* Right visual */}
           <motion.div
-            className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5"
+            className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5 md:order-2 order-1 md:mt-0 -mt-12"
             initial={{
               opacity: 0.86,
               x: 28,

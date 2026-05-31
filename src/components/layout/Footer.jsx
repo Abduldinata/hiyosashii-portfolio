@@ -3,7 +3,7 @@ import { SITE_CONFIG } from "@/constants/site";
 
 export default function Footer() {
   return (
-    <footer className="w-full py-8 bg-gray-50 dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800">
+    <footer className="w-full pb-20 md:pb-8 pt-8 bg-gray-50 dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 relative z-20">
       <div className="max-w-7xl mx-auto px-6 text-center">
         <p className="text-sm text-gray-600 dark:text-zinc-400">
           &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights
