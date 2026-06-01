@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import ScrollRevealClient from "@/components/layout/ScrollRevealClient";
 import BackgroundDepthClient from "@/components/layout/BackgroundDepthClient";
 import ElasticOverscroll from "@/components/layout/ElasticOverscroll";
+import CursorGlow from "@/components/layout/CursorGlow";
 import IntroSection from "@/components/sections/IntroSection";
 import ProfileSection from "@/components/sections/ProfileSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -61,6 +62,7 @@ export default function Home() {
           <div className="hiyo-bg-glow hiyo-bg-glow-b" />
         </div>
 
+        <CursorGlow />
         <ElasticOverscroll>
           <div className="relative z-20">
             <IntroSection key={`intro-${getTrigger("home")}`} />
