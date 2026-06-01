@@ -35,13 +35,24 @@ export const TOOL_ICONS = {
 
 export default function ToolPill({ tool, className = "" }) {
   const [iconError, setIconError] = useState(false);
+  const [tipOpen, setTipOpen] = useState(false);
   const iconPath = TOOL_ICONS[tool];
 
   if (iconPath && !iconError) {
     return (
-      <div className="group/pill relative">
+      <div
+        className="group/pill relative"
+        tabIndex={0}
+        role="button"
+        aria-label={tool}
+        onClick={(e) => {
+          e.stopPropagation();
+          setTipOpen((prev) => !prev);
+        }}
+        onBlur={() => setTipOpen(false)}
+      >
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 shadow-sm ring-1 ring-white/70 transition-transform duration-200 hover:scale-110 ${className}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 shadow-sm ring-1 ring-white/70 transition-transform duration-200 hover:scale-110 active:scale-95 ${className}`}
         >
           <img
             src={iconPath}
@@ -51,7 +62,11 @@ export default function ToolPill({ tool, className = "" }) {
           />
         </div>
         {/* Tooltip */}
-        <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-1.5 min-w-max -translate-x-1/2 opacity-0 transition-all duration-200 group-hover/pill:opacity-100">
+        <div
+          className={`pointer-events-none absolute bottom-full left-1/2 z-50 mb-1.5 min-w-max -translate-x-1/2 transition-all duration-200 ${
+            tipOpen ? "opacity-100" : "opacity-0 group-hover/pill:opacity-100"
+          }`}
+        >
           <div className="rounded-lg border border-white/60 bg-white px-2.5 py-1.5 text-xs font-bold text-[#123A5A] shadow-lg">
             {tool}
           </div>
