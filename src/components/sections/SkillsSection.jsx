@@ -204,6 +204,7 @@ function SkillColor(level) {
 
 function SkillIcon({ skill }) {
   const [hasError, setHasError] = useState(false);
+  const [tipOpen, setTipOpen] = useState(false);
   const label = skill.name || skill.label || skill.title || "Skill";
   const fallbackText = skill.fallback || label.slice(0, 2).toUpperCase();
   const barColor = SkillColor(skill.level);
@@ -216,6 +217,14 @@ function SkillIcon({ skill }) {
       viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
       className="group relative flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]"
+      tabIndex={0}
+      role="button"
+      aria-label={label}
+      onClick={(e) => {
+        e.stopPropagation();
+        setTipOpen((prev) => !prev);
+      }}
+      onBlur={() => setTipOpen(false)}
     >
       <div className="hiyo-hover-icon relative flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/70 before:pointer-events-none before:absolute before:inset-x-[-45%] before:top-[-60%] before:h-[70%] before:rotate-12 before:bg-white/30 before:blur-sm before:transition-transform before:duration-300 group-hover:before:translate-y-[135%] group-active:scale-95">
         {skill.icon && !hasError ? (
@@ -241,7 +250,13 @@ function SkillIcon({ skill }) {
       )}
 
       {/* Tooltip */}
-      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 min-w-[130px] -translate-x-1/2 translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+      <div
+        className={`pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 min-w-[130px] -translate-x-1/2 translate-y-1 transition-all duration-200 ${
+          tipOpen
+            ? "translate-y-0 opacity-100"
+            : "translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"
+        }`}
+      >
         <div className="rounded-xl border border-white/60 bg-white p-3 text-left shadow-xl">
           <p className="text-sm font-bold text-[#123A5A]">{label}</p>
           {skill.level && (

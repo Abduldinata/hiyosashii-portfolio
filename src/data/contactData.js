@@ -10,7 +10,7 @@ export const contactData = [
     label: "GitHub",
     type: "link",
     url: "https://github.com/Abduldinata",
-    icon: "/assets/icons/github.jpeg",
+    icon: "/assets/icons/github.png",
   },
   {
     label: "Instagram",
