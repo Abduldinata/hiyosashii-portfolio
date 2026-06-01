@@ -74,7 +74,7 @@ const webAppSkills = [
 const toolDeploymentSkills = [
   {
     name: "GitHub",
-    icon: "/assets/icons/github.jpeg",
+    icon: "/assets/icons/github.png",
     fallback: "GH",
     level: "Repository",
   },
@@ -92,7 +92,7 @@ const toolDeploymentSkills = [
   },
   {
     name: "PostgreSQL",
-    icon: "/assets/icons/postgres.png",
+    icon: "/assets/icons/postgresql.png",
     fallback: "SQL",
     level: "Database",
   },
@@ -170,10 +170,44 @@ const designSkills = [
   },
 ];
 
+function levelToPercent(level) {
+  const map = {
+    Learning: 25,
+    Basic: 45,
+    Familiar: 70,
+    "Very Familiar": 80,
+    Expert: 95,
+    Repository: 40,
+    Deployment: 60,
+    Database: 65,
+    Backend: 60,
+    "Local Server": 50,
+  };
+  return map[level] || 50;
+}
+
+function SkillColor(level) {
+  const map = {
+    Learning: "#f59e0b",
+    Basic: "#3b82f6",
+    Familiar: "#10b981",
+    "Very Familiar": "#10b981",
+    Expert: "#8b5cf6",
+    Repository: "#6366f1",
+    Deployment: "#06b6d4",
+    Database: "#8b5cf6",
+    Backend: "#06b6d4",
+    "Local Server": "#f59e0b",
+  };
+  return map[level] || "#3b82f6";
+}
+
 function SkillIcon({ skill }) {
   const [hasError, setHasError] = useState(false);
   const label = skill.name || skill.label || skill.title || "Skill";
   const fallbackText = skill.fallback || label.slice(0, 2).toUpperCase();
+  const barColor = SkillColor(skill.level);
+  const barWidth = levelToPercent(skill.level);
 
   return (
     <motion.div
@@ -181,7 +215,7 @@ function SkillIcon({ skill }) {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]"
+      className="group relative flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]"
     >
       <div className="hiyo-hover-icon relative flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/70 before:pointer-events-none before:absolute before:inset-x-[-45%] before:top-[-60%] before:h-[70%] before:rotate-12 before:bg-white/30 before:blur-sm before:transition-transform before:duration-300 group-hover:before:translate-y-[135%] group-active:scale-95">
         {skill.icon && !hasError ? (
@@ -205,6 +239,30 @@ function SkillIcon({ skill }) {
           {skill.level}
         </span>
       )}
+
+      {/* Tooltip */}
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 min-w-[130px] -translate-x-1/2 translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="rounded-xl border border-white/60 bg-white p-3 text-left shadow-xl">
+          <p className="text-sm font-bold text-[#123A5A]">{label}</p>
+          {skill.level && (
+            <>
+              <div className="mt-1.5 h-1.5 w-full rounded-full bg-gray-200">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: barWidth + "%", backgroundColor: barColor }}
+                />
+              </div>
+              <p
+                className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.08em]"
+                style={{ color: barColor }}
+              >
+                {skill.level}
+              </p>
+            </>
+          )}
+        </div>
+        <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-white/60 bg-white" />
+      </div>
     </motion.div>
   );
 }
