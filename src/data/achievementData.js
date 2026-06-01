@@ -97,7 +97,7 @@ export const achievementData = [
     category: "certificate",
     organization: "Kompetensi Keahlian",
     period: "Certificate",
-    year: "2022",
+    year: "2023",
     description:
       "Sertifikat kompetensi yang berkaitan dengan kemampuan dasar teknik komputer dan jaringan, meliputi pemahaman perangkat, jaringan dasar, serta keterampilan teknis pendukung.",
     tools: ["Networking", "Computer Hardware", "Technical Skill"],
@@ -118,7 +118,7 @@ export const achievementData = [
     category: "seminar",
     organization: "Kuliah Pakar",
     period: "Seminar",
-    year: "2025",
+    year: "2023",
     description:
       "Mengikuti kuliah pakar bertema Medical Health Technology untuk menambah wawasan mengenai pemanfaatan teknologi pada bidang kesehatan dan perkembangan sistem digital di sektor medis.",
     tools: ["Health Technology", "Digital System", "Medical Technology"],
@@ -139,7 +139,7 @@ export const achievementData = [
     category: "workshop",
     organization: "Workshop",
     period: "Workshop",
-    year: "2025",
+    year: "2023",
     description:
       "Mengikuti workshop animasi media promosi untuk memperkuat pemahaman mengenai visual promosi, motion sederhana, dan penyampaian pesan melalui media digital.",
     tools: ["Animation", "Promotion Media", "Visual Design"],
@@ -160,7 +160,7 @@ export const achievementData = [
     category: "seminar",
     organization: "Seminar",
     period: "Seminar",
-    year: "2025",
+    year: "2024",
     description:
       "Mengikuti seminar desain grafis dan personal branding untuk memperluas wawasan tentang identitas visual, komunikasi desain, dan penyusunan citra diri melalui media digital.",
     tools: ["Graphic Design", "Personal Branding", "Visual Identity"],
