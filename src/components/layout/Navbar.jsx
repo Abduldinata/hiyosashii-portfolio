@@ -28,11 +28,11 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-gray-200 dark:border-zinc-800 transition-colors duration-300">
+    <header className="fixed top-0 left-0 w-full z-[60] bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-gray-200 dark:border-zinc-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="#home"
-          className="text-xl font-bold text-black dark:text-white tracking-tight"
+          className="font-heading text-xl font-bold text-black dark:text-white tracking-tight"
         >
           Hiyosashii<span className="text-primary-blue">.</span>
         </a>
@@ -41,7 +41,7 @@ export default function Navbar() {
             <a
               key={item.id}
               href={item.href}
-              className="text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors relative group"
+              className="font-ui text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors relative group"
             >
               {item.label}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-blue transition-all duration-300 group-hover:w-full"></span>
@@ -115,7 +115,7 @@ export default function Navbar() {
               <a
                 href={item.href}
                 onClick={closeMobile}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-zinc-300 hover:bg-[#1E8DDE]/10 hover:text-[#123A5A] dark:hover:text-[#1E8DDE] transition-colors duration-200"
+                className="font-ui flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-zinc-300 hover:bg-[#1E8DDE]/10 hover:text-[#123A5A] dark:hover:text-[#1E8DDE] transition-colors duration-200"
               >
                 {item.label}
               </a>

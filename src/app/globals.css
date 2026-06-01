@@ -24,7 +24,9 @@
     --color-light-gray: var(--light-gray);
     --color-border: var(--border-color);
     --color-card-bg: var(--card-bg);
-    --font-sans: var(--font-main);
+    --font-sans: var(--font-body-inter);
+    --font-heading: var(--font-heading-nunito);
+    --font-ui: var(--font-main);
     --font-mono: var(--font-geist-mono);
 }
 
@@ -44,8 +46,13 @@ html {
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-main), "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-body-inter), "Helvetica Neue", Arial, sans-serif;
     scroll-behavior: smooth;
+}
+
+h1,
+h2 {
+    font-family: var(--font-heading-nunito), sans-serif;
 }
 
 .hiyo-section-surface {
@@ -324,7 +331,7 @@ body {
 .hiyo-bg-glow,
 .hiyo-bg-glow-a,
 .hiyo-bg-glow-b {
-    display: none !important;
+    display: block !important;
 }
 
 @keyframes hiyoBgFloat {
