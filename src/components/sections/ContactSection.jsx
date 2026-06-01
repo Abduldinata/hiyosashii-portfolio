@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 import { contactData } from "@/data/contactData";
+import SplitWords from "../ui/SplitWords";
+import StaggerWords from "../ui/StaggerWords";
 
 const badges = [
   "Editing",
@@ -32,7 +34,7 @@ function ContactIcon({ contact }) {
     <motion.a
       initial={{ opacity: 0, y: 16, scale: 0.94 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: false, amount: 0.25 }}
+      viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -5, scale: 1.04 }}
       href={contact.url}
@@ -76,25 +78,36 @@ export default function ContactSection() {
     >
       <div className="relative z-10 mx-auto w-full max-w-[1200px]">
         <motion.div
-          initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" }}
+          initial={{ opacity: 0, y: 22, scale: 0.988, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: false, amount: 0.16 }}
+          viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="grid min-h-0 lg:min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] sm:p-10 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:p-12 xl:p-16"
         >
           <div>
             <h2 className="text-[clamp(2rem,5.8vw,5.6rem)] font-black leading-[0.92] tracking-tight text-slate-900">
-              Let&rsquo;s work
+              <SplitWords
+                text="Let's work"
+                baseDelay={0.1}
+                charDuration={0.45}
+              />
               <br />
-              <span className="text-[#1E8DDE]">together.</span>
+              <span className="text-[#1E8DDE]">
+                <SplitWords
+                  text="together."
+                  baseDelay={0.25}
+                  charDuration={0.45}
+                />
+              </span>
             </h2>
 
             <p className="mt-6 max-w-md text-lg font-medium leading-relaxed text-slate-700 sm:text-xl md:text-[1.3rem]">
-              Available for editing, design,
-              <br className="hidden sm:block" />
-              UI/UX layouting, web/app project,
-              <br className="hidden sm:block" />
-              and creative collaboration.
+              <StaggerWords
+                text="Available for editing, design, UI/UX layouting, web/app project, and creative collaboration."
+                baseDelay={0.2}
+                wordDuration={0.4}
+                staggerDelay={0.04}
+              />
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">

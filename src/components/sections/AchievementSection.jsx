@@ -3,15 +3,28 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { achievementData } from "@/data/achievementData";
-
 const sectionTitleMotion = {
-  hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.48,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
 };
 
 const itemMotion = {
-  hidden: { opacity: 0.9, y: 16, scale: 0.992, filter: "blur(1.5px)" },
-  visible: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 16, scale: 0.94, filter: "blur(1px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 const filters = [
@@ -24,10 +37,10 @@ const filters = [
 ];
 
 const primaryActionClass =
-  "group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
 
 const secondaryActionClass =
-  "group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
 
 const arrowClass =
   "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
@@ -63,10 +76,35 @@ function textMatchesSlug(text, slug) {
 }
 
 function addPortfolioHighlight(card) {
-  card.classList.add("portfolio-card-highlight");
+  // Save original inline styles to restore later if necessary
+  const originalTransition = card.style.transition;
+  const originalTransform = card.style.transform;
+  const originalBoxShadow = card.style.boxShadow;
+  const originalBorder = card.style.border;
+  const originalOutline = card.style.outline;
+
+  // Add highlight styles directly
+  card.style.transition = "all 0.4s ease-in-out";
+  card.style.transform = "scale(1.02)";
+  card.style.boxShadow = "0 0 25px rgba(30, 141, 222, 0.4)";
+  card.style.outline = "2px solid #1E8DDE";
+  card.style.outlineOffset = "2px";
+
+  // Using a class based approach can be cleaner if it overrides correctly,
+  // but direct style updates ensure the animation plays consistently without specificity issues.
+
   window.setTimeout(() => {
-    card.classList.remove("portfolio-card-highlight");
-  }, 2500);
+    // Revert to original
+    card.style.transform = originalTransform;
+    card.style.boxShadow = originalBoxShadow;
+    card.style.outline = originalOutline;
+    card.style.outlineOffset = "";
+
+    // Give time for transition to finish before removing it
+    window.setTimeout(() => {
+      card.style.transition = originalTransition;
+    }, 400);
+  }, 2000); // Highlight duration: 2 seconds
 }
 
 function AchievementFallback() {
@@ -131,24 +169,43 @@ export default function AchievementSection() {
   };
 
   const handlePortfolioFocus = (slug) => {
-    const portfolioSection = document.getElementById("portfolio");
-    if (!portfolioSection) return;
+    // Trigger portfolio re-animation via custom event first
+    window.dispatchEvent(
+      new CustomEvent("sectionnav", { detail: "portfolio" }),
+    );
 
-    portfolioSection.scrollIntoView({ behavior: "smooth", block: "start" });
-
+    // Wait for React to process the state update and remount PortfolioSection
+    // before querying the DOM, so we get fresh references to the new elements
     window.setTimeout(() => {
-      const cards = Array.from(
-        portfolioSection.querySelectorAll("article, [data-portfolio-slug]"),
-      );
-      const matchingCard = cards.find((card) =>
-        textMatchesSlug(card.textContent, slug),
-      );
+      const portfolioSection = document.getElementById("portfolio");
+      if (!portfolioSection) return;
 
-      if (matchingCard) {
-        matchingCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        addPortfolioHighlight(matchingCard);
+      // Use querySelector to find the matching card directly
+      const targetSelector = `[data-portfolio-slug="${slug}"]`;
+      let targetCard = portfolioSection.querySelector(targetSelector);
+
+      // If not found, try a fallback search by text content matching the slug loosely
+      if (!targetCard) {
+        const allCards = Array.from(
+          portfolioSection.querySelectorAll("article, [data-portfolio-slug]"),
+        );
+        targetCard = allCards.find((card) => {
+          const text = card.textContent.toLowerCase();
+          const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, " ");
+          const slugWords = cleanSlug.split(" ").filter((w) => w.length > 3); // match significant words
+          return slugWords.some((word) => text.includes(word));
+        });
       }
-    }, 650);
+
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        targetCard.focus({ preventScroll: true });
+        addPortfolioHighlight(targetCard);
+      } else {
+        // Fallback
+        portfolioSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 150);
   };
 
   return (
@@ -175,11 +232,10 @@ export default function AchievementSection() {
           variants={sectionTitleMotion}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.22, margin: "-8% 0px -8% 0px" }}
-          transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
           className="mb-7 text-center"
         >
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
+          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
             Experience & Certificates
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
@@ -196,7 +252,7 @@ export default function AchievementSection() {
                   key={filter.value}
                   type="button"
                   onClick={() => handleFilterChange(filter.value)}
-                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
+                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
                     isActive
                       ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)]"
                       : "bg-white/60 text-[#1f4f7a] ring-1 ring-white/70"
@@ -211,11 +267,11 @@ export default function AchievementSection() {
 
         <motion.div
           key={activeCategory}
-          initial={{ opacity: 0.9, y: 16, scale: 0.992, filter: "blur(1.5px)" }}
+          initial={{ opacity: 0.9, y: 16, scale: 0.992, filter: "blur(3px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: false, amount: 0.14, margin: "-6% 0px -6% 0px" }}
+          viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7"
+          className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7 pt-4"
         >
           <div className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-6">
             <div className="relative space-y-4 pl-7">
@@ -233,7 +289,11 @@ export default function AchievementSection() {
                       variants={itemMotion}
                       initial="hidden"
                       whileInView="visible"
-                      viewport={{ once: false, amount: 0.16 }}
+                      viewport={{
+                        once: false,
+                        amount: 0.08,
+                        margin: "0px 0px 40% 0px",
+                      }}
                       transition={{
                         duration: 0.42,
                         ease: [0.22, 1, 0.36, 1],
@@ -311,7 +371,7 @@ export default function AchievementSection() {
               opacity: 0.92,
               y: 12,
               scale: 0.994,
-              filter: "blur(1.5px)",
+              filter: "blur(6px)",
             }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -328,12 +388,15 @@ export default function AchievementSection() {
 
               <div className="p-5 md:p-6">
                 <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987] ring-1 ring-white/80">
+                  <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987] ring-1 ring-white/80">
                     {selectedAchievement.type}
                   </span>
-                  <span className="rounded-full border border-[#D7EAF5] bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#185987]">
-                    {selectedDisplayPeriod}
-                  </span>
+                  {selectedAchievement.period &&
+                    selectedAchievement.period !== selectedAchievement.year && (
+                      <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#185987]">
+                        {selectedDisplayPeriod}
+                      </span>
+                    )}
                 </div>
 
                 <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
@@ -349,14 +412,14 @@ export default function AchievementSection() {
 
                 {selectedAchievement.tools?.length > 0 && (
                   <div className="mt-5">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.18em] text-[#185987]">
+                    <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#185987]">
                       Tools & Fokus
                     </h4>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {selectedAchievement.tools.map((tool) => (
                         <span
                           key={tool}
-                          className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
+                          className="font-ui rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
                         >
                           {tool}
                         </span>

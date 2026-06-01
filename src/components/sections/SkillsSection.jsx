@@ -2,29 +2,27 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-
 const sectionVariants = {
   hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.42,
-      ease: [0.22, 1, 0.36, 1],
-      staggerChildren: 0.04,
-      delayChildren: 0.06,
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1],
+      staggerChildren: 0.08,
+      delayChildren: 0.12,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" },
+  hidden: { opacity: 0, y: 18, scale: 0.94 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -181,7 +179,7 @@ function SkillIcon({ skill }) {
     <motion.div
       initial={{ opacity: 0, y: 16, scale: 0.92 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: false, amount: 0.25 }}
+      viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
       className="group flex w-[72px] flex-col items-center gap-1.5 text-center sm:w-[80px]"
     >
@@ -203,7 +201,7 @@ function SkillIcon({ skill }) {
         {label}
       </span>
       {skill.level && (
-        <span className="text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#3d6f93]/75">
+        <span className="font-ui text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#3d6f93]/75">
           {skill.level}
         </span>
       )}
@@ -214,15 +212,15 @@ function SkillIcon({ skill }) {
 function SkillGroup({ title, subtitle, skills }) {
   return (
     <motion.div
-      initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" }}
+      initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(6px)" }}
       whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: false, amount: 0.15 }}
+      viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -4, scale: 1.004 }}
       className="rounded-[1.75rem] border border-white/60 bg-white/45 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/50 backdrop-blur-sm sm:px-8 sm:py-6"
     >
       <div className="mb-5 text-center">
-        <h3 className="text-2xl font-black tracking-[-0.035em] text-[#2D8FE3] sm:text-3xl lg:text-[2rem]">
+        <h3 className="font-ui text-2xl font-black tracking-[-0.035em] text-[#2D8FE3] sm:text-3xl lg:text-[2rem]">
           {title}
         </h3>
         <p className="mx-auto mt-1.5 max-w-[520px] text-sm font-semibold leading-snug text-[#134E7D]/75 sm:text-base">
@@ -288,17 +286,17 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
           className="flex flex-col gap-8"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.15 }}
+          viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
           variants={sectionVariants}
         >
           <motion.div
-            initial={{ opacity: 0, y: 28, filter: "blur(4px)" }}
+            initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: false, amount: 0.22 }}
+            viewport={{ once: false, amount: 0.15, margin: "10% 0px 10% 0px" }}
             transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
             className="text-center"
           >
-            <h2 className="text-4xl font-black tracking-[-0.045em] text-[#123E63] sm:text-5xl">
+            <h2 className="font-ui text-4xl font-black tracking-[-0.045em] text-[#123E63] sm:text-5xl">
               {isTech ? "Tech & AI-Assisted Workflow" : "Creative Skills"}
             </h2>
             <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-relaxed text-[#134E7D]/80 sm:text-base">
@@ -308,7 +306,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+          <div className="flex flex-col gap-6 lg:gap-8 pt-4">
             {skillGroups.map((group) => (
               <SkillGroup
                 key={group.title}
@@ -320,8 +318,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
           </div>
         </motion.div>
 
-        <motion.div
-          variants={itemVariants}
+        <div
           className={`flex pt-0 ${isTech ? "justify-end" : "justify-start"}`}
         >
           <motion.button
@@ -330,7 +327,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
             onClick={() => onModeChange?.(isCreative ? "tech" : "creative")}
             initial={{ opacity: 0, y: 18, scale: 0.94 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, amount: 0.25 }}
+            viewport={{ once: false, amount: 0.3, margin: "0px 0px 20% 0px" }}
             transition={{
               duration: 0.36,
               ease: [0.22, 1, 0.36, 1],
@@ -359,7 +356,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
               </>
             )}
           </motion.button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

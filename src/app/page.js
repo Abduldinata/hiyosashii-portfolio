@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/layout/Navbar";
 import SideNavigation from "@/components/layout/SideNavigation";
 import Footer from "@/components/layout/Footer";
 import ScrollRevealClient from "@/components/layout/ScrollRevealClient";
 import BackgroundDepthClient from "@/components/layout/BackgroundDepthClient";
+import ElasticOverscroll from "@/components/layout/ElasticOverscroll";
 import IntroSection from "@/components/sections/IntroSection";
 import ProfileSection from "@/components/sections/ProfileSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -15,6 +16,33 @@ import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
   const [identityMode, setIdentityMode] = useState("student");
+  const [triggers, setTriggers] = useState({});
+
+  const getTrigger = useCallback((name) => triggers[name] || 0, [triggers]);
+
+  // Listen for hash changes & custom nav events to force section re-animation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setTriggers((prev) => ({ ...prev, [hash]: (prev[hash] || 0) + 1 }));
+      }
+    };
+
+    const handleSectionNav = (e) => {
+      const hash = e.detail;
+      if (hash) {
+        setTriggers((prev) => ({ ...prev, [hash]: (prev[hash] || 0) + 1 }));
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("sectionnav", handleSectionNav);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("sectionnav", handleSectionNav);
+    };
+  }, []);
 
   return (
     <>
@@ -33,19 +61,30 @@ export default function Home() {
           <div className="hiyo-bg-glow hiyo-bg-glow-b" />
         </div>
 
-        <div className="relative z-20">
-          <IntroSection />
-          <ProfileSection mode={identityMode} onModeChange={setIdentityMode} />
-          <SkillsSection
-            mode={identityMode === "student" ? "tech" : "creative"}
-            onModeChange={(nextSkillMode) =>
-              setIdentityMode(nextSkillMode === "tech" ? "student" : "creator")
-            }
-          />
-          <PortfolioSection />
-          <AchievementSection />
-          <ContactSection />
-        </div>
+        <ElasticOverscroll>
+          <div className="relative z-20">
+            <IntroSection key={`intro-${getTrigger("home")}`} />
+            <ProfileSection
+              key={`profile-${getTrigger("profile")}`}
+              mode={identityMode}
+              onModeChange={setIdentityMode}
+            />
+            <SkillsSection
+              key={`skills-${getTrigger("skills")}`}
+              mode={identityMode === "student" ? "tech" : "creative"}
+              onModeChange={(nextSkillMode) =>
+                setIdentityMode(
+                  nextSkillMode === "tech" ? "student" : "creator",
+                )
+              }
+            />
+            <PortfolioSection key={`portfolio-${getTrigger("portfolio")}`} />
+            <AchievementSection
+              key={`achievement-${getTrigger("achievement")}`}
+            />
+            <ContactSection key={`contact-${getTrigger("contact")}`} />
+          </div>
+        </ElasticOverscroll>
       </main>
       <Footer />
     </>

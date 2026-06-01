@@ -2,6 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import SplitWords from "../ui/SplitWords";
+import StaggerWords from "../ui/StaggerWords";
 
 const decorativeWords = [
   { label: "HELLO", className: "right-[13%] top-[18%] rotate-6" },
@@ -11,7 +13,7 @@ const decorativeWords = [
 const focusItems = ["Editing", "Design", "UI/UX", "AI Workflow"];
 
 const sectionVariants = {
-  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" },
+  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
@@ -37,7 +39,7 @@ const itemVariants = {
 };
 
 const titleVariants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 28, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
@@ -45,23 +47,6 @@ const titleVariants = {
     transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
   },
 };
-
-function SplitWords({ text, className = "" }) {
-  return (
-    <span className={`split-reveal ${className}`} aria-label={text}>
-      {text.split(" ").map((word, index) => (
-        <span
-          key={`${word}-${index}`}
-          className="split-word"
-          style={{ "--word-index": index }}
-          aria-hidden="true"
-        >
-          {word}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export default function IntroSection() {
   return (
@@ -87,19 +72,26 @@ export default function IntroSection() {
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-248px)] max-w-[1200px] items-center">
         <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12 xl:gap-14 md:pb-0 pb-6">
           <motion.div
-            className="max-w-[760px] lg:ml-8 md:order-1 order-1"
+            className="max-w-[760px] lg:ml-8 md:order-1 order-1 flex flex-col justify-center"
             initial="hidden"
             whileInView="visible"
             viewport={{
               once: false,
-              amount: 0.16,
-              margin: "-6% 0px -6% 0px",
+              amount: 0.15,
+              margin: "0px 0px -20% 0px",
             }}
             variants={sectionVariants}
           >
             <motion.span
-              variants={itemVariants}
-              className="inline-flex rounded-full border border-white/60 bg-white/35 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm"
+              initial={{ opacity: 0, letterSpacing: "0.38em" }}
+              whileInView={{ opacity: 1, letterSpacing: "0.22em" }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{
+                duration: 0.5,
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.15,
+              }}
+              className="font-ui inline-flex rounded-full border border-white/60 bg-white/35 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm"
             >
               Welcome to my portfolio
             </motion.span>
@@ -118,21 +110,23 @@ export default function IntroSection() {
               <SplitWords text="Creative Digital Portfolio" />
             </motion.h2>
 
-            <motion.p
-              variants={itemVariants}
-              className="mt-5 text-lg font-extrabold leading-relaxed text-[#134E7D] sm:text-xl"
-            >
-              Editing, Design, UI/UX, and AI-Assisted Development.
-            </motion.p>
+            <p className="mt-5 text-lg font-extrabold leading-relaxed text-[#134E7D] sm:text-xl">
+              <StaggerWords
+                text="Editing, Design, UI/UX, and AI-Assisted Development."
+                baseDelay={0.25}
+                wordDuration={0.4}
+                staggerDelay={0.05}
+              />
+            </p>
 
-            <motion.p
-              variants={itemVariants}
-              className="mt-5 max-w-[680px] text-sm font-semibold leading-relaxed text-[#123A5A]/80 sm:text-base"
-            >
-              Saya menggabungkan kemampuan visual, editing, UI layouting, dan
-              AI-assisted workflow untuk membangun karya digital yang rapi,
-              komunikatif, dan punya identitas visual.
-            </motion.p>
+            <p className="mt-5 max-w-[680px] text-sm font-semibold leading-relaxed text-[#123A5A]/80 sm:text-base">
+              <StaggerWords
+                text="Saya menggabungkan kemampuan visual, editing, UI layouting, dan AI-assisted workflow untuk membangun karya digital yang rapi, komunikatif, dan punya identitas visual."
+                baseDelay={0.3}
+                wordDuration={0.42}
+                staggerDelay={0.04}
+              />
+            </p>
 
             <motion.div
               variants={itemVariants}
@@ -140,13 +134,13 @@ export default function IntroSection() {
             >
               <a
                 href="#profile"
-                className="inline-flex items-center justify-center rounded-full bg-[#1E8DDE] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-white shadow-sm shadow-[#1E8DDE]/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-95"
+                className="font-ui inline-flex items-center justify-center rounded-full bg-[#1E8DDE] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-white shadow-sm shadow-[#1E8DDE]/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-95"
               >
                 Explore Profile
               </a>
               <a
                 href="#portfolio"
-                className="inline-flex items-center justify-center rounded-full border-2 border-[#1E8DDE] bg-white/10 px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#1E8DDE] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:bg-white/70 hover:shadow-[0_14px_34px_rgba(30,141,222,0.18)] active:scale-95"
+                className="font-ui inline-flex items-center justify-center rounded-full border-2 border-[#1E8DDE] bg-white/10 px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#1E8DDE] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:bg-white/70 hover:shadow-[0_14px_34px_rgba(30,141,222,0.18)] active:scale-95"
               >
                 View Portfolio
               </a>
@@ -156,14 +150,17 @@ export default function IntroSection() {
           <motion.div
             className="relative w-full max-w-[420px] md:max-w-full justify-self-center lg:justify-self-end lg:-translate-x-4 xl:-translate-x-8 md:order-2 order-2 mt-2 md:mt-0"
             initial={{
-              opacity: 0.84,
-              x: 28,
-              scale: 0.975,
-              filter: "blur(2px)",
+              opacity: 0,
+              x: 40,
+              scale: 0.88,
+              rotate: 3,
             }}
-            whileInView={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-            viewport={{ once: false, amount: 0.16, margin: "-6% 0px -6% 0px" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            whileInView={{ opacity: 1, x: 0, scale: 1, rotate: 0 }}
+            viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
+            transition={{
+              duration: 0.6,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             whileHover={{
               y: -6,
               scale: 1.025,
@@ -176,7 +173,7 @@ export default function IntroSection() {
               <div className="hiyo-orbit absolute right-9 top-9 h-3 w-3 rounded-full bg-[#1E8DDE]/45 shadow-[0_0_22px_rgba(30,141,222,0.38)]" />
 
               <div className="relative">
-                <p className="mb-5 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
+                <p className="font-ui mb-5 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
                   Focus Area
                 </p>
                 <div className="grid gap-4">
@@ -184,25 +181,31 @@ export default function IntroSection() {
                     <motion.div
                       key={item}
                       initial={{
-                        opacity: 0.88,
-                        y: 14,
-                        scale: 0.988,
-                        filter: "blur(2px)",
+                        opacity: 0,
+                        y: 18,
+                        scale: 0.9,
+                        rotate: -2,
                       }}
                       whileInView={{
                         opacity: 1,
                         y: 0,
                         scale: 1,
-                        filter: "blur(0px)",
+                        rotate: 0,
                       }}
-                      viewport={{ once: false, amount: 0.35 }}
+                      viewport={{
+                        once: false,
+                        amount: 0.15,
+                        margin: "0px 0px -20% 0px",
+                      }}
                       transition={{
-                        duration: 0.42,
-                        ease: [0.22, 1, 0.36, 1],
+                        type: "spring",
+                        stiffness: 180,
+                        damping: 14,
+                        mass: 0.6,
                         delay: 0.08 * index,
                       }}
                       whileHover={{ y: -4, x: 6, scale: 1.02 }}
-                      className="group flex min-h-[54px] items-center rounded-2xl border border-white/70 bg-white/70 px-5 text-sm font-black uppercase tracking-[0.16em] text-[#123A5A] shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.20)] sm:min-h-[56px] sm:text-base"
+                      className="font-ui group flex min-h-[54px] items-center rounded-2xl border border-white/70 bg-white/70 px-5 text-sm font-black uppercase tracking-[0.16em] text-[#123A5A] shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.20)] sm:min-h-[56px] sm:text-base"
                     >
                       {item}
                     </motion.div>

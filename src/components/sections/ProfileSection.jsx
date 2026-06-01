@@ -2,12 +2,14 @@
 
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import SplitWords from "../ui/SplitWords";
+import StaggerWords from "../ui/StaggerWords";
 
 const studentImage = "/assets/profile/profile-student.jpg";
 const creatorImage = "/assets/profile/profile-creator.jpg";
 
 const sectionVariants = {
-  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(2px)" },
+  hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
@@ -23,17 +25,18 @@ const sectionVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0.92, y: 12, scale: 0.99 },
+  hidden: { opacity: 0.92, y: 12, scale: 0.99, filter: "blur(4px)" },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
+    filter: "blur(0px)",
     transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 const titleVariants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 28, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
@@ -80,59 +83,56 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
         <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12 md:pb-0 pb-12">
           {/* Left content */}
           <motion.div
-            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2"
+            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2 flex flex-col justify-center"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.16 }}
+            viewport={{ once: false, amount: 0.25, margin: "0px 0px -20% 0px" }}
             variants={sectionVariants}
           >
             <motion.div
               key={isStudent ? "student-copy" : "creator-copy"}
-              initial={{ opacity: 0, y: 22, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{
-                duration: 0.42,
-                ease: [0.22, 1, 0.36, 1],
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: false,
+                amount: 0.25,
+                margin: "0px 0px -20% 0px",
               }}
+              variants={sectionVariants}
+              className="flex flex-col"
             >
-              <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.32, delay: 0.04 }}
-                className="inline-flex rounded-full border border-white/50 bg-white/30 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm"
-              >
-                {profileCopy.eyebrow}
-              </motion.span>
+              <span className="font-ui inline-flex rounded-full border border-white/50 bg-white/30 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm">
+                <SplitWords
+                  text={profileCopy.eyebrow}
+                  baseDelay={0.1}
+                  charDuration={0.3}
+                />
+              </span>
 
               <motion.h1
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.36, delay: 0.08 }}
+                variants={titleVariants}
                 className={`mt-6 font-black tracking-[-0.055em] ${
                   isCreator ? "text-[#123A5A]" : "text-[#2D8FE3]"
                 }`}
                 style={{
                   fontSize: "clamp(2.7rem, 4.4vw, 4.8rem)",
-                  lineHeight: 0.95,
+                  lineHeight: 1.05,
                   textShadow: "0 8px 24px rgba(30, 141, 222, 0.1)",
                 }}
               >
-                {profileCopy.title}
+                <SplitWords text={profileCopy.title} />
               </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.34, delay: 0.12 }}
-                className="mt-3 text-sm font-black uppercase tracking-[0.2em] text-[#123A5A]/60"
-              >
-                {profileCopy.name}
-              </motion.p>
+              <div className="font-heading mt-3">
+                <SplitWords
+                  text={profileCopy.name}
+                  baseDelay={0.2}
+                  charDuration={0.4}
+                  className="text-sm font-black uppercase tracking-[0.2em] text-[#123A5A]/60"
+                />
+              </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.38, delay: 0.16 }}
+              <p
                 className={`mt-6 max-w-[720px] font-medium leading-[1.55] ${
                   isStudent ? "text-[#1F6FAE]" : "text-[#123E63]"
                 }`}
@@ -143,19 +143,22 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
                     : undefined,
                 }}
               >
-                {profileCopy.description}
-              </motion.p>
+                <StaggerWords
+                  text={profileCopy.description}
+                  baseDelay={0.25}
+                  wordDuration={0.4}
+                  staggerDelay={0.04}
+                />
+              </p>
 
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.36, delay: 0.2 }}
+                variants={itemVariants}
                 className="mt-6 flex flex-wrap gap-2.5"
               >
                 {profileCopy.badges.map((badge) => (
                   <span
                     key={badge}
-                    className="rounded-full border border-white/50 bg-white/35 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#134E7D] backdrop-blur transition-transform duration-200 hover:scale-105"
+                    className="font-ui rounded-full border border-white/50 bg-white/35 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#134E7D] backdrop-blur transition-transform duration-200 hover:scale-105"
                   >
                     {badge}
                   </span>
@@ -163,14 +166,12 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.36, delay: 0.24 }}
+                variants={itemVariants}
                 className="mt-9 flex flex-wrap items-center gap-8"
               >
                 <a
                   href="#skills"
-                  className={`inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(30,141,222,0.24)] active:scale-[0.98] ${
+                  className={`font-ui inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(30,141,222,0.24)] active:scale-[0.98] ${
                     isStudent
                       ? "border-[#2D8FE3] text-[#2D8FE3] hover:bg-[#2D8FE3] hover:text-white"
                       : "border-[#123E63] text-[#123E63] hover:bg-white hover:text-[#1E8DDE]"
@@ -186,25 +187,30 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
           <motion.div
             className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5 md:order-2 order-1 md:mt-0 -mt-12"
             initial={{
-              opacity: 0.86,
-              x: 28,
-              scale: 0.96,
-              filter: "blur(3px)",
+              opacity: 0,
+              x: 40,
+              scale: 0.85,
+              rotate: 4,
             }}
             whileInView={{
               opacity: 1,
               x: 0,
               scale: 1,
-              filter: "blur(0px)",
+              rotate: 0,
             }}
-            viewport={{ once: false, amount: 0.2 }}
-            transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: false, amount: 0.3, margin: "0px 0px -20% 0px" }}
+            transition={{
+              type: "spring",
+              stiffness: 160,
+              damping: 13,
+              mass: 0.7,
+            }}
           >
             <div
               className="group relative"
               style={{
-                width: "clamp(252px, 25.2vw, 351px)",
-                height: "clamp(252px, 25.2vw, 351px)",
+                width: "min(clamp(240px, 60vw, 351px), 100%)",
+                aspectRatio: "1/1",
                 perspective: "1100px",
               }}
             >

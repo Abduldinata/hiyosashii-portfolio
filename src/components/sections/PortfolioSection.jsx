@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { portfolioData } from "../../data/portfolioData";
-
 const sectionTitleMotion = {
   hidden: {
     opacity: 0,
     y: 28,
-    filter: "blur(4px)",
+    filter: "blur(8px)",
   },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
+    transition: {
+      duration: 0.48,
+      ease: [0.22, 1, 0.36, 1],
+    },
   },
 };
 
@@ -22,26 +26,31 @@ const cardMotion = {
     opacity: 0.88,
     y: 22,
     scale: 0.988,
-    filter: "blur(2px)",
+    filter: "blur(6px)",
   },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     filter: "blur(0px)",
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+    },
   },
 };
 
 const itemMotion = {
   hidden: {
-    opacity: 0.92,
+    opacity: 0,
     y: 18,
-    scale: 0.992,
+    scale: 0.94,
   },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
+    transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -55,10 +64,10 @@ const filters = [
 ];
 
 const primaryActionClass =
-  "group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
 
 const secondaryActionClass =
-  "group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
 
 const arrowClass =
   "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
@@ -85,7 +94,7 @@ function CategoryPills({ categories, className = "" }) {
       {visibleCategories.map((category) => (
         <span
           key={category}
-          className="rounded-full bg-[#e8f2f8] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1f4f7a] ring-1 ring-white/80"
+          className="font-ui rounded-full bg-[#e8f2f8] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1f4f7a] ring-1 ring-white/80"
         >
           {category}
         </span>
@@ -219,10 +228,16 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
 
   return (
     <motion.article
+      data-portfolio-slug={
+        project.slug ||
+        project.id ||
+        project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      }
+      tabIndex={-1} // Allow programmatic focus
       variants={cardMotion}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.14, margin: "-6% 0px -6% 0px" }}
+      viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{
         duration: 0.46,
         ease: [0.22, 1, 0.36, 1],
@@ -232,7 +247,12 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         y: -5,
         scale: 1.006,
       }}
-      whileTap={{ scale: 0.985 }}
+      whileTap={{
+        scale: 0.985,
+        boxShadow: "0 0 25px rgba(30,141,222,0.5)",
+        borderColor: "#1E8DDE",
+        transition: { duration: 0.15 },
+      }}
       className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-5"
     >
       <PortfolioThumbnail
@@ -359,8 +379,8 @@ function PortfolioModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pb-8 pt-20 backdrop-blur-md sm:pt-24 md:pt-[104px]">
-      <div className="relative mx-auto mb-6 w-full max-w-[1120px] overflow-hidden rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] backdrop-blur-xl sm:p-5 md:p-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pt-20 backdrop-blur-md sm:pt-24 md:pt-[104px] pb-8">
+      <div className="relative mx-auto my-auto w-full max-w-[1120px] rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] backdrop-blur-xl sm:p-5 md:p-6 mb-8 md:mb-12 lg:mb-16">
         <button
           type="button"
           onClick={onClose}
@@ -375,7 +395,7 @@ function PortfolioModal({
             {project.categories?.slice(0, 2).map((category) => (
               <span
                 key={category}
-                className="inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
+                className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
               >
                 {category}
               </span>
@@ -396,17 +416,17 @@ function PortfolioModal({
         </header>
 
         <div className="mt-5 grid gap-5 md:grid-cols-[1.3fr_1fr] lg:grid-cols-[1.35fr_0.95fr] md:items-start lg:items-start">
-          <div className="space-y-3">
-            <div className="relative h-[240px] overflow-hidden rounded-[24px] bg-[#eef7fc] shadow-[0_18px_50px_rgba(31,79,122,0.12)] sm:h-[320px] lg:h-[380px]">
+          <div className="space-y-3 min-w-0">
+            <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#E8F4FB]/30 shadow-[0_18px_50px_rgba(31,79,122,0.12)] border border-slate-100 md:min-h-[400px]">
               <SafeImage
                 key={activeImage}
                 src={activeImage}
                 alt={project.title}
-                className="h-full w-full bg-[#081018] object-contain"
+                className="max-h-[70vh] w-full object-contain"
                 fallback={
                   <FallbackThumbnail
                     project={project}
-                    className="h-full w-full"
+                    className="h-full w-full object-cover"
                   />
                 }
               />
@@ -498,7 +518,7 @@ function PortfolioModal({
           </div>
 
           <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+            <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
               RINGKASAN
             </h4>
 
@@ -510,7 +530,7 @@ function PortfolioModal({
               {project.tools.map((tool) => (
                 <span
                   key={tool}
-                  className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
+                  className="font-ui rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
                 >
                   {tool}
                 </span>
@@ -519,7 +539,7 @@ function PortfolioModal({
 
             {project.links?.some((link) => link.url) && (
               <div className="mt-4">
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+                <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
                   TAUTAN
                 </h4>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -570,6 +590,18 @@ export default function PortfolioSection() {
     setSelectedProject(null);
   };
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedProject]);
+
   return (
     <section
       id="portfolio"
@@ -580,11 +612,10 @@ export default function PortfolioSection() {
           variants={sectionTitleMotion}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.22, margin: "-8% 0px -8% 0px" }}
-          transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
           className="mb-6 text-center"
         >
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
+          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
             Portfolio
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
@@ -595,7 +626,7 @@ export default function PortfolioSection() {
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.22, margin: "-8% 0px -8% 0px" }}
+            viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
             transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
             className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3"
           >
@@ -607,7 +638,7 @@ export default function PortfolioSection() {
                   key={filter}
                   type="button"
                   onClick={() => handleCategoryChange(filter)}
-                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
+                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
                     isActive
                       ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)]"
                       : "bg-white/60 text-[#1f4f7a] ring-1 ring-white/70"
@@ -622,7 +653,7 @@ export default function PortfolioSection() {
 
         <div
           key={activeCategory}
-          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6"
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6 pt-4"
         >
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project, index) => (
@@ -641,8 +672,8 @@ export default function PortfolioSection() {
               whileInView="visible"
               viewport={{
                 once: false,
-                amount: 0.14,
-                margin: "-6% 0px -6% 0px",
+                amount: 0.15,
+                margin: "10% 0px 10% 0px",
               }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
               className="rounded-[24px] border border-white/70 bg-white/75 px-5 py-8 text-center text-sm font-bold text-[#1f4f7a] shadow-[0_18px_45px_rgba(31,79,122,0.1)] md:col-span-2"
@@ -653,12 +684,17 @@ export default function PortfolioSection() {
         </div>
       </div>
 
-      <PortfolioModal
-        project={selectedProject}
-        activeImageIndex={activeImageIndex}
-        setActiveImageIndex={setActiveImageIndex}
-        onClose={closeDetails}
-      />
+      {typeof document !== "undefined" &&
+        selectedProject &&
+        createPortal(
+          <PortfolioModal
+            project={selectedProject}
+            activeImageIndex={activeImageIndex}
+            setActiveImageIndex={setActiveImageIndex}
+            onClose={closeDetails}
+          />,
+          document.body,
+        )}
     </section>
   );
 }
