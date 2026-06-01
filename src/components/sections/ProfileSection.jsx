@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import SplitWords from "../ui/SplitWords";
 import StaggerWords from "../ui/StaggerWords";
@@ -56,6 +56,20 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
     });
   }, []);
 
+  const [profileRot, setProfileRot] = useState({ x: 0, y: 0 });
+  const [isProfileHovered, setIsProfileHovered] = useState(false);
+
+  const handleProfileTilt = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const maxAngle = 5;
+    setProfileRot({
+      x: (y - 0.5) * -maxAngle,
+      y: (x - 0.5) * maxAngle,
+    });
+  }, []);
+
   const profileCopy = isStudent
     ? {
         eyebrow: "ABOUT PROFILE",
@@ -83,104 +97,123 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
         <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12 md:pb-0 pb-12">
           {/* Left content */}
           <motion.div
-            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] transition-all duration-500 ease-out sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2 flex flex-col justify-center"
+            className="max-w-[760px] rounded-[24px] border border-white/30 bg-white/10 p-5 pt-5 backdrop-blur-[1px] sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2 flex flex-col justify-center"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.25, margin: "0px 0px -20% 0px" }}
             variants={sectionVariants}
+            onMouseEnter={() => setIsProfileHovered(true)}
+            onMouseLeave={() => {
+              setIsProfileHovered(false);
+              setProfileRot({ x: 0, y: 0 });
+            }}
+            onMouseMove={handleProfileTilt}
+            style={{ perspective: "900px" }}
           >
-            <motion.div
-              key={isStudent ? "student-copy" : "creator-copy"}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{
-                once: false,
-                amount: 0.25,
-                margin: "0px 0px -20% 0px",
+            <div
+              className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
+              style={{
+                transform: `
+                  translateY(${isProfileHovered ? -3 : 0}px)
+                  scale(${isProfileHovered ? 1.004 : 1})
+                  rotateX(${profileRot.x}deg)
+                  rotateY(${profileRot.y}deg)
+                `,
               }}
-              variants={sectionVariants}
-              className="flex flex-col"
             >
-              <span className="font-ui inline-flex rounded-full border border-white/50 bg-white/30 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm">
-                <SplitWords
-                  text={profileCopy.eyebrow}
-                  baseDelay={0.1}
-                  charDuration={0.3}
-                />
-              </span>
-
-              <motion.h1
-                variants={titleVariants}
-                className={`mt-6 font-black tracking-[-0.055em] ${
-                  isCreator ? "text-[#123A5A]" : "text-[#2D8FE3]"
-                }`}
-                style={{
-                  fontSize: "clamp(2.7rem, 4.4vw, 4.8rem)",
-                  lineHeight: 1.05,
-                  textShadow: "0 8px 24px rgba(30, 141, 222, 0.1)",
-                }}
-              >
-                <SplitWords text={profileCopy.title} />
-              </motion.h1>
-
-              <div className="font-heading mt-3">
-                <SplitWords
-                  text={profileCopy.name}
-                  baseDelay={0.2}
-                  charDuration={0.4}
-                  className="text-sm font-black uppercase tracking-[0.2em] text-[#123A5A]/60"
-                />
-              </div>
-
-              <p
-                className={`mt-6 max-w-[720px] font-medium leading-[1.55] ${
-                  isStudent ? "text-[#1F6FAE]" : "text-[#123E63]"
-                }`}
-                style={{
-                  fontSize: "clamp(1rem, 1.25vw, 1.18rem)",
-                  textShadow: isCreator
-                    ? "0 2px 14px rgba(255,255,255,0.24)"
-                    : undefined,
-                }}
-              >
-                <StaggerWords
-                  text={profileCopy.description}
-                  baseDelay={0.25}
-                  wordDuration={0.4}
-                  staggerDelay={0.04}
-                />
-              </p>
-
               <motion.div
-                variants={itemVariants}
-                className="mt-6 flex flex-wrap gap-2.5"
+                key={isStudent ? "student-copy" : "creator-copy"}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{
+                  once: false,
+                  amount: 0.25,
+                  margin: "0px 0px -20% 0px",
+                }}
+                variants={sectionVariants}
+                className="flex flex-col"
               >
-                {profileCopy.badges.map((badge) => (
-                  <span
-                    key={badge}
-                    className="font-ui rounded-full border border-white/50 bg-white/35 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#134E7D] backdrop-blur transition-transform duration-200 hover:scale-105"
-                  >
-                    {badge}
-                  </span>
-                ))}
-              </motion.div>
+                <span className="font-ui inline-flex rounded-full border border-white/50 bg-white/30 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] shadow-sm backdrop-blur-sm">
+                  <SplitWords
+                    text={profileCopy.eyebrow}
+                    baseDelay={0.1}
+                    charDuration={0.3}
+                  />
+                </span>
 
-              <motion.div
-                variants={itemVariants}
-                className="mt-9 flex flex-wrap items-center gap-8"
-              >
-                <a
-                  href="#skills"
-                  className={`font-ui inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(30,141,222,0.24)] active:scale-[0.98] ${
-                    isStudent
-                      ? "border-[#2D8FE3] text-[#2D8FE3] hover:bg-[#2D8FE3] hover:text-white"
-                      : "border-[#123E63] text-[#123E63] hover:bg-white hover:text-[#1E8DDE]"
+                <motion.h1
+                  variants={titleVariants}
+                  className={`mt-6 font-black tracking-[-0.055em] ${
+                    isCreator ? "text-[#123A5A]" : "text-[#2D8FE3]"
                   }`}
+                  style={{
+                    fontSize: "clamp(2.7rem, 4.4vw, 4.8rem)",
+                    lineHeight: 1.05,
+                    textShadow: "0 8px 24px rgba(30, 141, 222, 0.1)",
+                  }}
                 >
-                  VIEW DETAILS
-                </a>
+                  <SplitWords text={profileCopy.title} />
+                </motion.h1>
+
+                <div className="font-heading mt-3">
+                  <SplitWords
+                    text={profileCopy.name}
+                    baseDelay={0.2}
+                    charDuration={0.4}
+                    className="text-sm font-black uppercase tracking-[0.2em] text-[#123A5A]/60"
+                  />
+                </div>
+
+                <p
+                  className={`mt-6 max-w-[720px] font-medium leading-[1.55] ${
+                    isStudent ? "text-[#1F6FAE]" : "text-[#123E63]"
+                  }`}
+                  style={{
+                    fontSize: "clamp(1rem, 1.25vw, 1.18rem)",
+                    textShadow: isCreator
+                      ? "0 2px 14px rgba(255,255,255,0.24)"
+                      : undefined,
+                  }}
+                >
+                  <StaggerWords
+                    text={profileCopy.description}
+                    baseDelay={0.25}
+                    wordDuration={0.4}
+                    staggerDelay={0.04}
+                  />
+                </p>
+
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-6 flex flex-wrap gap-2.5"
+                >
+                  {profileCopy.badges.map((badge) => (
+                    <span
+                      key={badge}
+                      className="font-ui rounded-full border border-white/50 bg-white/35 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#134E7D] backdrop-blur transition-transform duration-200 hover:scale-105"
+                    >
+                      {badge}
+                    </span>
+                  ))}
+                </motion.div>
+
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-9 flex flex-wrap items-center gap-8"
+                >
+                  <a
+                    href="#skills"
+                    className={`font-ui inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-[0.98] $
+                      isStudent
+                        ? "border-[#2D8FE3] text-[#2D8FE3] hover:bg-[#2D8FE3] hover:text-white"
+                        : "border-[#123E63] text-[#123E63] hover:bg-white hover:text-[#1E8DDE]"
+                    }`}
+                  >
+                    VIEW DETAILS
+                  </a>
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </div>
           </motion.div>
 
           {/* Right visual */}

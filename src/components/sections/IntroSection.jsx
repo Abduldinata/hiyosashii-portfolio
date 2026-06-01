@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import SplitWords from "../ui/SplitWords";
 import StaggerWords from "../ui/StaggerWords";
@@ -49,6 +49,20 @@ const titleVariants = {
 };
 
 export default function IntroSection() {
+  const [introCardRot, setIntroCardRot] = useState({ x: 0, y: 0 });
+  const [isIntroCardHovered, setIsIntroCardHovered] = useState(false);
+
+  const handleIntroCardTilt = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const maxAngle = 5;
+    setIntroCardRot({
+      x: (y - 0.5) * -maxAngle,
+      y: (x - 0.5) * maxAngle,
+    });
+  }, []);
+
   return (
     <section
       id="home"
@@ -134,13 +148,13 @@ export default function IntroSection() {
             >
               <a
                 href="#profile"
-                className="font-ui inline-flex items-center justify-center rounded-full bg-[#1E8DDE] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-white shadow-sm shadow-[#1E8DDE]/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-95"
+                className="font-ui inline-flex items-center justify-center rounded-full bg-[#1E8DDE] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-white shadow-sm shadow-[#1E8DDE]/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-95"
               >
                 Explore Profile
               </a>
               <a
                 href="#portfolio"
-                className="font-ui inline-flex items-center justify-center rounded-full border-2 border-[#1E8DDE] bg-white/10 px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#1E8DDE] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:bg-white/70 hover:shadow-[0_14px_34px_rgba(30,141,222,0.18)] active:scale-95"
+                className="font-ui inline-flex items-center justify-center rounded-full border-2 border-[#1E8DDE] bg-white/10 px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#1E8DDE] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-white/70 hover:shadow-[0_14px_34px_rgba(30,141,222,0.18)] active:scale-95"
               >
                 View Portfolio
               </a>
@@ -161,55 +175,68 @@ export default function IntroSection() {
               duration: 0.6,
               ease: [0.16, 1, 0.3, 1],
             }}
-            whileHover={{
-              y: -6,
-              scale: 1.025,
-              boxShadow: "0 28px 70px rgba(30, 141, 222, 0.24)",
+            onMouseEnter={() => setIsIntroCardHovered(true)}
+            onMouseLeave={() => {
+              setIsIntroCardHovered(false);
+              setIntroCardRot({ x: 0, y: 0 });
             }}
+            onMouseMove={handleIntroCardTilt}
+            style={{ perspective: "900px" }}
           >
-            <div className="relative w-full overflow-hidden rounded-[28px] border border-white/55 bg-white/22 p-6 shadow-[0_24px_70px_rgba(30,141,222,0.16)] ring-1 ring-white/30 backdrop-blur-md transition-shadow duration-500 hover:shadow-[0_26px_76px_rgba(30,141,222,0.20)] sm:p-7">
-              <div className="absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#2D8FE3]/12 blur-2xl" />
-              <div className="absolute -bottom-14 -left-14 h-28 w-28 rounded-full bg-white/35 blur-2xl" />
-              <div className="hiyo-orbit absolute right-9 top-9 h-3 w-3 rounded-full bg-[#1E8DDE]/45 shadow-[0_0_22px_rgba(30,141,222,0.38)]" />
+            <div
+              className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
+              style={{
+                transform: `
+                  translateY(${isIntroCardHovered ? -3 : 0}px)
+                  scale(${isIntroCardHovered ? 1.004 : 1})
+                  rotateX(${introCardRot.x}deg)
+                  rotateY(${introCardRot.y}deg)
+                `,
+              }}
+            >
+              <div className="relative w-full overflow-hidden rounded-[28px] border border-white/55 bg-white/22 p-6 shadow-[0_24px_70px_rgba(30,141,222,0.16)] ring-1 ring-white/30 backdrop-blur-md transition-shadow duration-500 hover:shadow-[0_26px_76px_rgba(30,141,222,0.20)] sm:p-7">
+                <div className="absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#2D8FE3]/12 blur-2xl" />
+                <div className="absolute -bottom-14 -left-14 h-28 w-28 rounded-full bg-white/35 blur-2xl" />
+                <div className="hiyo-orbit absolute right-9 top-9 h-3 w-3 rounded-full bg-[#1E8DDE]/45 shadow-[0_0_22px_rgba(30,141,222,0.38)]" />
 
-              <div className="relative">
-                <p className="font-ui mb-5 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
-                  Focus Area
-                </p>
-                <div className="grid gap-4">
-                  {focusItems.map((item, index) => (
-                    <motion.div
-                      key={item}
-                      initial={{
-                        opacity: 0,
-                        y: 18,
-                        scale: 0.9,
-                        rotate: -2,
-                      }}
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        rotate: 0,
-                      }}
-                      viewport={{
-                        once: false,
-                        amount: 0.15,
-                        margin: "0px 0px -20% 0px",
-                      }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 180,
-                        damping: 14,
-                        mass: 0.6,
-                        delay: 0.08 * index,
-                      }}
-                      whileHover={{ y: -4, x: 6, scale: 1.02 }}
-                      className="font-ui group flex min-h-[54px] items-center rounded-2xl border border-white/70 bg-white/70 px-5 text-sm font-black uppercase tracking-[0.16em] text-[#123A5A] shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.20)] sm:min-h-[56px] sm:text-base"
-                    >
-                      {item}
-                    </motion.div>
-                  ))}
+                <div className="relative">
+                  <p className="font-ui mb-5 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
+                    Focus Area
+                  </p>
+                  <div className="grid gap-4">
+                    {focusItems.map((item, index) => (
+                      <motion.div
+                        key={item}
+                        initial={{
+                          opacity: 0,
+                          y: 18,
+                          scale: 0.9,
+                          rotate: -2,
+                        }}
+                        whileInView={{
+                          opacity: 1,
+                          y: 0,
+                          scale: 1,
+                          rotate: 0,
+                        }}
+                        viewport={{
+                          once: false,
+                          amount: 0.15,
+                          margin: "0px 0px -20% 0px",
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 180,
+                          damping: 14,
+                          mass: 0.6,
+                          delay: 0.08 * index,
+                        }}
+                        className="font-ui group flex min-h-[54px] items-center rounded-2xl border border-white/70 bg-white/70 px-5 text-sm font-black uppercase tracking-[0.16em] text-[#123A5A] shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.20)] sm:min-h-[56px] sm:text-base"
+                      >
+                        {item}
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

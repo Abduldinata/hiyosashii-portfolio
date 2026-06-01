@@ -82,7 +82,7 @@ export default function ContactSection() {
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="grid min-h-0 lg:min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] sm:p-10 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:p-12 xl:p-16"
+          className="grid min-h-0 lg:min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(30,141,222,0.28)] sm:p-10 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:p-12 xl:p-16"
         >
           <div>
             <h2 className="text-[clamp(2rem,5.8vw,5.6rem)] font-black leading-[0.92] tracking-tight text-slate-900">
@@ -124,7 +124,7 @@ export default function ContactSection() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
                 href="mailto:abdul.dinata557@gmail.com"
-                className="rounded-full bg-[#1E8DDE] px-8 py-3 font-bold text-white shadow-[0_14px_34px_rgba(30,141,222,0.28)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_46px_rgba(30,141,222,0.38)] active:scale-95"
+                className="rounded-full bg-[#1E8DDE] px-8 py-3 font-bold text-white shadow-[0_14px_34px_rgba(30,141,222,0.28)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-95"
               >
                 Email Me
               </a>
@@ -132,7 +132,7 @@ export default function ContactSection() {
                 href="https://github.com/Abduldinata"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-[#1E8DDE]/40 bg-white/40 px-5 py-2.5 text-sm font-bold text-[#123A5A] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/70 active:scale-95"
+                className="rounded-full border border-[#1E8DDE]/40 bg-white/40 px-5 py-2.5 text-sm font-bold text-[#123A5A] transition-all duration-300 hover:-translate-y-1 hover:bg-white/70 active:scale-95"
               >
                 View GitHub
               </a>

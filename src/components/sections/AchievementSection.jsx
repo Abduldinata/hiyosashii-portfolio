@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { achievementData } from "@/data/achievementData";
+import ToolPill from "../ui/ToolPill";
 const sectionTitleMotion = {
   hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
   visible: {
@@ -158,6 +159,20 @@ export default function AchievementSection() {
     achievementData[0];
   const selectedDisplayPeriod = getDisplayPeriod(selectedAchievement);
   const selectedDocuments = getAchievementDocuments(selectedAchievement);
+
+  const [asideRot, setAsideRot] = useState({ x: 0, y: 0 });
+  const [isAsideHovered, setIsAsideHovered] = useState(false);
+
+  const handleAsideTilt = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const maxAngle = 5;
+    setAsideRot({
+      x: (y - 0.5) * -maxAngle,
+      y: (x - 0.5) * maxAngle,
+    });
+  }, []);
 
   const handleFilterChange = (filterValue) => {
     setActiveCategory(filterValue);
@@ -375,86 +390,100 @@ export default function AchievementSection() {
             }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ y: -5, scale: 1.006 }}
             className="rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] transition-all duration-300 ease-out hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] sm:p-5 lg:sticky lg:top-24"
+            onMouseEnter={() => setIsAsideHovered(true)}
+            onMouseLeave={() => {
+              setIsAsideHovered(false);
+              setAsideRot({ x: 0, y: 0 });
+            }}
+            onMouseMove={handleAsideTilt}
+            style={{ perspective: "900px" }}
           >
-            <div className="overflow-hidden rounded-[24px] border border-[#D7EAF5] bg-white/70 shadow-[0_18px_50px_rgba(31,79,122,0.08)]">
-              <div className="h-[240px] bg-[#eef7fc] sm:h-[320px] lg:h-[360px]">
-                <SafeAchievementImage
-                  item={selectedAchievement}
-                  className="h-full w-full bg-[#f8fbff] object-cover transition-transform duration-300 ease-out"
-                />
-              </div>
-
-              <div className="p-5 md:p-6">
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987] ring-1 ring-white/80">
-                    {selectedAchievement.type}
-                  </span>
-                  {selectedAchievement.period &&
-                    selectedAchievement.period !== selectedAchievement.year && (
-                      <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#185987]">
-                        {selectedDisplayPeriod}
-                      </span>
-                    )}
+            <div
+              className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
+              style={{
+                transform: `
+                  translateY(${isAsideHovered ? -3 : 0}px)
+                  scale(${isAsideHovered ? 1.004 : 1})
+                  rotateX(${asideRot.x}deg)
+                  rotateY(${asideRot.y}deg)
+                `,
+              }}
+            >
+              <div className="overflow-hidden rounded-[24px] border border-[#D7EAF5] bg-white/70 shadow-[0_18px_50px_rgba(31,79,122,0.08)]">
+                <div className="h-[240px] bg-[#eef7fc] sm:h-[320px] lg:h-[360px]">
+                  <SafeAchievementImage
+                    item={selectedAchievement}
+                    className="h-full w-full bg-[#f8fbff] object-cover transition-transform duration-300 ease-out"
+                  />
                 </div>
 
-                <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
-                  {selectedAchievement.title}
-                </h3>
-                <p className="mt-2 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
-                  {selectedAchievement.organization}
-                </p>
-
-                <p className="mt-5 text-sm leading-7 text-[#263B53] md:text-[15px]">
-                  {selectedAchievement.description}
-                </p>
-
-                {selectedAchievement.tools?.length > 0 && (
-                  <div className="mt-5">
-                    <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#185987]">
-                      Tools & Fokus
-                    </h4>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {selectedAchievement.tools.map((tool) => (
-                        <span
-                          key={tool}
-                          className="font-ui rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
-                        >
-                          {tool}
+                <div className="p-5 md:p-6">
+                  <div className="flex flex-wrap gap-2">
+                    <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987] ring-1 ring-white/80">
+                      {selectedAchievement.type}
+                    </span>
+                    {selectedAchievement.period &&
+                      selectedAchievement.period !==
+                        selectedAchievement.year && (
+                        <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#185987]">
+                          {selectedDisplayPeriod}
                         </span>
-                      ))}
-                    </div>
+                      )}
                   </div>
-                )}
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {selectedAchievement.relatedPortfolioSlug && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handlePortfolioFocus(
-                          selectedAchievement.relatedPortfolioSlug,
-                        )
-                      }
-                      className={primaryActionClass}
-                    >
-                      Lihat Portfolio
-                      <span className={arrowClass}>→</span>
-                    </button>
+                  <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
+                    {selectedAchievement.title}
+                  </h3>
+                  <p className="mt-2 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
+                    {selectedAchievement.organization}
+                  </p>
+
+                  <p className="mt-5 text-sm leading-7 text-[#263B53] md:text-[15px]">
+                    {selectedAchievement.description}
+                  </p>
+
+                  {selectedAchievement.tools?.length > 0 && (
+                    <div className="mt-5">
+                      <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#185987]">
+                        Tools & Fokus
+                      </h4>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {selectedAchievement.tools.map((tool) => (
+                          <ToolPill key={tool} tool={tool} />
+                        ))}
+                      </div>
+                    </div>
                   )}
 
-                  {selectedDocuments.map((document) => (
-                    <a
-                      key={`${selectedAchievement.id}-${document.url}`}
-                      href={document.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={secondaryActionClass}
-                    >
-                      {document.label || "Lihat Sertifikat"}
-                    </a>
-                  ))}
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {selectedAchievement.relatedPortfolioSlug && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handlePortfolioFocus(
+                            selectedAchievement.relatedPortfolioSlug,
+                          )
+                        }
+                        className={primaryActionClass}
+                      >
+                        Lihat Portfolio
+                        <span className={arrowClass}>→</span>
+                      </button>
+                    )}
+
+                    {selectedDocuments.map((document) => (
+                      <a
+                        key={`${selectedAchievement.id}-${document.url}`}
+                        href={document.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={secondaryActionClass}
+                      >
+                        {document.label || "Lihat Sertifikat"}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
