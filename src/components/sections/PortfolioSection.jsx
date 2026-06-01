@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { portfolioData } from "../../data/portfolioData";
+import ToolPill from "../ui/ToolPill";
 const sectionTitleMotion = {
   hidden: {
     opacity: 0,
@@ -206,8 +207,25 @@ function PortfolioThumbnail({ project, selectedImage, onSelectImage }) {
 
 function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
   const [selectedImage, setSelectedImage] = useState(project.thumbnail);
-  const visibleTools = project.tools.slice(0, 4);
-  const hiddenToolsCount = project.tools.length - visibleTools.length;
+  const [tiltRot, setTiltRot] = useState({ x: 0, y: 0 });
+  const [isCardHovered, setIsCardHovered] = useState(false);
+  const cardInnerRef = useRef(null);
+
+  // Auto-add related tools
+  const relatedTools = {
+    Flutter: ["Dart"],
+    "C++": ["Android"],
+    Dart: ["Flutter"],
+    Android: ["C++"],
+  };
+
+  const enrichedTools = project.tools.flatMap((tool) => {
+    const extras = relatedTools[tool] || [];
+    return [tool, ...extras.filter((ext) => !project.tools.includes(ext))];
+  });
+
+  const visibleTools = enrichedTools.slice(0, 5);
+  const hiddenToolsCount = Math.max(0, project.tools.length - 5);
   const visibleExternalLinks = project.links?.filter((link) => link.url) ?? [];
   const hasDetailAction = Boolean(
     project.gallery?.length || project.description,
@@ -226,6 +244,21 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
       )
     : visibleExternalLinks;
 
+  const handleTilt = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const maxAngle = 5;
+    setTiltRot({
+      x: (y - 0.5) * -maxAngle,
+      y: (x - 0.5) * maxAngle,
+    });
+  }, []);
+
+  const resetTilt = useCallback(() => {
+    setTiltRot({ x: 0, y: 0 });
+  }, []);
+
   return (
     <motion.article
       data-portfolio-slug={
@@ -233,7 +266,7 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         project.id ||
         project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
       }
-      tabIndex={-1} // Allow programmatic focus
+      tabIndex={-1}
       variants={cardMotion}
       initial="hidden"
       whileInView="visible"
@@ -243,10 +276,6 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         ease: [0.22, 1, 0.36, 1],
         delay: Math.min(index * 0.035, 0.16),
       }}
-      whileHover={{
-        y: -5,
-        scale: 1.006,
-      }}
       whileTap={{
         scale: 0.985,
         boxShadow: "0 0 25px rgba(30,141,222,0.5)",
@@ -254,87 +283,102 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         transition: { duration: 0.15 },
       }}
       className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-5"
+      onMouseEnter={() => setIsCardHovered(true)}
+      onMouseLeave={() => {
+        setIsCardHovered(false);
+        resetTilt();
+      }}
+      onMouseMove={handleTilt}
+      style={{ perspective: "900px" }}
     >
-      <PortfolioThumbnail
-        project={project}
-        selectedImage={selectedImage}
-        onSelectImage={setSelectedImage}
-      />
+      <div
+        ref={cardInnerRef}
+        className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
+        style={{
+          transform: `
+            translateY(${isCardHovered ? -3 : 0}px)
+            scale(${isCardHovered ? 1.004 : 1})
+            rotateX(${tiltRot.x}deg)
+            rotateY(${tiltRot.y}deg)
+          `,
+        }}
+      >
+        <PortfolioThumbnail
+          project={project}
+          selectedImage={selectedImage}
+          onSelectImage={setSelectedImage}
+        />
 
-      <div className="px-1 pt-4">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <CategoryPills categories={project.categories} />
-          <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#3d6f93]">
-            {project.year}
-          </span>
-        </div>
-
-        <h3 className="line-clamp-2 text-lg font-extrabold tracking-tight text-[#173d61] sm:text-xl">
-          {project.title}
-        </h3>
-        {project.role && (
-          <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[#1f4f7a]/75">
-            {project.role}
-          </p>
-        )}
-        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">
-          {project.description}
-        </p>
-
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {visibleTools.map((tool) => (
-            <span
-              key={tool}
-              className="rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
-            >
-              {tool}
+        <div className="px-1 pt-4">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <CategoryPills categories={project.categories} />
+            <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#3d6f93]">
+              {project.year}
             </span>
-          ))}
-          {hiddenToolsCount > 0 && (
-            <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[11px] font-bold text-[#1f4f7a] ring-1 ring-[#cfe1ed]">
-              +{hiddenToolsCount}
-            </span>
+          </div>
+
+          <h3 className="line-clamp-2 text-lg font-extrabold tracking-tight text-[#173d61] sm:text-xl">
+            {project.title}
+          </h3>
+          {project.role && (
+            <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[#1f4f7a]/75">
+              {project.role}
+            </p>
           )}
-        </div>
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">
+            {project.description}
+          </p>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          {hasDetailAction ? (
-            <button
-              type="button"
-              onClick={() => {
-                onOpenDetails(project);
-                setActiveImageIndex(0);
-              }}
-              className={primaryActionClass}
-            >
-              Lihat Detail
-              <span className={arrowClass}>→</span>
-            </button>
-          ) : (
-            fallbackPrimaryLink && (
-              <a
-                href={fallbackPrimaryLink.url}
-                target="_blank"
-                rel="noopener noreferrer"
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {visibleTools.map((tool) => (
+              <ToolPill key={tool} tool={tool} />
+            ))}
+            {hiddenToolsCount > 0 && (
+              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[11px] font-bold text-[#1f4f7a] ring-1 ring-[#cfe1ed]">
+                +{hiddenToolsCount}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            {hasDetailAction ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenDetails(project);
+                  setActiveImageIndex(0);
+                }}
                 className={primaryActionClass}
               >
-                {getCleanLinkLabel(fallbackPrimaryLink.label)}
+                Lihat Detail
                 <span className={arrowClass}>→</span>
-              </a>
-            )
-          )}
+              </button>
+            ) : (
+              fallbackPrimaryLink && (
+                <a
+                  href={fallbackPrimaryLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={primaryActionClass}
+                >
+                  {getCleanLinkLabel(fallbackPrimaryLink.label)}
+                  <span className={arrowClass}>→</span>
+                </a>
+              )
+            )}
 
-          {secondaryLinks.map((link) => (
-            <a
-              key={`${project.id}-${link.label}-${link.url}`}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={secondaryActionClass}
-            >
-              {getCleanLinkLabel(link.label)}
-            </a>
-          ))}
+            {secondaryLinks.map((link) => (
+              <a
+                key={`${project.id}-${link.label}-${link.url}`}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={secondaryActionClass}
+              >
+                {getCleanLinkLabel(link.label)}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </motion.article>
@@ -528,12 +572,7 @@ function PortfolioModal({
 
             <div className="mt-4 flex flex-wrap gap-2">
               {project.tools.map((tool) => (
-                <span
-                  key={tool}
-                  className="font-ui rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef]"
-                >
-                  {tool}
-                </span>
+                <ToolPill key={tool} tool={tool} />
               ))}
             </div>
 
