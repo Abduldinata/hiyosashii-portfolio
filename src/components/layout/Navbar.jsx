@@ -64,7 +64,7 @@ export default function Navbar() {
         navbarHidden ? "-translate-y-full" : "translate-y-0"
       } ${
         scrolled
-          ? "bg-white/75 dark:bg-zinc-900/80 backdrop-blur-xl shadow-[0_1px_20px_rgba(0,0,0,0.06)]"
+          ? "bg-white/90 md:bg-white/75 md:backdrop-blur-xl shadow-[0_1px_20px_rgba(0,0,0,0.06)]"
           : "bg-transparent"
       }`}
     >
