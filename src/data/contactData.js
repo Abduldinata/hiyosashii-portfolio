@@ -1,10 +1,9 @@
 export const contactData = [
   {
-    label: "Gmail",
-    type: "email",
-    url: "mailto:abdul.dinata557@gmail.com",
-    display: "abdul.dinata557@gmail.com",
-    icon: "/assets/icons/gmail.png",
+    label: "LinkedIn",
+    type: "link",
+    url: "https://linkedin.com/in/abduldinata",
+    icon: "/assets/icons/linkedin.png",
   },
   {
     label: "GitHub",
