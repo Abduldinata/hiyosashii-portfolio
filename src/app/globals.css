@@ -366,6 +366,8 @@ h2 {
 .hiyo-scroll-section {
     position: relative;
     transform-origin: center top;
+    content-visibility: auto;
+    contain-intrinsic-size: 800px;
 }
 
 @keyframes hiyoSectionEnter {
@@ -876,6 +878,22 @@ h2 {
     animation: spin-reverse linear infinite;
 }
 
+/* Dot fade for loading spinner — sequential dot appearance like reconnecting */
+/* Geist-style loading dots — subtle sequential bounce */
+@keyframes hiyoGeistDot {
+    0%,
+    80%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.7);
+    }
+    30%,
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .hiyo-section-reveal,
 .hiyo-reveal {
     opacity: 0.65;
@@ -1081,6 +1099,79 @@ button[aria-label="Switch profile mode"]:active {
         transform: none;
         filter: none;
         transition: none;
+    }
+}
+
+/* ── Mobile background simplification ── */
+@media (max-width: 767px) {
+    .hiyo-global-bg {
+        background:
+            radial-gradient(
+                circle at 20% 80%,
+                rgba(30, 141, 222, 0.08) 0%,
+                rgba(30, 141, 222, 0.03) 35%,
+                transparent 55%
+            ),
+            linear-gradient(160deg, #f8fafb 0%, #eef3f7 60%, #dce8f0 100%) !important;
+    }
+
+    .hiyo-global-bg::before {
+        width: min(30vw, 320px) !important;
+        opacity: 0.35 !important;
+        clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%) !important;
+        transform: none !important;
+    }
+
+    .hiyo-global-bg::after {
+        display: none !important;
+    }
+
+    .hiyo-bg-paper {
+        opacity: 0.08 !important;
+        mix-blend-mode: initial !important;
+    }
+
+    .hiyo-bg-shape-a {
+        width: min(30vw, 320px) !important;
+        opacity: 0.4 !important;
+        clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%) !important;
+    }
+
+    .hiyo-bg-shape-b {
+        display: none !important;
+    }
+
+    .hiyo-bg-shape-c {
+        width: 200px !important;
+        height: 30vh !important;
+        opacity: 0.08 !important;
+        left: -10vw !important;
+        animation: none !important;
+    }
+
+    .hiyo-bg-stripes {
+        opacity: 0.012 !important;
+    }
+
+    .hiyo-bg-glow {
+        filter: blur(40px) !important;
+        animation: none !important;
+    }
+
+    .hiyo-bg-glow-a {
+        width: 40vw !important;
+        opacity: 0.15 !important;
+    }
+
+    .hiyo-bg-glow-b {
+        width: 50vw !important;
+        opacity: 0.1 !important;
+    }
+
+    /* Disable expensive backdrop-blur on mobile for all components */
+    [class*="backdrop-blur"] {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 }
 
