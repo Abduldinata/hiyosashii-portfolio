@@ -71,7 +71,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="#home"
-          className="font-heading text-xl font-bold text-black dark:text-white tracking-tight"
+          className="font-heading text-xl font-bold text-[#123A5A] tracking-tight"
         >
           Hiyosashii<span className="text-primary-blue">.</span>
         </a>

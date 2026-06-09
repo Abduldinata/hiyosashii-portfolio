@@ -17,18 +17,20 @@ async function fetchSupabase(method, body) {
         "Content-Type": "application/json",
         apikey: SUPABASE_ANON_KEY,
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        ...(method === "POST" ? { Prefer: "return=representation" } : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
     });
     if (!res.ok) throw new Error(`Supabase ${res.status}`);
-    if (method === "GET") return await res.json();
-    return await res.json();
-  } catch {
+    const data = await res.json();
+    if (method === "POST") return data?.[0] || data;
+    return data;
+  } catch (e) {
+    console.warn("[Supabase]", e?.message);
     return null;
   }
 }
 
-/* ─── Local fallback storage ─── */
 const STORAGE_KEY = "hiyo-comments";
 
 function getLocalComments() {
@@ -46,7 +48,6 @@ function saveLocalComments(comments) {
   } catch {}
 }
 
-/* ─── Bubble component ─── */
 function CommentBubble({ name, message, date }) {
   return (
     <motion.div
@@ -67,7 +68,6 @@ function CommentBubble({ name, message, date }) {
   );
 }
 
-/* ─── Main component ─── */
 export default function ChibiMascot() {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
@@ -75,45 +75,42 @@ export default function ChibiMascot() {
   const [comments, setComments] = useState([]);
   const [submitted, setSubmitted] = useState(false);
 
-  // Load comments — coba dari Supabase dulu, fallback ke lokal
   useEffect(() => {
     (async () => {
-      const fromServer = await fetchSupabase("GET");
-      if (fromServer && Array.isArray(fromServer)) {
-        const mapped = fromServer.map((c) => ({
-          id: c.id,
-          name: c.name,
-          message: c.message,
-          date: new Date(c.created_at).toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          }),
-        }));
-        setComments(mapped);
-      } else {
-        // Fallback lokal
+      try {
+        const fromServer = await fetchSupabase("GET");
+        if (fromServer && Array.isArray(fromServer) && fromServer.length > 0) {
+          const mapped = fromServer.map((c) => ({
+            id: c.id,
+            name: c.name,
+            message: c.message,
+            date: new Date(c.created_at).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+          }));
+          setComments(mapped);
+          saveLocalComments(mapped);
+        } else {
+          setComments(getLocalComments());
+        }
+      } catch {
         setComments(getLocalComments());
       }
     })();
   }, []);
 
-  // Submit handler — kirim ke Supabase, fallback ke lokal
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
       if (!name.trim() || !message.trim()) return;
+      const entry = { name: name.trim(), message: message.trim() };
 
-      const entry = {
-        name: name.trim(),
-        message: message.trim(),
-      };
-
-      // Coba kirim ke Supabase
-      const result = await fetchSupabase("POST", entry);
+      await fetchSupabase("POST", entry);
 
       const newComment = {
-        id: result?.id || Date.now(),
+        id: Date.now(),
         name: entry.name,
         message: entry.message,
         date: new Date().toLocaleDateString("id-ID", {
@@ -126,7 +123,6 @@ export default function ChibiMascot() {
       const updated = [newComment, ...comments];
       setComments(updated);
       saveLocalComments(updated);
-
       setName("");
       setMessage("");
       setSubmitted(true);
@@ -135,24 +131,21 @@ export default function ChibiMascot() {
     [name, message, comments],
   );
 
-  // Auto-hide after empty state prompt
   const isEmpty = comments.length === 0;
 
   return (
     <>
-      {/* Feedback panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             key="feedback-panel"
-            initial={{ opacity: 0, y: 16, scale: 0.95, originX: 1, originY: 1 }}
+            initial={{ opacity: 0, y: 16, scale: 0.95, originX: 0, originY: 1 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.93, originX: 1, originY: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.93, originX: 0, originY: 1 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-[76px] left-4 z-[90] flex w-[340px] flex-col overflow-hidden rounded-2xl border border-white/25 bg-[#0c1f2e]/95 shadow-[0_24px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:w-[380px]"
+            className="fixed bottom-[76px] left-4 z-[90] flex w-[340px] flex-col overflow-hidden rounded-2xl border border-white/25 bg-[#0c1f2e]/95 shadow-[0_24px_80px_rgba(0,0,0,0.5)] shadow-[0_0_40px_rgba(30,141,222,0.08)] backdrop-blur-xl sm:w-[380px]"
             style={{ maxHeight: "min(560px, calc(100dvh - 100px))" }}
           >
-            {/* ─── Header ─── */}
             <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
               <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-white/20">
                 <img
@@ -188,9 +181,15 @@ export default function ChibiMascot() {
               </button>
             </div>
 
-            {/* ─── Body ─── */}
             <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-3">
-              {/* Form */}
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="mb-4 text-center text-[13px] font-semibold leading-relaxed text-white/50"
+              >
+                Hai! 👋 Tulis nama dan kesan kamu buat portfolio ini ya...
+              </motion.p>
               <form onSubmit={handleSubmit} className="mb-4 space-y-2.5">
                 <input
                   type="text"
@@ -200,16 +199,14 @@ export default function ChibiMascot() {
                   required
                   className="w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white/80 placeholder-white/25 outline-none transition-colors focus:border-[#1E8DDE]/40 focus:bg-white/[0.07]"
                 />
-                <div className="relative">
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Kesan / masukan untuk portfolio ini..."
-                    required
-                    rows={3}
-                    className="w-full resize-none rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white/80 placeholder-white/25 outline-none transition-colors focus:border-[#1E8DDE]/40 focus:bg-white/[0.07]"
-                  />
-                </div>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Kesan / masukan untuk portfolio ini..."
+                  required
+                  rows={3}
+                  className="w-full resize-none rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white/80 placeholder-white/25 outline-none transition-colors focus:border-[#1E8DDE]/40 focus:bg-white/[0.07]"
+                />
                 <button
                   type="submit"
                   disabled={!name.trim() || !message.trim()}
@@ -219,10 +216,8 @@ export default function ChibiMascot() {
                 </button>
               </form>
 
-              {/* Divider */}
               {!isEmpty && <div className="mb-3 h-px bg-white/5" />}
 
-              {/* Comments list */}
               <div className="space-y-2.5">
                 {comments.map((c) => (
                   <CommentBubble
@@ -235,19 +230,17 @@ export default function ChibiMascot() {
               </div>
             </div>
 
-            {/* ─── Footer ─── */}
             <div className="border-t border-white/10 px-4 py-2 text-[10px] font-semibold text-white/20">
-              Terkirim ke Supabase 🚀
+              Data dari Supabase 📦
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ─── Floating toggle button ─── */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed bottom-4 left-4 z-[91] flex h-14 w-14 touch-none select-none items-center justify-center overflow-hidden rounded-full border-2 border-white/25 bg-gradient-to-br from-[#1a3045] to-[#0a1e30] shadow-[0_0_30px_rgba(30,141,222,0.2)] outline-none transition-transform duration-200 active:scale-90"
+        className="fixed bottom-4 left-4 z-[91] flex h-14 w-14 touch-none select-none items-center justify-center overflow-hidden rounded-2xl border-2 border-white/25 bg-gradient-to-br from-[#1a3045] to-[#0a1e30] shadow-[0_0_30px_rgba(30,141,222,0.2)] outline-none transition-transform duration-200 active:scale-90"
       >
         {isOpen ? (
           <svg
@@ -268,12 +261,10 @@ export default function ChibiMascot() {
           <img
             src="/assets/characters/bot.png"
             alt="Feedback"
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover ${!isOpen ? "animate-bob" : ""}`}
             draggable="false"
           />
         )}
-
-        {/* Notification dot when closed */}
         {!isOpen && (
           <span className="absolute right-0.5 top-0.5 h-3 w-3 rounded-full border-2 border-[#0a1e30] bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
         )}
