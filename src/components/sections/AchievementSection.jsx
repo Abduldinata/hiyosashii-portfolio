@@ -13,6 +13,7 @@ const sectionTitleMotion = {
     transition: {
       duration: 0.48,
       ease: [0.22, 1, 0.36, 1],
+      filter: { duration: 0.08 },
     },
   },
 };
@@ -24,7 +25,11 @@ const itemMotion = {
     y: 0,
     scale: 1,
     filter: "blur(0px)",
-    transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
+    transition: {
+      duration: 0.38,
+      ease: [0.22, 1, 0.36, 1],
+      filter: { duration: 0.08 },
+    },
   },
 };
 
@@ -220,7 +225,7 @@ export default function AchievementSection() {
         // Fallback
         portfolioSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-    }, 150);
+    }, 450);
   };
 
   return (
@@ -285,7 +290,11 @@ export default function AchievementSection() {
           initial={{ opacity: 0.9, y: 16, scale: 0.992, filter: "blur(3px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1],
+            filter: { duration: 0.08 },
+          }}
           className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7 pt-4"
         >
           <div className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-6">
@@ -389,7 +398,11 @@ export default function AchievementSection() {
               filter: "blur(6px)",
             }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: 0.32,
+              ease: [0.22, 1, 0.36, 1],
+              filter: { duration: 0.08 },
+            }}
             className="rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] transition-all duration-300 ease-out hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] sm:p-5 lg:sticky lg:top-24"
             onMouseEnter={() => setIsAsideHovered(true)}
             onMouseLeave={() => {
