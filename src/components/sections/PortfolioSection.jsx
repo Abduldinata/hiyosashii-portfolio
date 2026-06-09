@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { portfolioData } from "../../data/portfolioData";
 import ToolPill from "../ui/ToolPill";
 const sectionTitleMotion = {
@@ -18,6 +18,7 @@ const sectionTitleMotion = {
     transition: {
       duration: 0.48,
       ease: [0.22, 1, 0.36, 1],
+      filter: { duration: 0.08 },
     },
   },
 };
@@ -37,6 +38,7 @@ const cardMotion = {
     transition: {
       duration: 0.5,
       ease: [0.22, 1, 0.36, 1],
+      filter: { duration: 0.08 },
     },
   },
 };
@@ -134,6 +136,8 @@ function SafeImage({ src, alt, className, fallback, fallbackSrc, onError }) {
       src={currentSrc}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
       onError={() => {
         if (fallbackSrc && currentSrc !== fallbackSrc) {
           setCurrentSrc(fallbackSrc);
@@ -210,6 +214,8 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
   const [tiltRot, setTiltRot] = useState({ x: 0, y: 0 });
   const [isCardHovered, setIsCardHovered] = useState(false);
   const cardInnerRef = useRef(null);
+  const isTouchDevice =
+    typeof window !== "undefined" && "ontouchstart" in window;
 
   // Auto-add related tools
   const relatedTools = {
@@ -277,30 +283,34 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         delay: Math.min(index * 0.035, 0.16),
       }}
       whileTap={{
-        scale: 0.985,
-        boxShadow: "0 0 25px rgba(30,141,222,0.5)",
-        borderColor: "#1E8DDE",
-        transition: { duration: 0.15 },
+        scale: 0.98,
+        transition: { duration: 0.12 },
       }}
-      className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-5"
-      onMouseEnter={() => setIsCardHovered(true)}
-      onMouseLeave={() => {
-        setIsCardHovered(false);
-        resetTilt();
-      }}
-      onMouseMove={handleTilt}
+      className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] sm:p-5"
+      onMouseEnter={!isTouchDevice ? () => setIsCardHovered(true) : undefined}
+      onMouseLeave={
+        !isTouchDevice
+          ? () => {
+              setIsCardHovered(false);
+              resetTilt();
+            }
+          : undefined
+      }
+      onMouseMove={!isTouchDevice ? handleTilt : undefined}
       style={{ perspective: "900px" }}
     >
       <div
         ref={cardInnerRef}
-        className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
+        className="transform-gpu transition-transform duration-[250ms] ease-out"
         style={{
-          transform: `
-            translateY(${isCardHovered ? -3 : 0}px)
-            scale(${isCardHovered ? 1.004 : 1})
-            rotateX(${tiltRot.x}deg)
-            rotateY(${tiltRot.y}deg)
-          `,
+          transform: isTouchDevice
+            ? "none"
+            : `
+                translateY(${isCardHovered ? -3 : 0}px)
+                scale(${isCardHovered ? 1.004 : 1})
+                rotateX(${tiltRot.x}deg)
+                rotateY(${tiltRot.y}deg)
+              `,
         }}
       >
         <PortfolioThumbnail
@@ -393,6 +403,15 @@ function PortfolioModal({
 }) {
   if (!project) return null;
 
+  // Keyboard: Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const galleryImages = project.gallery?.length
     ? project.gallery
     : project.thumbnail
@@ -423,185 +442,201 @@ function PortfolioModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/55 px-4 pt-20 backdrop-blur-md sm:pt-24 md:pt-[104px] pb-8">
-      <div className="relative mx-auto my-auto w-full max-w-[1120px] rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] backdrop-blur-xl sm:p-5 md:p-6 mb-8 md:mb-12 lg:mb-16">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 z-40 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#173d61] hover:shadow-[0_16px_38px_rgba(31,79,122,0.26)] active:translate-y-0 active:scale-95"
-          aria-label="Close portfolio detail"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#061424]/85"
+      onClick={onClose}
+    >
+      <div className="flex min-h-full items-center justify-center px-4 py-8 sm:py-12 md:py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 32, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.97 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-[1120px] rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] sm:p-5 md:p-6"
         >
-          ×
-        </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-4 top-4 z-40 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#173d61] hover:shadow-[0_16px_38px_rgba(31,79,122,0.26)] active:translate-y-0 active:scale-95"
+            aria-label="Close portfolio detail"
+          >
+            ×
+          </button>
 
-        <header className="pr-12">
-          <div className="flex flex-wrap items-center gap-2">
-            {project.categories?.slice(0, 2).map((category) => (
-              <span
-                key={category}
-                className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
-              >
-                {category}
-              </span>
-            ))}
-            <span className="text-[11px] font-black tracking-[0.2em] text-[#185987] md:text-xs">
-              {project.year}
-            </span>
-          </div>
-
-          <h3 className="mt-3 max-w-4xl text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
-            {project.title}
-          </h3>
-          {project.role && (
-            <p className="mt-2 max-w-4xl text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
-              {project.role}
-            </p>
-          )}
-        </header>
-
-        <div className="mt-5 grid gap-5 md:grid-cols-[1.3fr_1fr] lg:grid-cols-[1.35fr_0.95fr] md:items-start lg:items-start">
-          <div className="space-y-3 min-w-0">
-            <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#E8F4FB]/30 shadow-[0_18px_50px_rgba(31,79,122,0.12)] border border-slate-100 md:min-h-[400px]">
-              <SafeImage
-                key={activeImage}
-                src={activeImage}
-                alt={project.title}
-                className="max-h-[70vh] w-full object-contain"
-                fallback={
-                  <FallbackThumbnail
-                    project={project}
-                    className="h-full w-full object-cover"
-                  />
-                }
-              />
-
-              {galleryImages.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Previous image"
-                    onClick={goToPreviousImage}
-                    className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
-                  >
-                    ‹
-                  </button>
-
-                  <button
-                    type="button"
-                    aria-label="Next image"
-                    onClick={goToNextImage}
-                    className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] backdrop-blur-md transition-all duration-300 hover:translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-
-              {galleryImages.length > 1 && (
-                <span className="absolute bottom-3 right-3 z-30 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-black tracking-wide text-[#123A5A] shadow-sm backdrop-blur-md">
-                  {safeActiveIndex + 1} / {galleryImages.length}
+          <header className="pr-12">
+            <div className="flex flex-wrap items-center gap-2">
+              {project.categories?.slice(0, 2).map((category) => (
+                <span
+                  key={category}
+                  className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
+                >
+                  {category}
                 </span>
+              ))}
+              <span className="text-[11px] font-black tracking-[0.2em] text-[#185987] md:text-xs">
+                {project.year}
+              </span>
+            </div>
+
+            <h3 className="mt-3 max-w-4xl text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
+              {project.title}
+            </h3>
+            {project.role && (
+              <p className="mt-2 max-w-4xl text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
+                {project.role}
+              </p>
+            )}
+          </header>
+
+          <div className="mt-5 grid gap-5 md:grid-cols-[1.3fr_1fr] lg:grid-cols-[1.35fr_0.95fr] md:items-start lg:items-start">
+            <div className="space-y-3 min-w-0">
+              <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#E8F4FB]/30 shadow-[0_18px_50px_rgba(31,79,122,0.12)] border border-slate-100 md:min-h-[400px]">
+                <SafeImage
+                  key={activeImage}
+                  src={activeImage}
+                  alt={project.title}
+                  className="max-h-[70vh] w-full object-contain"
+                  fallback={
+                    <FallbackThumbnail
+                      project={project}
+                      className="h-full w-full object-cover"
+                    />
+                  }
+                />
+
+                {galleryImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Previous image"
+                      onClick={goToPreviousImage}
+                      className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:-translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
+                    >
+                      ‹
+                    </button>
+
+                    <button
+                      type="button"
+                      aria-label="Next image"
+                      onClick={goToNextImage}
+                      className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
+
+                {galleryImages.length > 1 && (
+                  <span className="absolute bottom-3 right-3 z-30 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-black tracking-wide text-[#123A5A] shadow-sm">
+                    {safeActiveIndex + 1} / {galleryImages.length}
+                  </span>
+                )}
+              </div>
+
+              {galleryImages.length > 1 && (
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  {galleryImages.map((_, index) => (
+                    <button
+                      key={`dot-${index}`}
+                      type="button"
+                      aria-label={`Go to image ${index + 1}`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setActiveImageIndex(index);
+                      }}
+                      className={`h-2 rounded-full transition-all duration-300 hover:bg-[#1E8DDE] ${
+                        safeActiveIndex === index
+                          ? "w-7 bg-[#185987] shadow-[0_8px_20px_rgba(30,141,222,0.28)]"
+                          : "w-2 bg-[#BFD8EA]"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {galleryImages.length > 1 && (
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+                  {galleryImages.map((image, index) => (
+                    <button
+                      type="button"
+                      key={image}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setActiveImageIndex(index);
+                      }}
+                      className={`group h-12 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.04] hover:opacity-100 hover:shadow-[0_12px_28px_rgba(30,141,222,0.22)] active:scale-95 md:h-14 md:w-24 ${
+                        safeActiveIndex === index
+                          ? "border-[#1E8DDE] opacity-100 shadow-[0_10px_26px_rgba(30,141,222,0.24)]"
+                          : "border-white/70 opacity-70"
+                      }`}
+                      aria-label={`Select ${project.title} image ${index + 1}`}
+                    >
+                      <SafeImage
+                        src={image}
+                        fallbackSrc={
+                          image === project.thumbnail
+                            ? project.fallbackThumbnail
+                            : null
+                        }
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fallback={
+                          <div className="h-full w-full bg-gradient-to-br from-[#e9f5ff] to-[#9fc7e3]" />
+                        }
+                      />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
-            {galleryImages.length > 1 && (
-              <div className="mt-3 flex items-center justify-center gap-2">
-                {galleryImages.map((_, index) => (
-                  <button
-                    key={`dot-${index}`}
-                    type="button"
-                    aria-label={`Go to image ${index + 1}`}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setActiveImageIndex(index);
-                    }}
-                    className={`h-2 rounded-full transition-all duration-300 hover:bg-[#1E8DDE] ${
-                      safeActiveIndex === index
-                        ? "w-7 bg-[#185987] shadow-[0_8px_20px_rgba(30,141,222,0.28)]"
-                        : "w-2 bg-[#BFD8EA]"
-                    }`}
-                  />
+            <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
+              <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+                RINGKASAN
+              </h4>
+
+              <p className="mt-3 text-sm leading-7 text-[#263B53] md:text-[15px]">
+                {project.description}
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.tools.map((tool) => (
+                  <ToolPill key={tool} tool={tool} />
                 ))}
               </div>
-            )}
 
-            {galleryImages.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-                {galleryImages.map((image, index) => (
-                  <button
-                    type="button"
-                    key={image}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setActiveImageIndex(index);
-                    }}
-                    className={`group h-12 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.04] hover:opacity-100 hover:shadow-[0_12px_28px_rgba(30,141,222,0.22)] active:scale-95 md:h-14 md:w-24 ${
-                      safeActiveIndex === index
-                        ? "border-[#1E8DDE] opacity-100 shadow-[0_10px_26px_rgba(30,141,222,0.24)]"
-                        : "border-white/70 opacity-70"
-                    }`}
-                    aria-label={`Select ${project.title} image ${index + 1}`}
-                  >
-                    <SafeImage
-                      src={image}
-                      fallbackSrc={
-                        image === project.thumbnail
-                          ? project.fallbackThumbnail
-                          : null
-                      }
-                      alt=""
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      fallback={
-                        <div className="h-full w-full bg-gradient-to-br from-[#e9f5ff] to-[#9fc7e3]" />
-                      }
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
-            <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
-              RINGKASAN
-            </h4>
-
-            <p className="mt-3 text-sm leading-7 text-[#263B53] md:text-[15px]">
-              {project.description}
-            </p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.tools.map((tool) => (
-                <ToolPill key={tool} tool={tool} />
-              ))}
-            </div>
-
-            {project.links?.some((link) => link.url) && (
-              <div className="mt-4">
-                <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
-                  TAUTAN
-                </h4>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.links
-                    .filter((link) => link.url)
-                    .map((link) => (
-                      <a
-                        key={`${link.label}-${link.url}`}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-4 py-2 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95"
-                      >
-                        {getCleanLinkLabel(link.label)}
-                      </a>
-                    ))}
+              {project.links?.some((link) => link.url) && (
+                <div className="mt-4">
+                  <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+                    TAUTAN
+                  </h4>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {project.links
+                      .filter((link) => link.url)
+                      .map((link) => (
+                        <a
+                          key={`${link.label}-${link.url}`}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-4 py-2 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95"
+                        >
+                          {getCleanLinkLabel(link.label)}
+                        </a>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -724,14 +759,18 @@ export default function PortfolioSection() {
       </div>
 
       {typeof document !== "undefined" &&
-        selectedProject &&
         createPortal(
-          <PortfolioModal
-            project={selectedProject}
-            activeImageIndex={activeImageIndex}
-            setActiveImageIndex={setActiveImageIndex}
-            onClose={closeDetails}
-          />,
+          <AnimatePresence>
+            {selectedProject && (
+              <PortfolioModal
+                key="portfolio-modal"
+                project={selectedProject}
+                activeImageIndex={activeImageIndex}
+                setActiveImageIndex={setActiveImageIndex}
+                onClose={closeDetails}
+              />
+            )}
+          </AnimatePresence>,
           document.body,
         )}
     </section>
