@@ -11,9 +11,40 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+  // Track scroll position & direction
+  useEffect(() => {
+    let prevScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+
+      setScrolled(currentY > 30);
+
+      // Hide navbar when scrolling down past threshold, show when scrolling up
+      if (currentY > 80 && currentY > prevScrollY) {
+        setNavbarHidden(true);
+      } else {
+        setNavbarHidden(false);
+      }
+
+      prevScrollY = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Ensure navbar is visible when mobile menu opens
+  useEffect(() => {
+    if (mobileOpen) setNavbarHidden(false);
+  }, [mobileOpen]);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -28,7 +59,15 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-[60] bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-gray-200 dark:border-zinc-800 transition-colors duration-300">
+    <header
+      className={`fixed top-0 left-0 w-full z-[60] transition-all duration-500 ${
+        navbarHidden ? "-translate-y-full" : "translate-y-0"
+      } ${
+        scrolled
+          ? "bg-white/75 dark:bg-zinc-900/80 backdrop-blur-xl shadow-[0_1px_20px_rgba(0,0,0,0.06)]"
+          : "bg-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="#home"
@@ -36,15 +75,15 @@ export default function Navbar() {
         >
           Hiyosashii<span className="text-primary-blue">.</span>
         </a>
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
             <a
               key={item.id}
               href={item.href}
-              className="font-ui text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors relative group"
+              className="font-ui text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-primary-blue dark:hover:text-primary-blue transition-all duration-300 hover:-translate-y-[1px] relative group"
             >
               {item.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-blue transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-[3px] left-1/2 -translate-x-1/2 w-[calc(100%+10px)] h-[3px] rounded-full bg-primary-blue/80 scale-x-0 group-hover:scale-x-75 transition-transform duration-300 origin-center"></span>
             </a>
           ))}
         </nav>
