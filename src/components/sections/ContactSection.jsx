@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
 import { contactData } from "@/data/contactData";
@@ -16,7 +16,7 @@ const badges = [
 ];
 
 const contactFallbacks = {
-  Gmail: "GM",
+  LinkedIn: "LI",
   GitHub: "GH",
   Instagram: "IG",
   YouTube: "YT",
@@ -71,6 +71,19 @@ function ContactIcon({ contact }) {
 }
 
 export default function ContactSection() {
+  const [showCVDropdown, setShowCVDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowCVDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <section
       id="contact"
@@ -81,7 +94,11 @@ export default function ContactSection() {
           initial={{ opacity: 0, y: 22, scale: 0.988, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1],
+            filter: { duration: 0.08 },
+          }}
           className="grid min-h-0 lg:min-h-[420px] grid-cols-1 items-center gap-10 rounded-[28px] border border-white/75 bg-white/85 p-7 shadow-[0_24px_60px_rgba(31,79,122,0.16)] backdrop-blur-[3px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(30,141,222,0.28)] sm:p-10 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:p-12 xl:p-16"
         >
           <div>
@@ -128,14 +145,72 @@ export default function ContactSection() {
               >
                 Email Me
               </a>
-              <a
-                href="https://github.com/Abduldinata"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-[#1E8DDE]/40 bg-white/40 px-5 py-2.5 text-sm font-bold text-[#123A5A] transition-all duration-300 hover:-translate-y-1 hover:bg-white/70 active:scale-95"
-              >
-                View GitHub
-              </a>
+
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowCVDropdown(!showCVDropdown)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#1E8DDE]/40 bg-white/40 px-5 py-2.5 text-sm font-bold text-[#123A5A] transition-all duration-300 hover:-translate-y-1 hover:bg-white/70 active:scale-95"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Download CV
+                  <svg
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${showCVDropdown ? "rotate-180" : ""}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {showCVDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="absolute bottom-full left-0 mb-2 w-52 rounded-xl border border-white/80 bg-white shadow-lg backdrop-blur-md overflow-hidden"
+                  >
+                    <a
+                      href="/assets/cv/cv_ats_tech.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowCVDropdown(false)}
+                      className="flex items-center gap-2.5 px-4 py-3.5 text-sm font-bold text-[#123A5A] transition-colors hover:bg-[#1E8DDE]/10"
+                    >
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                        💻
+                      </span>
+                      Tech CV
+                    </a>
+                    <a
+                      href="/assets/cv/cv_ats_multimedia.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowCVDropdown(false)}
+                      className="flex items-center gap-2.5 border-t border-white/60 px-4 py-3.5 text-sm font-bold text-[#123A5A] transition-colors hover:bg-[#1E8DDE]/10"
+                    >
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                        🎬
+                      </span>
+                      Multimedia CV
+                    </a>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
 

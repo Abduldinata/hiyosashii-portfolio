@@ -288,7 +288,11 @@ function SkillGroup({ title, subtitle, skills }) {
       initial={{ opacity: 0.88, y: 22, scale: 0.988, filter: "blur(6px)" }}
       whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1],
+        filter: { duration: 0.08 },
+      }}
       whileHover={{ y: -4, scale: 1.004 }}
       className="rounded-[1.75rem] border border-white/60 bg-white/45 px-6 py-5 shadow-xl shadow-[#1E8DDE]/10 ring-1 ring-white/50 backdrop-blur-sm sm:px-8 sm:py-6"
     >
@@ -366,7 +370,11 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
             initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: false, amount: 0.15, margin: "10% 0px 10% 0px" }}
-            transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: 0.48,
+              ease: [0.22, 1, 0.36, 1],
+              filter: { duration: 0.08 },
+            }}
             className="text-center"
           >
             <h2 className="font-ui text-4xl font-black tracking-[-0.045em] text-[#123E63] sm:text-5xl">
