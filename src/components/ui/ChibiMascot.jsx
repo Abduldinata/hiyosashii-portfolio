@@ -240,7 +240,7 @@ export default function ChibiMascot() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed bottom-4 left-4 z-[91] flex h-14 w-14 touch-none select-none items-center justify-center overflow-hidden rounded-2xl border-2 border-white/25 bg-gradient-to-br from-[#1a3045] to-[#0a1e30] shadow-[0_0_30px_rgba(30,141,222,0.2)] outline-none transition-transform duration-200 active:scale-90"
+        className="fixed bottom-4 left-4 z-[91] flex h-14 w-14 touch-none select-none items-center justify-center outline-none transition-transform duration-200 active:scale-90"
       >
         {isOpen ? (
           <svg
