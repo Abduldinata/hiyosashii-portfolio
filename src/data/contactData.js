@@ -2,7 +2,7 @@ export const contactData = [
   {
     label: "LinkedIn",
     type: "link",
-    url: "https://linkedin.com/in/abduldinata",
+    url: "https://www.linkedin.com/in/abdul-aziz-dinata-84042a345",
     icon: "/assets/icons/linkedin.png",
   },
   {

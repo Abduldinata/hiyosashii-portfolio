@@ -403,7 +403,7 @@ export default function AchievementSection() {
               ease: [0.22, 1, 0.36, 1],
               filter: { duration: 0.08 },
             }}
-            className="rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] transition-all duration-300 ease-out hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] sm:p-5 lg:sticky lg:top-24"
+            className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] transition-all duration-300 ease-out hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] sm:p-5 lg:sticky lg:top-24"
             onMouseEnter={() => setIsAsideHovered(true)}
             onMouseLeave={() => {
               setIsAsideHovered(false);
@@ -427,7 +427,7 @@ export default function AchievementSection() {
                 <div className="h-[240px] bg-[#eef7fc] sm:h-[320px] lg:h-[360px]">
                   <SafeAchievementImage
                     item={selectedAchievement}
-                    className="h-full w-full bg-[#f8fbff] object-cover transition-transform duration-300 ease-out"
+                    className="h-full w-full bg-[#f8fbff] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                   />
                 </div>
 

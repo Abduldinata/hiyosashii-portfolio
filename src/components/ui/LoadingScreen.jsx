@@ -61,7 +61,7 @@ export default function LoadingScreen({ onFinish }) {
         className="h-20 w-20 overflow-hidden rounded-full border-2 border-white/25 bg-white/10 shadow-[0_0_45px_rgba(30,141,222,0.2)]"
       >
         <img
-          src="/assets/load.png"
+          src="/assets/characters/load.png"
           alt="Loading"
           className="h-full w-full object-cover"
         />

@@ -9,6 +9,8 @@ import ScrollRevealClient from "@/components/layout/ScrollRevealClient";
 import BackgroundDepthClient from "@/components/layout/BackgroundDepthClient";
 import CursorGlow from "@/components/layout/CursorGlow";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import LagPopup from "@/components/ui/LagPopup";
+import ChibiMascot from "@/components/ui/ChibiMascot";
 import IntroSection from "@/components/sections/IntroSection";
 import ProfileSection from "@/components/sections/ProfileSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -53,7 +55,7 @@ export default function Home() {
       <div>
         <Navbar />
         <SideNavigation />
-        <main className="relative isolate min-h-screen overflow-x-hidden bg-[#eef3f7] pt-16">
+        <main className="relative isolate min-h-screen overflow-x-hidden bg-[#ece6dc] pt-16">
           <ScrollRevealClient />
           <BackgroundDepthClient />
           <div className="hiyo-global-bg" aria-hidden="true">
@@ -64,6 +66,9 @@ export default function Home() {
             <div className="hiyo-bg-stripes" />
             <div className="hiyo-bg-glow hiyo-bg-glow-a" />
             <div className="hiyo-bg-glow hiyo-bg-glow-b" />
+            <div className="hiyo-liquid-orb-a" aria-hidden="true" />
+            <div className="hiyo-liquid-orb-b" aria-hidden="true" />
+            <div className="hiyo-liquid-orb-c" aria-hidden="true" />
           </div>
 
           <CursorGlow />
@@ -89,6 +94,8 @@ export default function Home() {
             />
             <ContactSection key={`contact-${getTrigger("contact")}`} />
           </div>
+          <LagPopup />
+          <ChibiMascot />
         </main>
         <Footer />
       </div>

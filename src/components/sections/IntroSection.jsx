@@ -24,6 +24,7 @@ const sectionVariants = {
       ease: [0.16, 1, 0.3, 1],
       staggerChildren: 0.08,
       delayChildren: 0.12,
+      filter: { duration: 0.08 },
     },
   },
 };
@@ -44,7 +45,11 @@ const titleVariants = {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
+    transition: {
+      duration: 0.48,
+      ease: [0.22, 1, 0.36, 1],
+      filter: { duration: 0.08 },
+    },
   },
 };
 

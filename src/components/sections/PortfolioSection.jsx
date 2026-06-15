@@ -401,8 +401,6 @@ function PortfolioModal({
   setActiveImageIndex,
   onClose,
 }) {
-  if (!project) return null;
-
   // Keyboard: Escape to close
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -411,6 +409,8 @@ function PortfolioModal({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
+
+  if (!project) return null;
 
   const galleryImages = project.gallery?.length
     ? project.gallery

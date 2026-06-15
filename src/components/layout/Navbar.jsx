@@ -2,6 +2,7 @@
 
 import React from "react";
 import { SITE_CONFIG } from "@/constants/site";
+import AnimatedTooltip from "@/components/ui/AnimatedTooltip";
 
 const { useState, useEffect, useCallback } = React;
 
@@ -64,27 +65,40 @@ export default function Navbar() {
         navbarHidden ? "-translate-y-full" : "translate-y-0"
       } ${
         scrolled
-          ? "bg-white/90 md:bg-white/75 md:backdrop-blur-xl shadow-[0_1px_20px_rgba(0,0,0,0.06)]"
-          : "bg-transparent"
+          ? "bg-[#0a1e30]/85 md:bg-[#0a1e30]/75 md:backdrop-blur-xl shadow-lg shadow-black/10 border-b border-white/5"
+          : "bg-[#0a1e30]/30 md:bg-[#0a1e30]/20 backdrop-blur-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="#home"
-          className="font-heading text-xl font-bold text-[#123A5A] tracking-tight"
+          className="font-heading text-xl font-bold text-white tracking-tight relative"
         >
-          Hiyosashii<span className="text-primary-blue">.</span>
+          <span className="relative">
+            Hiyosashii
+            <span className="text-[#5DC3F5]">.</span>
+            <span className="absolute -bottom-0.5 left-0 h-[2.5px] w-full origin-left scale-x-0 rounded-full bg-gradient-to-r from-[#1E8DDE] to-[#00d4ff] transition-transform duration-500 group-hover:scale-x-100" />
+          </span>
         </a>
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
-            <a
+            <AnimatedTooltip
               key={item.id}
-              href={item.href}
-              className="font-ui text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-primary-blue dark:hover:text-primary-blue transition-all duration-300 hover:-translate-y-[1px] relative group"
+              content={
+                item.label === "Home"
+                  ? "Ke halaman utama"
+                  : `Lihat bagian ${item.label}`
+              }
+              position="bottom"
             >
-              {item.label}
-              <span className="absolute -bottom-[3px] left-1/2 -translate-x-1/2 w-[calc(100%+10px)] h-[3px] rounded-full bg-primary-blue/80 scale-x-0 group-hover:scale-x-75 transition-transform duration-300 origin-center"></span>
-            </a>
+              <a
+                href={item.href}
+                className="font-ui relative px-3.5 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 group"
+              >
+                {item.label}
+                <span className="absolute inset-x-3 bottom-0 h-[2.5px] rounded-full bg-gradient-to-r from-[#1E8DDE] to-[#00d4ff] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+              </a>
+            </AnimatedTooltip>
           ))}
         </nav>
 
@@ -101,7 +115,7 @@ export default function Navbar() {
           </span>
           {/* Three bars that animate into an X */}
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-gray-800 dark:bg-white transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               transform: mobileOpen
                 ? "translateY(0) rotate(45deg)"
@@ -109,13 +123,13 @@ export default function Navbar() {
             }}
           />
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-gray-800 dark:bg-white transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               opacity: mobileOpen ? 0 : 1,
             }}
           />
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-gray-800 dark:bg-white transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               transform: mobileOpen
                 ? "translateY(0) rotate(-45deg)"
@@ -140,7 +154,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <nav
-        className="md:hidden fixed right-0 z-50 flex flex-col bg-white dark:bg-zinc-900 shadow-xl transition-transform duration-300 ease-in-out"
+        className="md:hidden fixed right-0 z-50 flex flex-col bg-[#0a1e30]/95 backdrop-blur-xl shadow-2xl shadow-black/30 transition-transform duration-300 ease-in-out"
         style={{
           top: "64px",
           height: "calc(100dvh - 64px)",
@@ -148,14 +162,21 @@ export default function Navbar() {
           transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
         }}
       >
+        {/* Decorative top gradient line */}
+        <div className="h-[3px] w-full bg-gradient-to-r from-[#1E8DDE] via-[#00d4ff]/60 to-transparent" />
+
         <ul className="flex flex-col gap-1 px-4 py-6">
-          {navItems.map((item) => (
+          {navItems.map((item, index) => (
             <li key={item.id}>
               <a
                 href={item.href}
                 onClick={closeMobile}
-                className="font-ui flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-zinc-300 hover:bg-[#1E8DDE]/10 hover:text-[#123A5A] dark:hover:text-[#1E8DDE] transition-colors duration-200"
+                className="font-ui flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold text-gray-400 hover:bg-gradient-to-r hover:from-[#1E8DDE]/10 hover:to-transparent hover:text-white transition-all duration-200 group"
+                style={{
+                  animationDelay: `${index * 50}ms`,
+                }}
               >
+                <span className="h-[3px] w-0 rounded-full bg-[#1E8DDE] transition-all duration-300 group-hover:w-4" />
                 {item.label}
               </a>
             </li>
@@ -164,7 +185,10 @@ export default function Navbar() {
 
         {/* Accent bar at bottom of drawer */}
         <div className="mt-auto px-8 py-6">
-          <div className="h-1 w-12 rounded-full bg-[#1E8DDE]" />
+          <div className="flex items-center gap-2">
+            <div className="h-[3px] flex-1 rounded-full bg-gradient-to-r from-[#1E8DDE]/40 to-transparent" />
+            <div className="h-3 w-3 rounded-full border-2 border-[#1E8DDE]/30" />
+          </div>
         </div>
       </nav>
     </header>
