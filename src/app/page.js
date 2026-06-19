@@ -66,9 +66,13 @@ export default function Home() {
             <div className="hiyo-bg-stripes" />
             <div className="hiyo-bg-glow hiyo-bg-glow-a" />
             <div className="hiyo-bg-glow hiyo-bg-glow-b" />
-            <div className="hiyo-liquid-orb-a" aria-hidden="true" />
-            <div className="hiyo-liquid-orb-b" aria-hidden="true" />
-            <div className="hiyo-liquid-orb-c" aria-hidden="true" />
+            <div className="hiyo-fluid-mesh hiyo-fluid-mesh-a">
+              <div className="hiyo-fluid-glow hiyo-fluid-glow-a" />
+            </div>
+            <div className="hiyo-fluid-mesh hiyo-fluid-mesh-b">
+              <div className="hiyo-fluid-glow hiyo-fluid-glow-b" />
+              <div className="hiyo-fluid-glow hiyo-fluid-glow-c" />
+            </div>
           </div>
 
           <CursorGlow />
