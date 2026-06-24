@@ -231,7 +231,7 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
 
           {/* Right visual */}
           <motion.div
-            className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5 md:order-2 order-1 md:mt-0 -mt-12"
+            className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5 md:order-2 order-1 md:mt-0 sm:-mt-8"
             initial={{
               opacity: 0,
               x: 40,

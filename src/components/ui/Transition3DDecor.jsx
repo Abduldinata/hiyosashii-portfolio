@@ -28,22 +28,22 @@ const GREETINGS = [
 
 const POSITIONS = [
   {
-    cls: "top-1/4 right-0 -translate-y-1/4 translate-x-[18%]",
+    cls: "top-1/4 right-0 -translate-y-1/4 translate-x-[5%] sm:translate-x-[18%]",
     size: "h-80 w-80 sm:h-[30rem] sm:w-[30rem] lg:h-[40rem] lg:w-[40rem]",
     side: "right",
   },
   {
-    cls: "top-1/3 left-0 -translate-y-1/3 -translate-x-[18%]",
+    cls: "top-1/3 left-0 -translate-y-1/3 -translate-x-[5%] sm:-translate-x-[18%]",
     size: "h-80 w-80 sm:h-[30rem] sm:w-[30rem] lg:h-[40rem] lg:w-[40rem]",
     side: "left",
   },
   {
-    cls: "bottom-[22%] left-0 -translate-x-[30%]",
+    cls: "bottom-[22%] left-0 -translate-x-[10%] sm:-translate-x-[30%]",
     size: "h-48 w-48 sm:h-64 sm:w-64 lg:h-80 lg:w-80",
     side: "left",
   },
   {
-    cls: "bottom-[22%] right-0 translate-x-[30%]",
+    cls: "bottom-[22%] right-0 translate-x-[10%] sm:translate-x-[30%]",
     size: "h-48 w-48 sm:h-64 sm:w-64 lg:h-80 lg:w-80",
     side: "right",
   },
