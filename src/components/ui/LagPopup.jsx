@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 export default function LagPopup() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [status, setStatus] = useState("online"); // "online" | "offline" | "lag"
   const [show, setShow] = useState(false);
   const heartbeatRef = useRef(null);
@@ -71,6 +74,8 @@ export default function LagPopup() {
 
   const handleDismiss = useCallback(() => setShow(false), []);
 
+  const accentColor = isDark ? "#5DC3F5" : "#1E8DDE";
+
   return (
     <AnimatePresence>
       {show && (
@@ -80,11 +85,19 @@ export default function LagPopup() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-6 left-6 z-[100] max-w-[280px] rounded-2xl border border-white/30 bg-[#0a1e30]/95 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-md sm:bottom-8 sm:left-8"
+          className={`fixed bottom-6 left-6 z-[100] max-w-[280px] rounded-2xl border p-4 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-md sm:bottom-8 sm:left-8 ${
+            isDark
+              ? "border-white/30 bg-[#0a1e30]/95"
+              : "border-gray-200/80 bg-white/95 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+          }`}
         >
           <div className="flex items-start gap-3">
             {/* Lag/Lost chibi icon */}
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white/20">
+            <div
+              className={`h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 ${
+                isDark ? "border-white/20" : "border-gray-200"
+              }`}
+            >
               <img
                 src="/assets/characters/lag.png"
                 alt=""
@@ -95,17 +108,27 @@ export default function LagPopup() {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-black uppercase tracking-[0.12em] text-[#5DC3F5]">
+              <p
+                className="text-sm font-black uppercase tracking-[0.12em]"
+                style={{ color: accentColor }}
+              >
                 {status === "offline" ? "Offline" : "Lag Detect"}
               </p>
-              <p className="mt-1 text-xs font-semibold leading-relaxed text-white/70">
+              <p
+                className={`mt-1 text-xs font-semibold leading-relaxed ${
+                  isDark ? "text-white/70" : "text-gray-600"
+                }`}
+              >
                 {status === "offline"
                   ? "Koneksi internet terputus. Beberapa konten mungkin tidak bisa dimuat."
                   : "Koneksi terasa lambat. Beberapa fitur mungkin mengalami delay."}
               </p>
 
               {/* Animated dots like reconnect */}
-              <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#5DC3F5]/50">
+              <div
+                className="mt-3 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em]"
+                style={{ color: `${accentColor}80` }}
+              >
                 <span>Reconnecting</span>
                 <span className="flex gap-0.5">
                   <span className="h-1 w-1 animate-bounce rounded-full bg-current [animation-delay:0ms]" />
@@ -119,7 +142,11 @@ export default function LagPopup() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="-mr-1 -mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/80"
+              className={`-mr-1 -mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors ${
+                isDark
+                  ? "text-white/40 hover:bg-white/10 hover:text-white/80"
+                  : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+              }`}
               aria-label="Tutup"
             >
               ×

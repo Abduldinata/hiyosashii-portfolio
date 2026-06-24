@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
     --background: #ece6dc;
@@ -24,19 +25,20 @@
     --color-light-gray: var(--light-gray);
     --color-border: var(--border-color);
     --color-card-bg: var(--card-bg);
-    --font-sans: var(--font-body-inter);
+    --font-sans: var(--font-neue-montreal);
     --font-heading: var(--font-heading-poppins);
-    --font-ui: var(--font-body-inter);
+    --font-ui: var(--font-neue-montreal);
     --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0f172a;
-        --foreground: #f8fafc;
-        --border-color: #374151;
-        --card-bg: #1e293b;
-    }
+html.dark {
+    --background: #0a0f1a;
+    --foreground: #e2e8f0;
+    --primary-blue: #3b9eff;
+    --accent-cyan: #00d4ff;
+    --light-gray: #1a2235;
+    --border-color: #1e2d44;
+    --card-bg: rgba(15, 23, 42, 0.7);
 }
 
 html {
@@ -46,10 +48,13 @@ html {
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-body-inter), "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-neue-montreal), "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    transition:
+        background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 h1,
@@ -76,17 +81,11 @@ li,
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-        radial-gradient(
-            circle at 18% 82%,
-            rgba(30, 141, 222, 0.08),
-            transparent 34%
-        ),
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.1),
-            rgba(255, 255, 255, 0)
-        );
+    background: radial-gradient(
+        circle at 18% 82%,
+        rgba(30, 141, 222, 0.06),
+        transparent 34%
+    );
 }
 
 .hiyo-section-bridge,
@@ -1478,4 +1477,265 @@ button[aria-label="Switch profile mode"]:active {
     opacity: 0 !important;
     height: 0 !important;
     margin: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════
+   DARK THEME OVERRIDES (html.dark)
+   ══════════════════════════════════════════════════ */
+
+.dark body {
+    background: var(--background);
+    color: var(--foreground);
+}
+
+/* ── Dark: Global Background ── */
+.dark .hiyo-global-bg {
+    background:
+        radial-gradient(
+            ellipse at 12% 78%,
+            rgba(30, 141, 222, 0.15) 0,
+            rgba(30, 141, 222, 0.06) 20%,
+            transparent 40%
+        ),
+        radial-gradient(
+            ellipse at 85% 20%,
+            rgba(0, 212, 255, 0.06) 0,
+            transparent 35%
+        ),
+        linear-gradient(
+            160deg,
+            #0a0f1a 0%,
+            #0d1525 30%,
+            #101b2e 60%,
+            #0a1424 100%
+        );
+}
+
+.dark .hiyo-global-bg::before {
+    background: linear-gradient(
+        145deg,
+        rgba(30, 141, 222, 0.22),
+        rgba(13, 77, 120, 0.1)
+    );
+    opacity: 0.55;
+}
+
+.dark .hiyo-global-bg::after {
+    opacity: 0.12;
+}
+
+.dark .hiyo-bg-paper {
+    opacity: 0.03;
+    mix-blend-mode: overlay;
+}
+
+.dark .hiyo-bg-shape {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .hiyo-bg-shape-a {
+    background: linear-gradient(
+        145deg,
+        rgba(30, 141, 222, 0.18),
+        rgba(13, 77, 120, 0.06)
+    );
+    opacity: 0.5;
+}
+
+.dark .hiyo-bg-shape-c {
+    background: linear-gradient(
+        135deg,
+        rgba(30, 141, 222, 0.1),
+        rgba(45, 143, 227, 0.02)
+    );
+}
+
+.dark .hiyo-bg-stripes {
+    opacity: 0.02;
+}
+
+.dark .hiyo-bg-glow-a {
+    background: radial-gradient(
+        circle,
+        rgba(59, 158, 255, 0.14),
+        transparent 70%
+    );
+    opacity: 0.8;
+}
+
+.dark .hiyo-bg-glow-b {
+    background: radial-gradient(
+        circle,
+        rgba(0, 212, 255, 0.1),
+        transparent 70%
+    );
+    opacity: 0.7;
+}
+
+/* ── Dark: Section surface ── */
+.dark .hiyo-section-surface::before {
+    background:
+        radial-gradient(
+            circle at 18% 82%,
+            rgba(30, 141, 222, 0.05),
+            transparent 34%
+        ),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+}
+
+/* ── Dark: Cards ── */
+.dark .card-clean {
+    background: rgba(15, 23, 42, 0.55);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.dark .card-clean:hover {
+    box-shadow: 0 4px 24px rgba(30, 141, 222, 0.15);
+    border-color: rgba(30, 141, 222, 0.15);
+}
+
+.dark .card-blue {
+    background: rgba(30, 141, 222, 0.06);
+    border-color: rgba(30, 141, 222, 0.12);
+}
+
+.dark .card-premium {
+    background: rgba(15, 23, 42, 0.65);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        0 8px 24px rgba(0, 0, 0, 0.15),
+        0 20px 48px rgba(0, 0, 0, 0.08);
+}
+
+.dark .card-premium::after {
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(30, 141, 222, 0.03) 100%
+    );
+}
+
+.dark .card-premium:hover {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        0 12px 32px rgba(30, 141, 222, 0.12),
+        0 28px 60px rgba(30, 141, 222, 0.08);
+    border-color: rgba(59, 158, 255, 0.2);
+}
+
+.dark .card-premium-glow {
+    background: rgba(15, 23, 42, 0.65);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.dark .card-premium-glow:hover {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        0 12px 32px rgba(30, 141, 222, 0.15),
+        0 28px 60px rgba(30, 141, 222, 0.1);
+}
+
+.dark .card-texture::before {
+    mix-blend-mode: overlay;
+    opacity: 0.3;
+}
+
+/* ── Dark: Buttons ── */
+.dark .btn-outline-blue {
+    border-color: rgba(59, 158, 255, 0.4);
+    color: #5dc3f5;
+}
+
+.dark .btn-outline-blue:hover {
+    background: #3b9eff;
+    color: white;
+    border-color: #3b9eff;
+}
+
+.dark .btn-outline-white {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.dark .btn-outline-white:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* ── Dark: Soft divider ── */
+.dark .hiyo-soft-divider {
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(59, 158, 255, 0.06),
+        transparent
+    );
+}
+
+/* ── Dark: Motion card hover ── */
+.dark .hiyo-motion-card:hover {
+    box-shadow:
+        0 12px 32px rgba(30, 141, 222, 0.15),
+        0 28px 70px rgba(30, 141, 222, 0.2),
+        0 48px 100px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Dark: Fluid glows ── */
+.dark .hiyo-fluid-glow-a {
+    background: radial-gradient(
+        circle at 40% 40%,
+        rgba(59, 158, 255, 0.12),
+        rgba(30, 141, 222, 0.04) 45%,
+        transparent 65%
+    );
+    opacity: 0.8;
+}
+
+.dark .hiyo-fluid-glow-b {
+    background: radial-gradient(
+        circle at 55% 35%,
+        rgba(0, 212, 255, 0.08),
+        rgba(30, 141, 222, 0.03) 40%,
+        transparent 60%
+    );
+    opacity: 0.6;
+}
+
+.dark .hiyo-fluid-glow-c {
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(147, 197, 253, 0.06),
+        transparent 55%
+    );
+    opacity: 0.7;
+}
+
+/* ── Dark: Mobile overrides ── */
+@media (max-width: 767px) {
+    .dark .hiyo-global-bg {
+        background:
+            radial-gradient(
+                circle at 20% 80%,
+                rgba(30, 141, 222, 0.1) 0%,
+                rgba(30, 141, 222, 0.04) 35%,
+                transparent 55%
+            ),
+            linear-gradient(160deg, #0a0f1a 0%, #0d1525 60%, #101b2e 100%) !important;
+    }
+
+    .dark .hiyo-global-bg::before {
+        opacity: 0.3 !important;
+    }
+
+    .dark .hiyo-bg-paper {
+        opacity: 0.02 !important;
+        mix-blend-mode: overlay !important;
+    }
 }

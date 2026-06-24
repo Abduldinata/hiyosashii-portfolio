@@ -43,10 +43,10 @@ const filters = [
 ];
 
 const primaryActionClass =
-  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] dark:bg-[#1a567a] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
 
 const secondaryActionClass =
-  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/90 px-5 py-3 text-sm font-black tracking-wide text-[#1a567a] shadow-sm dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-gray-300 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
 
 const arrowClass =
   "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
@@ -231,7 +231,7 @@ export default function AchievementSection() {
   return (
     <section
       id="achievement"
-      className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 sm:px-6 lg:px-8"
+      className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 dark:text-white sm:px-6 lg:px-8"
     >
       <style jsx global>{`
         .portfolio-card-highlight {
@@ -255,10 +255,10 @@ export default function AchievementSection() {
           viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
           className="mb-7 text-center"
         >
-          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
+          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#0f3b5e] dark:text-white/90 md:text-4xl">
             Experience & Certificates
           </h2>
-          <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+          <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 dark:text-gray-400 md:text-base">
             Jejak pengalaman, project, sertifikat, workshop, dan perkembangan
             skill yang membentuk perjalanan kreatif dan akademik saya.
           </p>
@@ -272,10 +272,10 @@ export default function AchievementSection() {
                   key={filter.value}
                   type="button"
                   onClick={() => handleFilterChange(filter.value)}
-                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
+                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white active:scale-95 sm:text-xs ${
                     isActive
-                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)]"
-                      : "bg-white/60 text-[#1f4f7a] ring-1 ring-white/70"
+                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)] dark:bg-[#1a567a] dark:shadow-[0_8px_22px_rgba(0,0,0,0.3)]"
+                      : "bg-white/80 text-[#1a567a] ring-1 ring-white/70 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
                   }`}
                 >
                   {filter.label}
@@ -297,9 +297,9 @@ export default function AchievementSection() {
           }}
           className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7 pt-4"
         >
-          <div className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] sm:p-6">
+          <div className="rounded-[28px] border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 sm:p-6">
             <div className="relative space-y-4 pl-7">
-              <div className="absolute bottom-2 left-[9px] top-2 w-px bg-[#8fb6d1]/70" />
+              <div className="absolute bottom-2 left-[9px] top-2 w-px bg-[#8fb6d1]/70 dark:bg-white/[0.08]" />
 
               {filteredAchievements.length > 0 ? (
                 filteredAchievements.map((item, index) => {
@@ -327,7 +327,7 @@ export default function AchievementSection() {
                       whileTap={{ scale: 0.985 }}
                       className="relative"
                     >
-                      <div className="absolute -left-[28px] top-4 flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_rgba(31,79,122,0.18)] ring-1 ring-[#cfe1ed]">
+                      <div className="absolute -left-[28px] top-4 flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_rgba(31,79,122,0.18)] ring-1 ring-[#cfe1ed] dark:bg-[#0f1a2e] dark:shadow-[0_6px_16px_rgba(0,0,0,0.3)] dark:ring-white/[0.05]">
                         <span
                           className={`h-2.5 w-2.5 rounded-full transition-colors duration-300 ${
                             isSelected ? "bg-[#1E8DDE]" : "bg-[#8fb6d1]"
@@ -338,10 +338,10 @@ export default function AchievementSection() {
                       <button
                         type="button"
                         onClick={() => setSelectedId(item.id)}
-                        className={`group block w-full rounded-[28px] border p-4 text-left shadow-[0_18px_45px_rgba(31,79,122,0.09)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:border-[#1E8DDE]/50 hover:bg-white/90 hover:shadow-[0_18px_46px_rgba(30,141,222,0.16)] ${
+                        className={`group block w-full rounded-[28px] border p-4 text-left shadow-[0_18px_45px_rgba(31,79,122,0.09)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:border-[#1E8DDE]/50 dark:hover:border-[#3b9eff]/50 hover:bg-white/90 dark:hover:bg-[#0f1a2e]/80 hover:shadow-[0_18px_46px_rgba(30,141,222,0.16)] dark:hover:shadow-[0_18px_46px_rgba(0,0,0,0.3)] ${
                           isSelected
-                            ? "border-[#BFD8EA] bg-white/95 ring-2 ring-[#d8eaf6]"
-                            : "border-white/70 bg-white/80"
+                            ? "border-[#BFD8EA] bg-white/95 ring-2 ring-[#d8eaf6] dark:border-[#3b9eff]/30 dark:bg-[#0f1a2e]/80 dark:ring-[#3b9eff]/10"
+                            : "border-white/70 bg-white/80 dark:border-white/[0.05] dark:bg-[#0b1425]/50"
                         }`}
                       >
                         <div className="flex gap-4">
@@ -354,25 +354,25 @@ export default function AchievementSection() {
 
                           <div className="min-w-0 flex-1">
                             <div className="mb-2 flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-extrabold tracking-wide text-[#1f4f7a]">
+                              <span className="text-sm font-extrabold tracking-wide text-[#1a567a] dark:text-gray-300">
                                 {item.year}
                               </span>
-                              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1f4f7a] ring-1 ring-white/80">
+                              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1a567a] ring-1 ring-white/80 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]">
                                 {item.type}
                               </span>
                             </div>
-                            <h3 className="text-base font-extrabold tracking-tight text-[#173d61] sm:text-lg">
+                            <h3 className="text-base font-extrabold tracking-tight text-[#0f3b5e] dark:text-white sm:text-lg">
                               {item.title}
                             </h3>
-                            <p className="mt-1 text-sm font-bold text-[#1f4f7a]">
+                            <p className="mt-1 text-sm font-bold text-[#1a567a] dark:text-gray-400">
                               {item.organization}
                             </p>
                             {shouldShowPeriod && (
-                              <p className="mt-0.5 text-xs font-bold text-slate-500">
+                              <p className="mt-0.5 text-xs font-bold text-slate-500 dark:text-gray-500">
                                 {item.period}
                               </p>
                             )}
-                            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-600">
+                            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-gray-400">
                               {item.description}
                             </p>
                           </div>
@@ -382,7 +382,7 @@ export default function AchievementSection() {
                   );
                 })
               ) : (
-                <p className="rounded-[28px] border border-white/70 bg-white/75 px-5 py-8 text-center text-sm font-bold text-[#1f4f7a] shadow-[0_18px_45px_rgba(31,79,122,0.1)]">
+                <p className="rounded-[28px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300">
                   Belum ada data untuk kategori ini.
                 </p>
               )}
@@ -403,7 +403,7 @@ export default function AchievementSection() {
               ease: [0.22, 1, 0.36, 1],
               filter: { duration: 0.08 },
             }}
-            className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] backdrop-blur-[3px] transition-all duration-300 ease-out hover:shadow-[0_24px_60px_rgba(30,141,222,0.16)] sm:p-5 lg:sticky lg:top-24"
+            className="group rounded-[28px] border border-white/50 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-[0_12px_32px_rgba(30,141,222,0.15)] dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:hover:shadow-[0_12px_32px_rgba(30,141,222,0.1)] sm:p-5 lg:sticky lg:top-24"
             onMouseEnter={() => setIsAsideHovered(true)}
             onMouseLeave={() => {
               setIsAsideHovered(false);
@@ -423,7 +423,7 @@ export default function AchievementSection() {
                 `,
               }}
             >
-              <div className="overflow-hidden rounded-[24px] border border-[#D7EAF5] bg-white/70 shadow-[0_18px_50px_rgba(31,79,122,0.08)]">
+              <div className="overflow-hidden rounded-[24px] border border-[#D7EAF5] bg-white/70 shadow-[0_18px_50px_rgba(31,79,122,0.08)] dark:border-white/[0.06] dark:bg-[#0b1425]/50 dark:shadow-[0_18px_50px_rgba(0,0,0,0.3)]">
                 <div className="h-[240px] bg-[#eef7fc] sm:h-[320px] lg:h-[360px]">
                   <SafeAchievementImage
                     item={selectedAchievement}
@@ -433,32 +433,32 @@ export default function AchievementSection() {
 
                 <div className="p-5 md:p-6">
                   <div className="flex flex-wrap gap-2">
-                    <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987] ring-1 ring-white/80">
+                    <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] dark:bg-white/[0.06] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#1a567a] ring-1 ring-white/80">
                       {selectedAchievement.type}
                     </span>
                     {selectedAchievement.period &&
                       selectedAchievement.period !==
                         selectedAchievement.year && (
-                        <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#185987]">
+                        <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 dark:border-white/[0.06] dark:bg-[#0f1a2e]/50 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#1a567a]">
                           {selectedDisplayPeriod}
                         </span>
                       )}
                   </div>
 
-                  <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
+                  <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#0f3b5e] dark:text-white md:text-3xl">
                     {selectedAchievement.title}
                   </h3>
-                  <p className="mt-2 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
+                  <p className="mt-2 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] dark:text-gray-500 md:text-xs">
                     {selectedAchievement.organization}
                   </p>
 
-                  <p className="mt-5 text-sm leading-7 text-[#263B53] md:text-[15px]">
+                  <p className="mt-5 text-sm leading-7 text-[#0f3b5e] dark:text-gray-300 md:text-[15px]">
                     {selectedAchievement.description}
                   </p>
 
                   {selectedAchievement.tools?.length > 0 && (
                     <div className="mt-5">
-                      <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#185987]">
+                      <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#1a567a] dark:text-gray-300">
                         Tools & Fokus
                       </h4>
                       <div className="mt-3 flex flex-wrap gap-2">

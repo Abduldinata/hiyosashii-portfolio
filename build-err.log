@@ -1,0 +1,28 @@
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/components/ui/ChibiMascot.jsx:307:1
+Expression expected
+  [90m305 |[0m     [name, message, comments],
+  [90m306 |[0m   );
+[31m[1m>[0m [90m307 |[0m ]);
+  [90m    |[0m [31m[1m^[0m
+  [90m308 |[0m
+  [90m309 |[0m [36mconst[0m isEmpty = comments.length === [35m0[0m;
+  [90m310 |[0m
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ui/ChibiMascot.jsx [Client Component Browser]
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/components/ui/ChibiMascot.jsx [Client Component SSR]
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+
+    at <unknown> (./src/components/ui/ChibiMascot.jsx:307:1)

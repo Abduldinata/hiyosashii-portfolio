@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { portfolioData } from "../../data/portfolioData";
 import ToolPill from "../ui/ToolPill";
+
 const sectionTitleMotion = {
   hidden: {
     opacity: 0,
@@ -67,10 +68,10 @@ const filters = [
 ];
 
 const primaryActionClass =
-  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] dark:bg-[#1a567a] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
 
 const secondaryActionClass =
-  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-5 py-3 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
+  "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/90 px-5 py-3 text-sm font-black tracking-wide text-[#1a567a] shadow-sm dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-gray-300 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] dark:hover:border-[#3b9eff] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] dark:hover:shadow-[0_16px_38px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95";
 
 const arrowClass =
   "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
@@ -97,7 +98,7 @@ function CategoryPills({ categories, className = "" }) {
       {visibleCategories.map((category) => (
         <span
           key={category}
-          className="font-ui rounded-full bg-[#e8f2f8] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1f4f7a] ring-1 ring-white/80"
+          className="font-ui rounded-full bg-[#e8f2f8] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1a567a] ring-1 ring-white/80 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
         >
           {category}
         </span>
@@ -117,7 +118,7 @@ function FallbackThumbnail({ project, className = "aspect-video" }) {
         <span className="inline-flex rounded-full bg-[#1f4f7a] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
           {project.categories?.[0] ?? "Portfolio"}
         </span>
-        <p className="mt-3 line-clamp-2 text-base font-extrabold leading-tight text-[#173d61]">
+        <p className="mt-3 line-clamp-2 text-base font-extrabold leading-tight text-[#0f3b5e]">
           {project.title}
         </p>
       </div>
@@ -286,7 +287,7 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         scale: 0.98,
         transition: { duration: 0.12 },
       }}
-      className="group rounded-[28px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_45px_rgba(31,79,122,0.13)] sm:p-5"
+      className="group rounded-[28px] border border-white/50 bg-white/40 p-4 shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] sm:p-5"
       onMouseEnter={!isTouchDevice ? () => setIsCardHovered(true) : undefined}
       onMouseLeave={
         !isTouchDevice
@@ -322,20 +323,20 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         <div className="px-1 pt-4">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <CategoryPills categories={project.categories} />
-            <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#3d6f93]">
+            <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#3d6f93] dark:text-gray-500">
               {project.year}
             </span>
           </div>
 
-          <h3 className="line-clamp-2 text-lg font-extrabold tracking-tight text-[#173d61] sm:text-xl">
+          <h3 className="line-clamp-2 text-lg font-extrabold tracking-tight text-[#0f3b5e] dark:text-white sm:text-xl">
             {project.title}
           </h3>
           {project.role && (
-            <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[#1f4f7a]/75">
+            <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[#1a567a]/75 dark:text-gray-400">
               {project.role}
             </p>
           )}
-          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-gray-400">
             {project.description}
           </p>
 
@@ -344,7 +345,7 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
               <ToolPill key={tool} tool={tool} />
             ))}
             {hiddenToolsCount > 0 && (
-              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[11px] font-bold text-[#1f4f7a] ring-1 ring-[#cfe1ed]">
+              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[11px] font-bold text-[#1a567a] ring-1 ring-[#cfe1ed] dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]">
                 +{hiddenToolsCount}
               </span>
             )}
@@ -457,12 +458,12 @@ function PortfolioModal({
           exit={{ opacity: 0, y: 16, scale: 0.97 }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-[1120px] rounded-[30px] border border-white/70 bg-white/95 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] sm:p-5 md:p-6"
+          className="relative w-full max-w-[1120px] rounded-[30px] border border-white/70 bg-white/90 dark:border-white/[0.06] dark:bg-[#0b1425]/90 p-4 shadow-[0_34px_100px_rgba(15,77,120,0.28)] dark:shadow-[0_34px_80px_rgba(0,0,0,0.4)] sm:p-5 md:p-6"
         >
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 z-40 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#173d61] hover:shadow-[0_16px_38px_rgba(31,79,122,0.26)] active:translate-y-0 active:scale-95"
+            className="absolute right-4 top-4 z-40 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1f4f7a] dark:bg-[#1a567a] text-lg font-black text-white shadow-[0_10px_24px_rgba(31,79,122,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#173d61] dark:hover:bg-[#0f3b5e] hover:shadow-[0_16px_38px_rgba(31,79,122,0.26)] active:translate-y-0 active:scale-95"
             aria-label="Close portfolio detail"
           >
             ×
@@ -473,21 +474,21 @@ function PortfolioModal({
               {project.categories?.slice(0, 2).map((category) => (
                 <span
                   key={category}
-                  className="font-ui inline-flex rounded-full bg-[#E8F4FB] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#185987]"
+                  className="font-ui inline-flex rounded-full bg-[#E8F4FB] dark:bg-white/[0.06] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#1a567a] dark:text-gray-300"
                 >
                   {category}
                 </span>
               ))}
-              <span className="text-[11px] font-black tracking-[0.2em] text-[#185987] md:text-xs">
+              <span className="text-[11px] font-black tracking-[0.2em] text-[#1a567a] dark:text-gray-300 md:text-xs">
                 {project.year}
               </span>
             </div>
 
-            <h3 className="mt-3 max-w-4xl text-2xl font-black leading-tight tracking-tight text-[#123A5A] md:text-3xl">
+            <h3 className="mt-3 max-w-4xl text-2xl font-black leading-tight tracking-tight text-[#0f3b5e] dark:text-white md:text-3xl">
               {project.title}
             </h3>
             {project.role && (
-              <p className="mt-2 max-w-4xl text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] md:text-xs">
+              <p className="mt-2 max-w-4xl text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] dark:text-gray-500 md:text-xs">
                 {project.role}
               </p>
             )}
@@ -495,7 +496,7 @@ function PortfolioModal({
 
           <div className="mt-5 grid gap-5 md:grid-cols-[1.3fr_1fr] lg:grid-cols-[1.35fr_0.95fr] md:items-start lg:items-start">
             <div className="space-y-3 min-w-0">
-              <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#E8F4FB]/30 shadow-[0_18px_50px_rgba(31,79,122,0.12)] border border-slate-100 md:min-h-[400px]">
+              <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#E8F4FB] dark:bg-[#0b1425]/50 shadow-[0_18px_50px_rgba(31,79,122,0.12)] border border-slate-100 dark:border-white/[0.06] md:min-h-[400px]">
                 <SafeImage
                   key={activeImage}
                   src={activeImage}
@@ -515,7 +516,7 @@ function PortfolioModal({
                       type="button"
                       aria-label="Previous image"
                       onClick={goToPreviousImage}
-                      className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:-translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
+                      className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 dark:border-white/[0.06] dark:bg-[#0b1425]/90 text-2xl font-black text-[#1a567a] dark:text-gray-300 shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:-translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
                     >
                       ‹
                     </button>
@@ -524,7 +525,7 @@ function PortfolioModal({
                       type="button"
                       aria-label="Next image"
                       onClick={goToNextImage}
-                      className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-2xl font-black text-[#185987] shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
+                      className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 dark:border-white/[0.06] dark:bg-[#0b1425]/90 text-2xl font-black text-[#1a567a] dark:text-gray-300 shadow-[0_16px_38px_rgba(15,77,120,0.22)] transition-all duration-300 hover:translate-x-1 hover:scale-110 hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_18px_46px_rgba(30,141,222,0.34)] active:scale-95"
                     >
                       ›
                     </button>
@@ -532,7 +533,7 @@ function PortfolioModal({
                 )}
 
                 {galleryImages.length > 1 && (
-                  <span className="absolute bottom-3 right-3 z-30 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-black tracking-wide text-[#123A5A] shadow-sm">
+                  <span className="absolute bottom-3 right-3 z-30 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-black tracking-wide text-[#0f3b5e] dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300 dark:text-white shadow-sm">
                     {safeActiveIndex + 1} / {galleryImages.length}
                   </span>
                 )}
@@ -549,10 +550,10 @@ function PortfolioModal({
                         event.stopPropagation();
                         setActiveImageIndex(index);
                       }}
-                      className={`h-2 rounded-full transition-all duration-300 hover:bg-[#1E8DDE] ${
+                      className={`h-2 rounded-full transition-all duration-300 hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] ${
                         safeActiveIndex === index
-                          ? "w-7 bg-[#185987] shadow-[0_8px_20px_rgba(30,141,222,0.28)]"
-                          : "w-2 bg-[#BFD8EA]"
+                          ? "w-7 bg-[#185987] dark:bg-[#1a567a] shadow-[0_8px_20px_rgba(30,141,222,0.28)]"
+                          : "w-2 bg-[#BFD8EA] dark:bg-white/[0.1]"
                       }`}
                     />
                   ))}
@@ -572,7 +573,7 @@ function PortfolioModal({
                       className={`group h-12 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.04] hover:opacity-100 hover:shadow-[0_12px_28px_rgba(30,141,222,0.22)] active:scale-95 md:h-14 md:w-24 ${
                         safeActiveIndex === index
                           ? "border-[#1E8DDE] opacity-100 shadow-[0_10px_26px_rgba(30,141,222,0.24)]"
-                          : "border-white/70 opacity-70"
+                          : "border-white/70 opacity-70 dark:border-white/[0.05] dark:opacity-50"
                       }`}
                       aria-label={`Select ${project.title} image ${index + 1}`}
                     >
@@ -595,12 +596,12 @@ function PortfolioModal({
               )}
             </div>
 
-            <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
-              <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+            <div className="rounded-[22px] border border-[#D7EAF5] bg-white/70 dark:border-white/[0.06] dark:bg-[#0b1425]/50 p-4 shadow-[0_18px_50px_rgba(31,79,122,0.08)] md:p-5">
+              <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#1a567a] dark:text-gray-300">
                 RINGKASAN
               </h4>
 
-              <p className="mt-3 text-sm leading-7 text-[#263B53] md:text-[15px]">
+              <p className="mt-3 text-sm leading-7 text-[#0f3b5e] dark:text-white md:text-[15px]">
                 {project.description}
               </p>
 
@@ -612,7 +613,7 @@ function PortfolioModal({
 
               {project.links?.some((link) => link.url) && (
                 <div className="mt-4">
-                  <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#185987]">
+                  <h4 className="font-ui text-xs font-black uppercase tracking-[0.2em] text-[#1a567a] dark:text-gray-300">
                     TAUTAN
                   </h4>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -624,7 +625,7 @@ function PortfolioModal({
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/75 px-4 py-2 text-sm font-black tracking-wide text-[#185987] shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95"
+                          className="group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/90 px-4 py-2 text-sm font-black tracking-wide text-[#1a567a] dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-gray-300 dark:text-gray-300 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] dark:hover:border-[#3b9eff] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] dark:hover:shadow-[0_16px_38px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95"
                         >
                           {getCleanLinkLabel(link.label)}
                         </a>
@@ -679,7 +680,7 @@ export default function PortfolioSection() {
   return (
     <section
       id="portfolio"
-      className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 sm:px-6 lg:px-8"
+      className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 dark:text-white sm:px-6 lg:px-8"
     >
       <div className="relative z-10 mx-auto w-full max-w-[1200px]">
         <motion.div
@@ -689,10 +690,10 @@ export default function PortfolioSection() {
           viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
           className="mb-6 text-center"
         >
-          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#173d61] md:text-4xl">
+          <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#0f3b5e] dark:text-white/90 md:text-4xl">
             Portfolio
           </h2>
-          <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+          <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 dark:text-gray-400 md:text-base">
             Kumpulan proyek utama yang menggabungkan sisi teknologi, desain, dan
             identitas kreatif saya.
           </p>
@@ -712,10 +713,10 @@ export default function PortfolioSection() {
                   key={filter}
                   type="button"
                   onClick={() => handleCategoryChange(filter)}
-                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] hover:text-white active:scale-95 sm:text-xs ${
+                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white active:scale-95 sm:text-xs ${
                     isActive
-                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)]"
-                      : "bg-white/60 text-[#1f4f7a] ring-1 ring-white/70"
+                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)] dark:bg-[#1a567a] dark:shadow-[0_8px_22px_rgba(0,0,0,0.3)]"
+                      : "bg-white/80 text-[#1a567a] ring-1 ring-white/70 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
                   }`}
                 >
                   {filter}
@@ -750,7 +751,7 @@ export default function PortfolioSection() {
                 margin: "10% 0px 10% 0px",
               }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-[24px] border border-white/70 bg-white/75 px-5 py-8 text-center text-sm font-bold text-[#1f4f7a] shadow-[0_18px_45px_rgba(31,79,122,0.1)] md:col-span-2"
+              className="rounded-[24px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300 md:col-span-2"
             >
               Belum ada portfolio untuk kategori ini.
             </motion.p>

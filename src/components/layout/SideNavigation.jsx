@@ -45,14 +45,14 @@ export default function SideNavigation() {
           className="group relative flex items-center justify-end"
           aria-label={`Go to ${item.label}`}
         >
-          <span className="pointer-events-none absolute right-7 whitespace-nowrap rounded-full border border-white/60 bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#123A5A] opacity-0 shadow-md backdrop-blur-md transition-all duration-300 ease-out group-hover:-translate-x-1 group-hover:opacity-100">
+          <span className="pointer-events-none absolute right-7 whitespace-nowrap rounded-full border border-white/60 bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f3b5e] dark:border-white/[0.08] dark:bg-[#0f1a2e]/90 dark:text-white opacity-0 shadow-md backdrop-blur-md transition-all duration-300 ease-out group-hover:-translate-x-1 group-hover:opacity-100">
             {item.label}
           </span>
           <span
-            className={`relative block rounded-full border transition-all duration-300 ease-out hover:scale-125 hover:border-white hover:bg-white/90 hover:shadow-[0_0_18px_rgba(30,141,222,0.35)] ${
+            className={`relative block rounded-full border transition-all duration-300 ease-out hover:scale-125 hover:border-[#1E8DDE] dark:hover:border-white hover:bg-[#1E8DDE] dark:hover:bg-white/90 hover:shadow-[0_0_18px_rgba(30,141,222,0.35)] ${
               activeSection === item.id
-                ? "h-4 w-4 border-white bg-white shadow-[0_0_0_4px_rgba(255,255,255,0.16),0_0_22px_rgba(30,141,222,0.35)]"
-                : "h-3 w-3 border-[#123A5A]/50 bg-transparent"
+                ? "h-4 w-4 border-[#1E8DDE] bg-[#1E8DDE] dark:border-white dark:bg-white shadow-[0_0_0_4px_rgba(30,141,222,0.16),0_0_22px_rgba(30,141,222,0.35)] dark:shadow-[0_0_0_4px_rgba(255,255,255,0.16),0_0_22px_rgba(30,141,222,0.35)]"
+                : "h-3 w-3 border-[#123A5A]/30 bg-transparent dark:border-white/30"
             }`}
           />
         </a>

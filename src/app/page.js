@@ -7,10 +7,12 @@ import SideNavigation from "@/components/layout/SideNavigation";
 import Footer from "@/components/layout/Footer";
 import ScrollRevealClient from "@/components/layout/ScrollRevealClient";
 import BackgroundDepthClient from "@/components/layout/BackgroundDepthClient";
+import Transition3DDecor from "@/components/ui/Transition3DDecor";
 import CursorGlow from "@/components/layout/CursorGlow";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import LagPopup from "@/components/ui/LagPopup";
 import ChibiMascot from "@/components/ui/ChibiMascot";
+import { useTheme } from "@/components/layout/ThemeProvider";
 import IntroSection from "@/components/sections/IntroSection";
 import ProfileSection from "@/components/sections/ProfileSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -22,6 +24,8 @@ export default function Home() {
   const [showContent, setShowContent] = useState(false);
   const [identityMode, setIdentityMode] = useState("student");
   const [triggers, setTriggers] = useState({});
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const getTrigger = useCallback((name) => triggers[name] || 0, [triggers]);
 
@@ -55,9 +59,10 @@ export default function Home() {
       <div>
         <Navbar />
         <SideNavigation />
-        <main className="relative isolate min-h-screen overflow-x-hidden bg-[#ece6dc] pt-16">
+        <main className="relative isolate min-h-screen overflow-x-hidden bg-[#ece6dc] dark:bg-transparent pt-16 transition-colors duration-300">
           <ScrollRevealClient />
           <BackgroundDepthClient />
+          <Transition3DDecor />
           <div className="hiyo-global-bg" aria-hidden="true">
             <div className="hiyo-bg-paper" />
             <div className="hiyo-bg-shape hiyo-bg-shape-a" />
@@ -111,9 +116,16 @@ export default function Home() {
             key="loading-overlay"
             exit={{ opacity: 0, scale: 1.05, filter: "blur(3px)" }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-b from-[#0a1e30] via-[#0f2a42] to-[#061424]"
+            className={`fixed inset-0 z-[9999] flex items-center justify-center ${
+              isDark
+                ? "bg-gradient-to-b from-[#0a1e30] via-[#0f2a42] to-[#061424]"
+                : "bg-gradient-to-b from-[#f5f0ea] via-[#ece6dc] to-[#e5ddd2]"
+            }`}
           >
-            <LoadingScreen onFinish={() => setShowContent(true)} />
+            <LoadingScreen
+              onFinish={() => setShowContent(true)}
+              isDark={isDark}
+            />
           </motion.div>
         )}
       </AnimatePresence>

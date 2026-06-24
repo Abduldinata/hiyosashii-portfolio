@@ -52,12 +52,12 @@ export default function ToolPill({ tool, className = "" }) {
         onBlur={() => setTipOpen(false)}
       >
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 shadow-sm ring-1 ring-white/70 transition-transform duration-200 hover:scale-110 active:scale-95 ${className}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 shadow-sm ring-1 ring-white/70 transition-transform duration-200 hover:scale-110 active:scale-95 dark:bg-white/[0.06] dark:ring-white/[0.05] ${className}`}
         >
           <img
             src={iconPath}
             alt={tool}
-            className="max-h-6 max-w-6 object-contain mix-blend-multiply"
+            className="max-h-6 max-w-6 object-contain mix-blend-multiply dark:mix-blend-screen dark:opacity-90"
             onError={() => setIconError(true)}
           />
         </div>
@@ -67,10 +67,10 @@ export default function ToolPill({ tool, className = "" }) {
             tipOpen ? "opacity-100" : "opacity-0 group-hover/pill:opacity-100"
           }`}
         >
-          <div className="rounded-lg border border-white/60 bg-white px-2.5 py-1.5 text-xs font-bold text-[#123A5A] shadow-lg">
+          <div className="rounded-lg border border-white/60 bg-white px-2.5 py-1.5 text-xs font-bold text-[#0f3b5e] shadow-lg dark:border-white/[0.08] dark:bg-[#0f1a2e] dark:text-white">
             {tool}
           </div>
-          <div className="absolute -bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 border-b border-r border-white/60 bg-white" />
+          <div className="absolute -bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 border-b border-r border-white/60 bg-white dark:border-white/[0.08] dark:bg-[#0f1a2e]" />
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ export default function ToolPill({ tool, className = "" }) {
 
   return (
     <span
-      className={`rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef] ${className}`}
+      className={`rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-slate-600 ring-1 ring-[#d7e5ef] dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05] ${className}`}
     >
       {tool}
     </span>

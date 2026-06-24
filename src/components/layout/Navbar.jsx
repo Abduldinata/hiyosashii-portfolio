@@ -3,6 +3,7 @@
 import React from "react";
 import { SITE_CONFIG } from "@/constants/site";
 import AnimatedTooltip from "@/components/ui/AnimatedTooltip";
+import ThemeSwitch from "@/components/ui/ThemeSwitch";
 
 const { useState, useEffect, useCallback } = React;
 
@@ -65,14 +66,14 @@ export default function Navbar() {
         navbarHidden ? "-translate-y-full" : "translate-y-0"
       } ${
         scrolled
-          ? "bg-[#0a1e30]/85 md:bg-[#0a1e30]/75 md:backdrop-blur-xl shadow-lg shadow-black/10 border-b border-white/5"
-          : "bg-[#0a1e30]/30 md:bg-[#0a1e30]/20 backdrop-blur-md"
+          ? "bg-white/70 dark:bg-[#0a1e30]/75 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/20 border-b border-gray-200/50 dark:border-white/5"
+          : "bg-white/10 md:bg-transparent dark:bg-[#0a1e30]/20 backdrop-blur-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="#home"
-          className="font-heading text-xl font-bold text-white tracking-tight relative"
+          className="font-heading text-xl font-bold text-[#0f3b5e] dark:text-white tracking-tight relative"
         >
           <span className="relative">
             Hiyosashii
@@ -93,7 +94,7 @@ export default function Navbar() {
             >
               <a
                 href={item.href}
-                className="font-ui relative px-3.5 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 group"
+                className="font-ui relative px-3.5 py-2 text-sm font-semibold text-[#0f3b5e]/70 dark:text-gray-300 hover:text-[#0f3b5e] dark:hover:text-white transition-all duration-300 group"
               >
                 {item.label}
                 <span className="absolute inset-x-3 bottom-0 h-[2.5px] rounded-full bg-gradient-to-r from-[#1E8DDE] to-[#00d4ff] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -101,6 +102,11 @@ export default function Navbar() {
             </AnimatedTooltip>
           ))}
         </nav>
+
+        {/* Theme toggle */}
+        <div className="hidden md:flex items-center ml-4">
+          <ThemeSwitch />
+        </div>
 
         {/* Mobile hamburger button */}
         <button
@@ -115,7 +121,7 @@ export default function Navbar() {
           </span>
           {/* Three bars that animate into an X */}
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-[#123A5A]/60 dark:bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               transform: mobileOpen
                 ? "translateY(0) rotate(45deg)"
@@ -123,13 +129,13 @@ export default function Navbar() {
             }}
           />
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-[#123A5A]/60 dark:bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               opacity: mobileOpen ? 0 : 1,
             }}
           />
           <span
-            className="absolute h-0.5 w-6 rounded-full bg-white/70 transition-all duration-300 ease-in-out"
+            className="absolute h-0.5 w-6 rounded-full bg-[#123A5A]/60 dark:bg-white/70 transition-all duration-300 ease-in-out"
             style={{
               transform: mobileOpen
                 ? "translateY(0) rotate(-45deg)"
@@ -154,7 +160,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <nav
-        className="md:hidden fixed right-0 z-50 flex flex-col bg-[#0a1e30]/95 backdrop-blur-xl shadow-2xl shadow-black/30 transition-transform duration-300 ease-in-out"
+        className="md:hidden fixed right-0 z-50 flex flex-col bg-white/95 dark:bg-[#0a1e30]/95 backdrop-blur-xl shadow-2xl shadow-black/10 dark:shadow-black/30 transition-transform duration-300 ease-in-out"
         style={{
           top: "64px",
           height: "calc(100dvh - 64px)",
@@ -171,7 +177,7 @@ export default function Navbar() {
               <a
                 href={item.href}
                 onClick={closeMobile}
-                className="font-ui flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold text-gray-400 hover:bg-gradient-to-r hover:from-[#1E8DDE]/10 hover:to-transparent hover:text-white transition-all duration-200 group"
+                className="font-ui flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold text-[#0f3b5e]/60 dark:text-gray-400 hover:bg-gradient-to-r hover:from-[#1E8DDE]/10 hover:to-transparent hover:text-[#0f3b5e] dark:hover:text-white transition-all duration-200 group"
                 style={{
                   animationDelay: `${index * 50}ms`,
                 }}
@@ -183,10 +189,20 @@ export default function Navbar() {
           ))}
         </ul>
 
+        {/* Mobile theme toggle */}
+        <div className="px-4 py-2">
+          <div className="flex items-center justify-between rounded-xl px-4 py-3">
+            <span className="text-sm font-semibold text-[#0f3b5e]/60 dark:text-gray-400">
+              Theme
+            </span>
+            <ThemeSwitch />
+          </div>
+        </div>
+
         {/* Accent bar at bottom of drawer */}
         <div className="mt-auto px-8 py-6">
           <div className="flex items-center gap-2">
-            <div className="h-[3px] flex-1 rounded-full bg-gradient-to-r from-[#1E8DDE]/40 to-transparent" />
+            <div className="h-[3px] flex-1 rounded-full bg-gradient-to-r from-[#1E8DDE]/40 dark:from-[#5DC3F5]/40 to-transparent" />
             <div className="h-3 w-3 rounded-full border-2 border-[#1E8DDE]/30" />
           </div>
         </div>
