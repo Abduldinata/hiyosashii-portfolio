@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import SplitWords from "../ui/SplitWords";
 import StaggerWords from "../ui/StaggerWords";
 
 const focusItems = ["Editing", "Design", "UI/UX", "AI Workflow"];
+
+const quickStats = [
+  { label: "Experience", value: "3+", icon: "⚡" },
+  { label: "Projects", value: "15+", icon: "📁" },
+  { label: "Certificates", value: "4", icon: "🏆" },
+];
 
 const sectionVariants = {
   hidden: { opacity: 0.88, y: 22, scale: 0.988, filter: "blur(6px)" },
@@ -51,6 +57,18 @@ const titleVariants = {
 export default function IntroSection() {
   const [introCardRot, setIntroCardRot] = useState({ x: 0, y: 0 });
   const [isIntroCardHovered, setIsIntroCardHovered] = useState(false);
+  const [cvOpen, setCvOpen] = useState(false);
+  const cvRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (cvRef.current && !cvRef.current.contains(e.target)) {
+        setCvOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleIntroCardTilt = useCallback((e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -187,42 +205,173 @@ export default function IntroSection() {
                 <div className="hiyo-orbit absolute right-9 top-9 h-3 w-3 rounded-full bg-[#1E8DDE]/45 shadow-[0_0_22px_rgba(30,141,222,0.38)]" />
 
                 <div className="relative">
-                  <p className="font-ui mb-5 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
-                    Focus Area
+                  <p className="font-ui mb-4 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
+                    Download CV
                   </p>
-                  <div className="grid gap-4">
-                    {focusItems.map((item, index) => (
-                      <motion.div
-                        key={item}
-                        initial={{
-                          opacity: 0,
-                          y: 18,
-                          scale: 0.9,
-                          rotate: -2,
-                        }}
-                        whileInView={{
-                          opacity: 1,
-                          y: 0,
-                          scale: 1,
-                          rotate: 0,
-                        }}
-                        viewport={{
-                          once: false,
-                          amount: 0.15,
-                          margin: "0px 0px -20% 0px",
-                        }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 14,
-                          mass: 0.6,
-                          delay: 0.08 * index,
-                        }}
-                        className="font-ui group flex min-h-[54px] items-center rounded-2xl border border-white/50 bg-white/80 px-5 text-sm font-black uppercase tracking-[0.16em] text-[#0f3b5e] shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-[0_14px_34px_rgba(30,141,222,0.20)] dark:border-white/[0.06] dark:bg-white/[0.05] dark:text-white/90 dark:hover:bg-white/[0.08] dark:hover:shadow-[0_14px_34px_rgba(30,141,222,0.15)] sm:min-h-[56px] sm:text-base"
+
+                  {/* CV Dropdown */}
+                  <div className="relative mb-5" ref={cvRef}>
+                    <button
+                      onClick={() => setCvOpen((prev) => !prev)}
+                      className="font-ui flex w-full items-center justify-between rounded-2xl border border-white/50 dark:border-white/[0.06] bg-white/80 dark:bg-white/[0.05] px-5 py-3.5 text-sm font-bold text-[#0f3b5e] dark:text-white/90 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-[0_8px_24px_rgba(30,141,222,0.15)]"
+                    >
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="h-4 w-4 text-[#1E8DDE]"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Pilih CV
+                      </span>
+                      <svg
+                        className={`h-3.5 w-3.5 transition-transform duration-200 ${cvOpen ? "rotate-180" : ""}`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        {item}
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+
+                    {cvOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/70 dark:border-white/[0.08] bg-white dark:bg-[#0f1a2e]/95 shadow-lg backdrop-blur-md"
+                      >
+                        <a
+                          href="/assets/cv/cv_ats_tech.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setCvOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3.5 text-sm font-bold text-[#0f3b5e] dark:text-white transition-colors hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5"
+                        >
+                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                            💻
+                          </span>
+                          CV - Tech
+                        </a>
+                        <a
+                          href="/assets/cv/cv_ats_multimedia.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setCvOpen(false)}
+                          className="flex items-center gap-3 border-t border-white/60 dark:border-white/10 px-4 py-3.5 text-sm font-bold text-[#0f3b5e] dark:text-white transition-colors hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5"
+                        >
+                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                            🎬
+                          </span>
+                          CV - Multimedia
+                        </a>
                       </motion.div>
+                    )}
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    {quickStats.map((stat) => (
+                      <div
+                        key={stat.label}
+                        className="flex flex-col items-center rounded-2xl border border-white/40 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] px-2 py-3 text-center backdrop-blur-sm"
+                      >
+                        <span className="text-lg">{stat.icon}</span>
+                        <span className="mt-0.5 text-lg font-black text-[#1E8DDE] dark:text-[#5DC3F5]">
+                          {stat.value}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#0f3b5e]/60 dark:text-gray-400">
+                          {stat.label}
+                        </span>
+                      </div>
                     ))}
+                  </div>
+
+                  {/* GitHub Stats — data dari API asli */}
+                  <div className="mt-4 rounded-2xl border border-white/40 dark:border-white/[0.06] bg-white/50 dark:bg-white/[0.04] px-3.5 py-3 backdrop-blur-sm">
+                    <p className="mb-2.5 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-500">
+                      GitHub Stats
+                    </p>
+                    <a
+                      href="https://github.com/Abduldinata"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block space-y-2"
+                    >
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
+                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">
+                            16
+                          </span>
+                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
+                            Repos
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
+                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">
+                            5
+                          </span>
+                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
+                            Followers
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
+                          <span className="text-xs font-black text-amber-500">
+                            8
+                          </span>
+                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
+                            Stars
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {[
+                          { lang: "Dart", color: "bg-cyan-500" },
+                          { lang: "C++", color: "bg-blue-600" },
+                          { lang: "HTML", color: "bg-orange-500" },
+                          { lang: "JS", color: "bg-yellow-500" },
+                          { lang: "PHP", color: "bg-indigo-500" },
+                          { lang: "C", color: "bg-slate-500" },
+                        ].map((l) => (
+                          <span
+                            key={l.lang}
+                            className="inline-flex items-center gap-1 rounded-md bg-slate-200/40 dark:bg-slate-800/40 px-1.5 py-0.5 text-[8px] font-semibold text-slate-600 dark:text-slate-400"
+                          >
+                            <span
+                              className={`inline-block h-1.5 w-1.5 rounded-full ${l.color}`}
+                            />
+                            {l.lang}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-xl bg-[#1E8DDE]/10 px-3 py-2 transition-colors group-hover:bg-[#1E8DDE]/20">
+                        <span className="text-[9px] font-bold text-[#1E8DDE]">
+                          github.com/Abduldinata
+                        </span>
+                        <svg
+                          className="h-3 w-3 text-[#1E8DDE] transition-transform group-hover:translate-x-0.5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M9 18l6-6-6-6" />
+                        </svg>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>

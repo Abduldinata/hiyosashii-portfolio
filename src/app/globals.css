@@ -1170,32 +1170,7 @@ li,
 }
 
 /* Profile mode switch button animation */
-button[aria-label="Switch profile mode"] {
-    transition:
-        transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
-        background-color 300ms ease,
-        border-color 300ms ease,
-        color 300ms ease,
-        box-shadow 300ms ease;
-}
 
-button[aria-label="Switch profile mode"]:active {
-    animation: profileSwitchSpin 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes profileSwitchSpin {
-    0% {
-        transform: rotate(0deg) scale(1);
-    }
-    50% {
-        transform: rotate(180deg) scale(1.08);
-    }
-    100% {
-        transform: rotate(360deg) scale(1);
-    }
-}
-
-/* ── ChibiMascot / Feedback ── */
 @keyframes hiyoBotThink {
     0%,
     100% {
