@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SplitWords from "../ui/SplitWords";
 import StaggerWords from "../ui/StaggerWords";
 
@@ -58,6 +58,7 @@ export default function IntroSection() {
   const [introCardRot, setIntroCardRot] = useState({ x: 0, y: 0 });
   const [isIntroCardHovered, setIsIntroCardHovered] = useState(false);
   const [cvOpen, setCvOpen] = useState(false);
+  const [gitExpand, setGitExpand] = useState(false);
   const cvRef = useRef(null);
 
   useEffect(() => {
@@ -68,6 +69,13 @@ export default function IntroSection() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Auto-open CV when requested from Contact Section
+  useEffect(() => {
+    const handler = () => setCvOpen(true);
+    window.addEventListener("openCV", handler);
+    return () => window.removeEventListener("openCV", handler);
   }, []);
 
   const handleIntroCardTilt = useCallback((e) => {
@@ -199,13 +207,13 @@ export default function IntroSection() {
                 `,
               }}
             >
-              <div className="relative w-full overflow-hidden rounded-[28px] border border-white/55 bg-white/22 p-6 shadow-[0_24px_70px_rgba(30,141,222,0.16)] ring-1 ring-white/30 backdrop-blur-md transition-shadow duration-500 hover:shadow-[0_26px_76px_rgba(30,141,222,0.20)] sm:p-7">
+              <div className="relative w-full overflow-hidden rounded-[28px] border border-white/55 dark:border-slate-700/50 bg-white/22 dark:bg-[#0d1525]/85 p-6 shadow-[0_24px_70px_rgba(30,141,222,0.16)] dark:shadow-[0_24px_70px_rgba(0,0,0,0.5)] ring-1 ring-white/30 dark:ring-slate-800/30 backdrop-blur-md transition-shadow duration-500 hover:shadow-[0_26px_76px_rgba(30,141,222,0.20)] dark:hover:shadow-[0_26px_76px_rgba(0,0,0,0.6)] sm:p-7">
                 <div className="absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#2D8FE3]/12 blur-2xl" />
                 <div className="absolute -bottom-14 -left-14 h-28 w-28 rounded-full bg-white/35 blur-2xl" />
                 <div className="hiyo-orbit absolute right-9 top-9 h-3 w-3 rounded-full bg-[#1E8DDE]/45 shadow-[0_0_22px_rgba(30,141,222,0.38)]" />
 
                 <div className="relative">
-                  <p className="font-ui mb-4 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE]">
+                  <p className="font-ui mb-4 text-[0.82rem] font-black uppercase tracking-[0.22em] text-[#1E8DDE] dark:text-[#5DC3F5]">
                     Download CV
                   </p>
 
@@ -246,33 +254,61 @@ export default function IntroSection() {
 
                     {cvOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                        initial={{ opacity: 0, y: -4, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/70 dark:border-white/[0.08] bg-white dark:bg-[#0f1a2e]/95 shadow-lg backdrop-blur-md"
+                        transition={{
+                          duration: 0.25,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl border border-white/70 bg-white/95 shadow-xl backdrop-blur-md dark:border-white/[0.1] dark:bg-[#0f1a2e]/95"
                       >
                         <a
                           href="/assets/cv/cv_ats_tech.pdf"
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setCvOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3.5 text-sm font-bold text-[#0f3b5e] dark:text-white transition-colors hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5"
+                          className="group flex items-center gap-2.5 px-4 py-3 text-sm font-bold text-[#0f3b5e] dark:text-white transition-all duration-200 hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5 hover:pl-5"
                         >
-                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-[10px] transition-transform duration-200 group-hover:scale-110">
                             💻
                           </span>
-                          CV - Tech
+                          <span className="flex-1">CV - Tech</span>
+                          <svg
+                            className="h-3.5 w-3.5 text-[#1E8DDE]/50 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#1E8DDE]"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M7 17L17 7" />
+                            <path d="M7 7h10v10" />
+                          </svg>
                         </a>
                         <a
                           href="/assets/cv/cv_ats_multimedia.pdf"
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setCvOpen(false)}
-                          className="flex items-center gap-3 border-t border-white/60 dark:border-white/10 px-4 py-3.5 text-sm font-bold text-[#0f3b5e] dark:text-white transition-colors hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5"
+                          className="group flex items-center gap-2.5 border-t border-white/50 px-4 py-3 text-sm font-bold text-[#0f3b5e] dark:text-white dark:border-white/[0.06] transition-all duration-200 hover:bg-[#1E8DDE]/10 dark:hover:bg-white/5 hover:pl-5"
                         >
-                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-xs">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#1E8DDE]/10 text-[10px] transition-transform duration-200 group-hover:scale-110">
                             🎬
                           </span>
-                          CV - Multimedia
+                          <span className="flex-1">CV - Multimedia</span>
+                          <svg
+                            className="h-3.5 w-3.5 text-[#1E8DDE]/50 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#1E8DDE]"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M7 17L17 7" />
+                            <path d="M7 7h10v10" />
+                          </svg>
                         </a>
                       </motion.div>
                     )}
@@ -283,7 +319,7 @@ export default function IntroSection() {
                     {quickStats.map((stat) => (
                       <div
                         key={stat.label}
-                        className="flex flex-col items-center rounded-2xl border border-white/40 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] px-2 py-3 text-center backdrop-blur-sm"
+                        className="flex flex-col items-center rounded-2xl border border-white/40 dark:border-slate-700/50 bg-white/60 dark:bg-slate-800/40 px-2 py-3 text-center"
                       >
                         <span className="text-lg">{stat.icon}</span>
                         <span className="mt-0.5 text-lg font-black text-[#1E8DDE] dark:text-[#5DC3F5]">
@@ -296,83 +332,181 @@ export default function IntroSection() {
                     ))}
                   </div>
 
-                  {/* GitHub Stats — data dari API asli */}
-                  <div className="mt-4 rounded-2xl border border-white/40 dark:border-white/[0.06] bg-white/50 dark:bg-white/[0.04] px-3.5 py-3 backdrop-blur-sm">
-                    <p className="mb-2.5 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-500">
-                      GitHub Stats
-                    </p>
-                    <a
-                      href="https://github.com/Abduldinata"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block space-y-2"
+                  {/* Toggle Button */}
+                  <button
+                    onClick={() => setGitExpand((prev) => !prev)}
+                    className="mt-3 flex w-full items-center justify-between rounded-xl border border-white/40 dark:border-slate-700/50 bg-white/40 dark:bg-slate-800/30 px-3 py-2 transition-all duration-200 hover:bg-white/60 dark:hover:bg-slate-800/60 group/toggle"
+                  >
+                    <span className="flex items-center gap-2 text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                      <svg
+                        className="h-3 w-3 text-slate-400"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                      {gitExpand
+                        ? "Sembunyikan aktivitas"
+                        : "Lihat aktivitas GitHub"}
+                    </span>
+                    <motion.svg
+                      animate={{ rotate: gitExpand ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
-                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">
-                            16
-                          </span>
-                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                            Repos
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
-                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">
-                            5
-                          </span>
-                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                            Followers
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-center rounded-xl bg-slate-200/40 dark:bg-slate-800/40 py-2 transition-colors group-hover:bg-slate-200/60 dark:group-hover:bg-slate-800/60">
-                          <span className="text-xs font-black text-amber-500">
-                            8
-                          </span>
-                          <span className="text-[8px] font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                            Stars
-                          </span>
-                        </div>
-                      </div>
+                      <polyline points="6 9 12 15 18 9" />
+                    </motion.svg>
+                  </button>
 
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {[
-                          { lang: "Dart", color: "bg-cyan-500" },
-                          { lang: "C++", color: "bg-blue-600" },
-                          { lang: "HTML", color: "bg-orange-500" },
-                          { lang: "JS", color: "bg-yellow-500" },
-                          { lang: "PHP", color: "bg-indigo-500" },
-                          { lang: "C", color: "bg-slate-500" },
-                        ].map((l) => (
-                          <span
-                            key={l.lang}
-                            className="inline-flex items-center gap-1 rounded-md bg-slate-200/40 dark:bg-slate-800/40 px-1.5 py-0.5 text-[8px] font-semibold text-slate-600 dark:text-slate-400"
-                          >
-                            <span
-                              className={`inline-block h-1.5 w-1.5 rounded-full ${l.color}`}
-                            />
-                            {l.lang}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center justify-between rounded-xl bg-[#1E8DDE]/10 px-3 py-2 transition-colors group-hover:bg-[#1E8DDE]/20">
-                        <span className="text-[9px] font-bold text-[#1E8DDE]">
-                          github.com/Abduldinata
-                        </span>
-                        <svg
-                          className="h-3 w-3 text-[#1E8DDE] transition-transform group-hover:translate-x-0.5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </div>
-                    </a>
-                  </div>
+                  {/* Collapsible Commits */}
+                  <AnimatePresence initial={false}>
+                    {gitExpand && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{
+                          duration: 0.35,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 rounded-2xl border border-white/40 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/40 px-3.5 pt-2.5 pb-2">
+                          <div className="mb-3 flex items-center gap-2 px-1">
+                            <div className="flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2 py-0.5">
+                              <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
+                              <span className="text-[8px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                                main
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-semibold text-slate-400 dark:text-slate-500">
+                              Recent Commits
+                            </span>
+                          </div>
+                          <div className="group">
+                            <div className="relative">
+                              <div className="absolute left-[11px] top-2 bottom-2 w-px bg-gradient-to-b from-emerald-400/40 via-indigo-400/20 to-transparent" />
+                              <div className="space-y-0">
+                                {[
+                                  {
+                                    msg: "Fix mobile avatar clipping and adjust profile layout",
+                                    date: "Jun 24",
+                                    repo: "hiyosashii-portfolio",
+                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/e4111c181d28b183e575772ef6d2b1c3c6e8f9d7",
+                                  },
+                                  {
+                                    msg: "Refactor 3D assets into global slideshow with scroll-reactive effects",
+                                    date: "Jun 24",
+                                    repo: "hiyosashii-portfolio",
+                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/1c203dbc35e69d3e0a951c17ed279abc3a752de1",
+                                  },
+                                  {
+                                    msg: "Update CV and replace liquid orbs with fluid mesh gradients",
+                                    date: "Jun 19",
+                                    repo: "hiyosashii-portfolio",
+                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/648c6b4e9dfd04144cc1e3e1d97fa8ea15acac0f",
+                                  },
+                                  {
+                                    msg: "redeploy with env vars",
+                                    date: "Jun 15",
+                                    repo: "hiyosashii-portfolio",
+                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/918a8f6318b4b3d6cf7b985694d68c497fd07e8e",
+                                  },
+                                  {
+                                    msg: "Refactor file structure",
+                                    date: "Jun 9",
+                                    repo: "hiyosashii-portfolio",
+                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/de0cc58e0c7fcb61cd15d20cd574647e6c1a264d",
+                                  },
+                                ].map((c, i) => (
+                                  <a
+                                    key={i}
+                                    href={c.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="relative flex items-start gap-3 rounded-lg px-2 py-2 transition-all duration-200 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 group/commit"
+                                  >
+                                    <div className="relative mt-0.5 flex shrink-0">
+                                      <div className="h-[10px] w-[10px] rounded-full border-2 border-emerald-400 dark:border-emerald-400 bg-white dark:bg-slate-900 shadow-[0_0_8px_rgba(52,211,153,0.3)] dark:shadow-[0_0_10px_rgba(52,211,153,0.2)] transition-all duration-300 group-hover/commit:scale-125 group-hover/commit:shadow-[0_0_14px_rgba(52,211,153,0.5)]" />
+                                      <div
+                                        className="absolute inset-0 h-[10px] w-[10px] rounded-full bg-emerald-400/20 animate-ping"
+                                        style={{
+                                          animationDuration: "3s",
+                                          animationDelay: `${i * 0.3}s`,
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-200 leading-snug line-clamp-2 group-hover/commit:text-[#1E8DDE] dark:group-hover/commit:text-[#5DC3F5] transition-colors duration-200">
+                                        {c.msg}
+                                      </p>
+                                      <div className="mt-1 flex items-center gap-2 text-[8px] text-slate-400 dark:text-slate-600">
+                                        <span className="inline-flex items-center gap-1">
+                                          <svg
+                                            className="h-2.5 w-2.5"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          >
+                                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                                          </svg>
+                                          {c.repo}
+                                        </span>
+                                        <span>•</span>
+                                        <span>{c.date}</span>
+                                      </div>
+                                    </div>
+                                    <svg
+                                      className="h-3 w-3 shrink-0 text-indigo-400 opacity-0 group-hover/commit:opacity-100 transition-all duration-200 translate-x-0 group-hover/commit:translate-x-0.5"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M9 18l6-6-6-6" />
+                                    </svg>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-1 flex items-center justify-between rounded-xl bg-gradient-to-r from-[#1E8DDE]/5 to-indigo-500/5 dark:from-[#1E8DDE]/10 dark:to-indigo-500/10 px-3 py-2 transition-all duration-300 hover:from-[#1E8DDE]/15 hover:to-indigo-500/15 dark:hover:from-[#1E8DDE]/20 dark:hover:to-indigo-500/20 group/bar">
+                            <span className="text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5]">
+                              github.com/Abduldinata
+                            </span>
+                            <span className="flex items-center gap-1.5 text-[9px] font-semibold text-indigo-400 transition-all group-hover/bar:gap-2.5">
+                              <span>View all</span>
+                              <svg
+                                className="h-3 w-3"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              ></svg>
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
