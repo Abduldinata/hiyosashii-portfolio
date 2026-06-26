@@ -2,6 +2,7 @@
 
 import React, { useEffect, useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import { twMerge } from "tailwind-merge";
 import SplitWords from "../ui/SplitWords";
 import StaggerWords from "../ui/StaggerWords";
 
@@ -102,11 +103,85 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
       id="profile"
       className="hiyo-section-surface relative min-h-[calc(100vh-88px)] scroll-mt-24 overflow-hidden bg-transparent"
     >
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-[1200px] items-center px-5 py-10 sm:px-8 sm:py-12 lg:px-12">
-        <div className="grid w-full grid-cols-1 items-center gap-6 md:gap-8 md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12 md:pb-0 pb-12">
-          {/* Left content */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-[1200px] items-center px-5 py-16 sm:px-8 lg:px-12">
+        <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-[1fr_1.2fr] lg:gap-12">
+          {/* Left - Photo with Premium Gradient Ring */}
           <motion.div
-            className="max-w-[760px] rounded-[24px] border border-white/40 dark:border-white/[0.06] bg-white/25 dark:bg-white/[0.05] p-5 pt-5 backdrop-blur-sm sm:p-6 lg:ml-2 lg:p-7 md:order-1 order-2 flex flex-col justify-center"
+            className="flex justify-center md:justify-start"
+            initial={{ opacity: 0, x: -30, scale: 0.9 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              className="group relative"
+              style={{
+                width: "clamp(260px, 42vw, 340px)",
+                aspectRatio: 1,
+              }}
+            >
+              {/* Gradient Ring Wrapper */}
+              <div className="h-full w-full rounded-full bg-gradient-to-br from-[#1E8DDE] to-[#6366F1] p-[3px] shadow-[0_0_40px_rgba(30,141,222,0.25)] dark:shadow-[0_0_50px_rgba(99,102,241,0.2)] transition-all duration-500 group-hover:shadow-[0_0_60px_rgba(30,141,222,0.4)] group-hover:scale-[1.02]">
+                <div className="h-full w-full rounded-full bg-[#0d1525] p-[2px]">
+                  <div className="relative h-full w-full rounded-full overflow-hidden bg-[#222831]">
+                    {/* Crossfade Transition for Premium Feel */}
+                    <img
+                      src={studentImage}
+                      alt="Abdul Aziz Dinata - Student"
+                      className={`absolute inset-0 h-full w-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                        isStudent
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-110"
+                      }`}
+                    />
+                    <img
+                      src={creatorImage}
+                      alt="Abdul Aziz Dinata - Creator"
+                      className={`absolute inset-0 h-full w-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                        isCreator
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-110"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Mode Switch — nempel border ring */}
+              <button
+                type="button"
+                onClick={() =>
+                  onModeChange?.(isCreator ? "student" : "creator")
+                }
+                className={`absolute -bottom-2 -right-2 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 backdrop-blur-md transition-all duration-500 ease-out hover:scale-110 hover:rotate-45 hover:shadow-[0_8px_30px_rgba(30,141,222,0.4)] active:scale-90 ${
+                  isStudent
+                    ? "border-white/60 bg-white/80 text-[#1E8DDE] shadow-[0_4px_16px_rgba(30,141,222,0.2)] dark:border-white/30 dark:bg-[#0a1e30]/80 dark:text-[#5DC3F5]"
+                    : "border-[#1E8DDE]/60 bg-[#1E8DDE]/90 text-white shadow-[0_4px_16px_rgba(30,141,222,0.3)] dark:border-[#5DC3F5]/40 dark:bg-[#3b9eff]/80"
+                }`}
+                aria-label="Switch profile mode"
+                title="Switch profile mode"
+              >
+                <svg
+                  className={`h-4.5 w-4.5 transition-transform duration-500 ${
+                    isCreator ? "rotate-180" : "rotate-0"
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Right - Content */}
+          <motion.div
+            className="relative rounded-[24px] border border-white/40 dark:border-white/[0.06] bg-white/25 dark:bg-white/[0.05] p-6 backdrop-blur-md sm:p-8 lg:p-10"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.25, margin: "0px 0px -20% 0px" }}
@@ -123,8 +198,8 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
               className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
               style={{
                 transform: `
-                  translateY(${isProfileHovered ? -3 : 0}px)
-                  scale(${isProfileHovered ? 1.004 : 1})
+                  translateY(${isProfileHovered ? -2 : 0}px)
+                  scale(${isProfileHovered ? 1.002 : 1})
                   rotateX(${profileRot.x}deg)
                   rotateY(${profileRot.y}deg)
                 `,
@@ -140,7 +215,7 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
                   margin: "0px 0px -20% 0px",
                 }}
                 variants={sectionVariants}
-                className="flex flex-col"
+                className="flex flex-col items-center text-center sm:items-start sm:text-left"
               >
                 <span className="font-ui inline-flex rounded-full border border-white/50 dark:border-white/10 bg-white/30 dark:bg-white/[0.06] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#1E8DDE] dark:text-[#5DC3F5] shadow-sm backdrop-blur-sm">
                   <SplitWords
@@ -152,13 +227,13 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
 
                 <motion.h1
                   variants={titleVariants}
-                  className={`mt-6 font-black tracking-[-0.055em] ${
+                  className={`mt-5 font-black tracking-[-0.055em] ${
                     isCreator
                       ? "text-[#0f3b5e] dark:text-white/90"
                       : "text-[#2D8FE3] dark:text-[#5DC3F5]"
                   }`}
                   style={{
-                    fontSize: "clamp(2.7rem, 4.4vw, 4.8rem)",
+                    fontSize: "clamp(2rem, 4vw, 4.5rem)",
                     lineHeight: 1.05,
                     textShadow: "0 8px 24px rgba(30, 141, 222, 0.1)",
                   }}
@@ -176,17 +251,12 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
                 </div>
 
                 <p
-                  className={`mt-6 max-w-[720px] font-medium leading-[1.55] ${
+                  className={`mt-5 font-medium leading-[1.55] ${
                     isStudent
                       ? "text-[#2a6f9e] dark:text-gray-300"
                       : "text-[#2a6f9e] dark:text-gray-400"
                   }`}
-                  style={{
-                    fontSize: "clamp(1rem, 1.25vw, 1.18rem)",
-                    textShadow: isCreator
-                      ? "0 2px 14px rgba(255,255,255,0.24)"
-                      : undefined,
-                  }}
+                  style={{ fontSize: "clamp(0.9rem, 1.1vw, 1.1rem)" }}
                 >
                   <StaggerWords
                     text={profileCopy.description}
@@ -198,7 +268,7 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
 
                 <motion.div
                   variants={itemVariants}
-                  className="mt-6 flex flex-wrap gap-2.5"
+                  className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start"
                 >
                   {profileCopy.badges.map((badge) => (
                     <span
@@ -212,11 +282,11 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
 
                 <motion.div
                   variants={itemVariants}
-                  className="mt-9 flex flex-wrap items-center gap-4"
+                  className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:justify-start"
                 >
                   <a
                     href="#skills"
-                    className={`font-ui inline-flex items-center justify-center rounded-full border-2 px-7 py-4 md:px-10 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-[0.98] $
+                    className={`font-ui inline-flex items-center justify-center rounded-full border-2 px-8 py-3.5 text-sm font-bold uppercase tracking-[0.22em] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)] active:scale-[0.98] ${
                       isStudent
                         ? "border-[#2D8FE3] dark:border-[#5DC3F5]/40 text-[#2D8FE3] dark:text-[#5DC3F5] hover:bg-[#2D8FE3] dark:hover:bg-[#5DC3F5]/20 hover:text-white dark:hover:text-white"
                         : "border-[#1E8DDE] dark:border-[#5DC3F5]/30 text-[#1a567a] dark:text-white/70 hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_16px_40px_rgba(30,141,222,0.32)]"
@@ -226,96 +296,6 @@ export default function ProfileSection({ mode = "student", onModeChange }) {
                   </a>
                 </motion.div>
               </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Right visual */}
-          <motion.div
-            className="relative flex justify-center lg:translate-x-0 lg:justify-end lg:pr-5 md:order-2 order-1 md:mt-0 sm:-mt-8"
-            initial={{
-              opacity: 0,
-              x: 40,
-              scale: 0.85,
-              rotate: 4,
-            }}
-            whileInView={{
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              rotate: 0,
-            }}
-            viewport={{ once: false, amount: 0.3, margin: "0px 0px -20% 0px" }}
-            transition={{
-              type: "spring",
-              stiffness: 160,
-              damping: 13,
-              mass: 0.7,
-            }}
-          >
-            <div
-              className="group relative"
-              style={{
-                width: "min(clamp(240px, 60vw, 351px), 100%)",
-                aspectRatio: "1/1",
-                perspective: "1100px",
-              }}
-            >
-              <div className="h-full w-full rounded-full transition-transform duration-500 group-hover:scale-[1.025]">
-                <div
-                  className="relative h-full w-full rounded-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: isCreator ? "rotateY(180deg)" : "rotateY(0deg)",
-                  }}
-                >
-                  <div
-                    className="absolute inset-0 overflow-hidden rounded-full border-[5px] border-white bg-[#222831] shadow-2xl shadow-[#1E8DDE]/20"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                    }}
-                  >
-                    <img
-                      src={studentImage}
-                      alt="Abdul Aziz Dinata - Student"
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-
-                  <div
-                    className="absolute inset-0 overflow-hidden rounded-full border-[5px] border-white bg-[#222831] shadow-2xl shadow-[#1E8DDE]/20"
-                    style={{
-                      transform: "rotateY(180deg)",
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                    }}
-                  >
-                    <img
-                      src={creatorImage}
-                      alt="Abdul Aziz Dinata - Creator"
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pointer-events-none absolute inset-[-8px] rounded-full border border-white/50 dark:border-white/[0.06] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:shadow-[0_0_45px_rgba(30,141,222,0.28)]" />
-
-              <button
-                type="button"
-                onClick={() =>
-                  onModeChange?.(isCreator ? "student" : "creator")
-                }
-                className={`absolute bottom-4 right-4 z-20 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 text-2xl font-bold shadow-[0_12px_30px_rgba(30,141,222,0.28)] transition-all duration-500 hover:scale-110 hover:rotate-180 active:scale-95 ${
-                  isStudent
-                    ? "border-[#2D8FE3] dark:border-[#5DC3F5]/50 bg-white/90 dark:bg-[#0a1e30]/90 text-[#2D8FE3] dark:text-[#5DC3F5]"
-                    : "border-white dark:border-[#3b9eff]/60 bg-[#1E8DDE]/90 dark:bg-[#1E8DDE]/70 text-white"
-                }`}
-                aria-label="Switch profile mode"
-                title="Switch profile mode"
-              >
-                ↻
-              </button>
             </div>
           </motion.div>
         </div>
