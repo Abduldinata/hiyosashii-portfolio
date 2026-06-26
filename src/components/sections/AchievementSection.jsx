@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { motion } from "framer-motion";
 import { achievementData } from "@/data/achievementData";
-import ToolPill from "../ui/ToolPill";
+
 const sectionTitleMotion = {
   hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
   visible: {
@@ -42,466 +48,484 @@ const filters = [
   { label: "Seminar", value: "seminar" },
 ];
 
-const primaryActionClass =
-  "font-ui group inline-flex items-center justify-center rounded-full bg-[#185987] dark:bg-[#1a567a] px-6 py-3 text-sm font-black tracking-wide text-white shadow-[0_14px_34px_rgba(24,89,135,0.22)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:shadow-[0_20px_48px_rgba(30,141,222,0.34)] active:translate-y-0 active:scale-95";
-
 const secondaryActionClass =
   "font-ui group inline-flex items-center justify-center rounded-full border border-[#BFD8EA] bg-white/90 px-5 py-3 text-sm font-black tracking-wide text-[#1a567a] shadow-sm dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-gray-300 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.035] hover:border-[#1E8DDE] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white hover:shadow-[0_16px_38px_rgba(30,141,222,0.26)] active:translate-y-0 active:scale-95";
 
-const arrowClass =
-  "ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1";
-
-function getDisplayPeriod(item) {
-  return item?.period && item.period !== item.year ? item.period : item?.year;
-}
-
-function getAchievementDocuments(item) {
+function getDocuments(item) {
   if (Array.isArray(item?.documents)) return item.documents.filter(Boolean);
-  if (item?.certificateUrl) {
+  if (item?.certificateUrl)
     return [{ label: "Lihat Sertifikat", url: item.certificateUrl }];
-  }
   return [];
 }
 
-function normalizeText(value) {
-  return value
-    ?.toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
-function textMatchesSlug(text, slug) {
-  const normalizedText = normalizeText(text);
-  const slugTokens = normalizeText(slug)?.split(" ").filter(Boolean) ?? [];
-
-  return (
-    slugTokens.length > 0 &&
-    slugTokens.every((token) => normalizedText.includes(token))
-  );
-}
-
-function addPortfolioHighlight(card) {
-  // Save original inline styles to restore later if necessary
-  const originalTransition = card.style.transition;
-  const originalTransform = card.style.transform;
-  const originalBoxShadow = card.style.boxShadow;
-  const originalBorder = card.style.border;
-  const originalOutline = card.style.outline;
-
-  // Add highlight styles directly
-  card.style.transition = "all 0.4s ease-in-out";
-  card.style.transform = "scale(1.02)";
-  card.style.boxShadow = "0 0 25px rgba(30, 141, 222, 0.4)";
-  card.style.outline = "2px solid #1E8DDE";
-  card.style.outlineOffset = "2px";
-
-  // Using a class based approach can be cleaner if it overrides correctly,
-  // but direct style updates ensure the animation plays consistently without specificity issues.
-
-  window.setTimeout(() => {
-    // Revert to original
-    card.style.transform = originalTransform;
-    card.style.boxShadow = originalBoxShadow;
-    card.style.outline = originalOutline;
-    card.style.outlineOffset = "";
-
-    // Give time for transition to finish before removing it
-    window.setTimeout(() => {
-      card.style.transition = originalTransition;
-    }, 400);
-  }, 2000); // Highlight duration: 2 seconds
-}
-
-function AchievementFallback() {
-  return (
-    <div className="flex h-full min-h-[240px] items-center justify-center rounded-[24px] border border-dashed border-[#BFD8EA] bg-gradient-to-br from-[#eef7ff] via-white to-[#d8eaf6] p-5 text-center shadow-[0_14px_28px_rgba(31,79,122,0.13)] ring-1 ring-white/80">
-      <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6d8798]">
-        Preview Belum Tersedia
-      </p>
-    </div>
-  );
-}
-
-function SafeAchievementImage({ item, className }) {
-  const [currentSrc, setCurrentSrc] = useState(item?.thumbnail);
-  const [imageError, setImageError] = useState(false);
-
-  if (!currentSrc || imageError) {
-    return <AchievementFallback />;
-  }
-
+function SafeImage({ item, className = "" }) {
+  const src = item?.image || item?.thumbnail || "";
+  const [errored, setErrored] = useState(false);
+  if (!src || errored) return null;
   return (
     <img
-      key={currentSrc}
-      src={currentSrc}
-      alt={item.title}
+      src={src}
+      alt={item?.title || ""}
       className={className}
-      onError={() => {
-        if (item.fallbackThumbnail && currentSrc !== item.fallbackThumbnail) {
-          setCurrentSrc(item.fallbackThumbnail);
-          return;
-        }
-
-        setImageError(true);
-      }}
+      loading="lazy"
+      onError={() => setErrored(true)}
     />
   );
 }
 
 export default function AchievementSection() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedId, setSelectedId] = useState(achievementData[0]?.id);
+  const [viewMode, setViewMode] = useState("grid");
+  const [expandedId, setExpandedId] = useState(null);
 
-  const filteredAchievements = useMemo(() => {
-    if (activeCategory === "all") return achievementData;
-    return achievementData.filter((item) => item.category === activeCategory);
+  const filtered = useMemo(() => {
+    const data =
+      activeCategory === "all"
+        ? achievementData
+        : achievementData.filter((i) => i.category === activeCategory);
+    return [...data].sort((a, b) => (b.year || "").localeCompare(a.year || ""));
   }, [activeCategory]);
 
-  const selectedAchievement =
-    filteredAchievements.find((item) => item.id === selectedId) ||
-    filteredAchievements[0] ||
-    achievementData[0];
-  const selectedDisplayPeriod = getDisplayPeriod(selectedAchievement);
-  const selectedDocuments = getAchievementDocuments(selectedAchievement);
-
-  const [asideRot, setAsideRot] = useState({ x: 0, y: 0 });
-  const [isAsideHovered, setIsAsideHovered] = useState(false);
-
-  const handleAsideTilt = useCallback((e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    const maxAngle = 5;
-    setAsideRot({
-      x: (y - 0.5) * -maxAngle,
-      y: (x - 0.5) * maxAngle,
+  // Group by year
+  const groups = useMemo(() => {
+    const map = {};
+    filtered.forEach((item) => {
+      const y = item.year || "Lainnya";
+      if (!map[y]) map[y] = [];
+      map[y].push(item);
     });
-  }, []);
+    return Object.entries(map).sort(([a], [b]) => b.localeCompare(a));
+  }, [filtered]);
 
-  const handleFilterChange = (filterValue) => {
-    setActiveCategory(filterValue);
-    const nextItem =
-      filterValue === "all"
-        ? achievementData[0]
-        : achievementData.find((item) => item.category === filterValue);
-    setSelectedId(nextItem?.id);
-  };
+  // Auto-switch to grid when items per year are few
+  useEffect(() => {
+    const maxPerYear = Math.max(...groups.map(([, items]) => items.length), 0);
+    if (maxPerYear <= 3) setViewMode("grid");
+  }, [groups]);
 
-  const handlePortfolioFocus = (slug) => {
-    // Trigger portfolio re-animation via custom event first
-    window.dispatchEvent(
-      new CustomEvent("sectionnav", { detail: "portfolio" }),
-    );
-
-    // Wait for React to process the state update and remount PortfolioSection
-    // before querying the DOM, so we get fresh references to the new elements
-    window.setTimeout(() => {
-      const portfolioSection = document.getElementById("portfolio");
-      if (!portfolioSection) return;
-
-      // Use querySelector to find the matching card directly
-      const targetSelector = `[data-portfolio-slug="${slug}"]`;
-      let targetCard = portfolioSection.querySelector(targetSelector);
-
-      // If not found, try a fallback search by text content matching the slug loosely
-      if (!targetCard) {
-        const allCards = Array.from(
-          portfolioSection.querySelectorAll("article, [data-portfolio-slug]"),
-        );
-        targetCard = allCards.find((card) => {
-          const text = card.textContent.toLowerCase();
-          const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, " ");
-          const slugWords = cleanSlug.split(" ").filter((w) => w.length > 3); // match significant words
-          return slugWords.some((word) => text.includes(word));
+  const handlePortfolioFocus = useCallback((slug) => {
+    document.querySelectorAll(".portfolio-card-highlight").forEach((el) => {
+      el.classList.remove("portfolio-card-highlight");
+    });
+    const section = document.getElementById("portfolio");
+    if (!section) return;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!slug) return;
+    // Poll until scroll settles, then locate card
+    const waitForScroll = () => {
+      const card = document.querySelector(`[data-portfolio-slug="${slug}"]`);
+      if (card) {
+        card.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
         });
-      }
-
-      if (targetCard) {
-        targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        targetCard.focus({ preventScroll: true });
-        addPortfolioHighlight(targetCard);
+        card.classList.add("portfolio-card-highlight");
+        setTimeout(
+          () => card.classList.remove("portfolio-card-highlight"),
+          3000,
+        );
       } else {
-        // Fallback
-        portfolioSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        requestAnimationFrame(waitForScroll);
       }
-    }, 450);
-  };
+    };
+    requestAnimationFrame(waitForScroll);
+  }, []);
 
   return (
     <section
       id="achievement"
       className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 dark:text-white sm:px-6 lg:px-8"
     >
-      <style jsx global>{`
-        .portfolio-card-highlight {
-          border-color: rgba(30, 141, 222, 0.9) !important;
-          box-shadow:
-            0 0 0 3px rgba(30, 141, 222, 0.18),
-            0 24px 60px rgba(30, 141, 222, 0.3) !important;
-          transform: scale(1.025);
-          transition:
-            border-color 280ms ease,
-            box-shadow 280ms ease,
-            transform 280ms ease;
-        }
-      `}</style>
-
+      <style>{`.portfolio-card-highlight { box-shadow: 0 0 0 2px rgba(30,141,222,0.35), 0 8px 24px rgba(30,141,222,0.1) !important; transition: box-shadow 280ms ease; }`}</style>
       <div className="relative z-10 mx-auto w-full max-w-[1200px]">
         <motion.div
           variants={sectionTitleMotion}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
-          className="mb-7 text-center"
+          className="mb-8 flex flex-col items-center text-center"
         >
           <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#0f3b5e] dark:text-white/90 md:text-4xl">
             Experience & Certificates
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 dark:text-gray-400 md:text-base">
             Jejak pengalaman, project, sertifikat, workshop, dan perkembangan
-            skill yang membentuk perjalanan kreatif dan akademik saya.
+            skill.
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            {filters.map((filter) => {
-              const isActive = filter.value === activeCategory;
-
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            {filters.map((f) => {
+              const active = f.value === activeCategory;
               return (
                 <button
-                  key={filter.value}
+                  key={f.value}
                   type="button"
-                  onClick={() => handleFilterChange(filter.value)}
-                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white active:scale-95 sm:text-xs ${
-                    isActive
-                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)] dark:bg-[#1a567a] dark:shadow-[0_8px_22px_rgba(0,0,0,0.3)]"
-                      : "bg-white/80 text-[#1a567a] ring-1 ring-white/70 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
+                  onClick={() => setActiveCategory(f.value)}
+                  className={`font-ui rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] active:scale-95 sm:text-xs ${
+                    active
+                      ? "border border-transparent bg-[#1E8DDE] text-white shadow-[0_8px_22px_rgba(30,141,222,0.3)] dark:bg-[#3b9eff] dark:shadow-[0_8px_22px_rgba(59,158,255,0.3)]"
+                      : "border border-white/60 bg-white/50 text-[#1a567a] shadow-sm hover:bg-white/80 dark:border-white/[0.08] dark:bg-white/[0.05] dark:text-gray-300 dark:hover:bg-white/10"
                   }`}
                 >
-                  {filter.label}
+                  {f.label}
                 </button>
               );
             })}
           </div>
         </motion.div>
 
-        <motion.div
-          key={activeCategory}
-          initial={{ opacity: 0.9, y: 16, scale: 0.992, filter: "blur(3px)" }}
-          whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: false, amount: 0.08, margin: "0px 0px 40% 0px" }}
-          transition={{
-            duration: 0.5,
-            ease: [0.22, 1, 0.36, 1],
-            filter: { duration: 0.08 },
-          }}
-          className="grid grid-cols-1 items-start gap-5 md:grid-cols-[1.1fr_0.9fr] md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7 pt-4"
-        >
-          <div className="rounded-[28px] border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 sm:p-6">
-            <div className="relative space-y-4 pl-7">
-              <div className="absolute bottom-2 left-[9px] top-2 w-px bg-[#8fb6d1]/70 dark:bg-white/[0.08]" />
+        {/* Toggle Timeline / Grid */}
+        {groups.reduce((sum, [, items]) => sum + items.length, 0) > 6 && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.15 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center mb-8"
+          >
+            <div className="inline-flex rounded-full border border-white/40 bg-white/50 p-1 shadow-sm backdrop-blur-md dark:border-white/[0.08] dark:bg-[#0b1425]/60">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] rounded-full backdrop-blur-sm transition-all duration-300 ${
+                  viewMode === "grid"
+                    ? "bg-[#1E8DDE] text-white shadow-[0_4px_12px_rgba(30,141,222,0.25)] dark:bg-[#5DC3F5] dark:text-[#0a1e30]"
+                    : "text-[#0f3b5e]/60 dark:text-gray-400 hover:text-[#0f3b5e] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5"
+                }`}
+              >
+                Grid View
+              </button>
+              <button
+                onClick={() => setViewMode("timeline")}
+                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] rounded-full backdrop-blur-sm transition-all duration-300 ${
+                  viewMode === "timeline"
+                    ? "bg-[#1E8DDE] text-white shadow-[0_4px_12px_rgba(30,141,222,0.25)] dark:bg-[#5DC3F5] dark:text-[#0a1e30]"
+                    : "text-[#0f3b5e]/60 dark:text-gray-400 hover:text-[#0f3b5e] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5"
+                }`}
+              >
+                Timeline
+              </button>
+            </div>
+          </motion.div>
+        )}
 
-              {filteredAchievements.length > 0 ? (
-                filteredAchievements.map((item, index) => {
-                  const isSelected = item.id === selectedAchievement?.id;
-                  const shouldShowPeriod =
-                    item.period && item.period !== item.year;
+        {/* ── Content: Grid or Timeline ── */}
+        {groups.length > 0 ? (
+          viewMode === "timeline" ? (
+            /* ══ TIMELINE VIEW ══ */
+            <div className="space-y-10">
+              {groups.map(([year, items]) => (
+                <div key={year}>
+                  {/* Year Header */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    className="flex items-center gap-4 mb-6"
+                  >
+                    <div className="rounded-full border border-white/40 bg-white/40 px-5 py-2 shadow-sm backdrop-blur-md dark:border-white/[0.08] dark:bg-white/[0.05]">
+                      <span className="text-xl font-black tracking-widest text-[#1E8DDE] dark:text-[#5DC3F5]">
+                        {year}
+                      </span>
+                    </div>
+                    <div className="flex-1 h-px bg-gradient-to-r from-[#1E8DDE]/40 to-transparent dark:from-[#5DC3F5]/30" />
+                  </motion.div>
 
-                  return (
-                    <motion.article
-                      key={`${activeCategory}-${item.id}`}
-                      variants={itemMotion}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{
-                        once: false,
-                        amount: 0.08,
-                        margin: "0px 0px 40% 0px",
-                      }}
-                      transition={{
-                        duration: 0.42,
-                        ease: [0.22, 1, 0.36, 1],
-                        delay: Math.min(index * 0.03, 0.14),
-                      }}
-                      whileHover={{ y: -5, scale: 1.006 }}
-                      whileTap={{ scale: 0.985 }}
-                      className="relative"
-                    >
-                      <div className="absolute -left-[28px] top-4 flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_rgba(31,79,122,0.18)] ring-1 ring-[#cfe1ed] dark:bg-[#0f1a2e] dark:shadow-[0_6px_16px_rgba(0,0,0,0.3)] dark:ring-white/[0.05]">
-                        <span
-                          className={`h-2.5 w-2.5 rounded-full transition-colors duration-300 ${
-                            isSelected ? "bg-[#1E8DDE]" : "bg-[#8fb6d1]"
-                          }`}
-                        />
-                      </div>
+                  {/* Timeline items */}
+                  <div className="relative pl-8">
+                    {/* Vertical line */}
+                    <div className="absolute left-[11px] top-2 bottom-2 w-px bg-[#8fb6d1]/50 dark:bg-white/[0.08]" />
 
-                      <button
-                        type="button"
-                        onClick={() => setSelectedId(item.id)}
-                        className={`group block w-full rounded-[28px] border p-4 text-left shadow-[0_18px_45px_rgba(31,79,122,0.09)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:border-[#1E8DDE]/50 dark:hover:border-[#3b9eff]/50 hover:bg-white/90 dark:hover:bg-[#0f1a2e]/80 hover:shadow-[0_18px_46px_rgba(30,141,222,0.16)] dark:hover:shadow-[0_18px_46px_rgba(0,0,0,0.3)] ${
-                          isSelected
-                            ? "border-[#BFD8EA] bg-white/95 ring-2 ring-[#d8eaf6] dark:border-[#3b9eff]/30 dark:bg-[#0f1a2e]/80 dark:ring-[#3b9eff]/10"
-                            : "border-white/70 bg-white/80 dark:border-white/[0.05] dark:bg-[#0b1425]/50"
-                        }`}
-                      >
-                        <div className="flex gap-4">
-                          <div className="hidden h-24 w-28 shrink-0 overflow-hidden rounded-[20px] bg-[#eef7fc] shadow-[0_10px_24px_rgba(31,79,122,0.1)] sm:block">
-                            <SafeAchievementImage
-                              item={item}
-                              className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
-                            />
+                    <div className="space-y-5">
+                      {items.map((item, i) => {
+                        const docs = getDocuments(item);
+                        const hasPeriod =
+                          item.period && item.period !== item.year;
+                        return (
+                          <motion.div
+                            key={`tl-${activeCategory}-${item.id}`}
+                            initial={{ opacity: 0, x: -10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: false, amount: 0.15 }}
+                            transition={{
+                              duration: 0.35,
+                              ease: [0.22, 1, 0.36, 1],
+                              delay: Math.min(i * 0.05, 0.2),
+                            }}
+                            whileHover={{ x: 3 }}
+                            className="relative"
+                          >
+                            {/* Dot */}
+                            <div className="absolute -left-8 top-1.5 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-white dark:bg-[#0f1a2e] shadow-[0_2px_8px_rgba(31,79,122,0.15)] ring-1 ring-[#cfe1ed] dark:ring-white/[0.05]">
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#1E8DDE] dark:bg-[#5DC3F5]" />
+                            </div>
+
+                            {/* Card */}
+                            <div className="relative overflow-hidden rounded-[20px] border border-white/50 dark:border-white/[0.06] bg-white/80 dark:bg-[#0b1425]/70 p-4 shadow-sm backdrop-blur-sm ring-1 ring-white/30 dark:ring-slate-800/30 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(30,141,222,0.1)]">
+                              {/* Decorative elements */}
+                              <div className="pointer-events-none absolute -right-8 -top-8 h-16 w-16 rounded-full bg-[#1E8DDE]/5 blur-2xl dark:bg-[#5DC3F5]/3" />
+                              <div className="pointer-events-none absolute -bottom-6 -left-6 h-12 w-12 rounded-full bg-white/20 blur-2xl dark:bg-white/5" />
+                              <div className="flex flex-wrap gap-2 mb-1.5">
+                                <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#1E8DDE] dark:text-[#5DC3F5]">
+                                  {item.type}
+                                </span>
+                                {hasPeriod && (
+                                  <span className="text-[10px] font-bold text-slate-500 dark:text-gray-500">
+                                    {item.period}
+                                  </span>
+                                )}
+                              </div>
+                              <h3 className="text-base font-extrabold tracking-tight text-[#0f3b5e] dark:text-white">
+                                {item.title}
+                              </h3>
+                              {item.organization && (
+                                <p className="mt-0.5 text-xs font-bold text-[#1a567a] dark:text-gray-400">
+                                  {item.organization}
+                                </p>
+                              )}
+                              {item.description && (
+                                <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-gray-400">
+                                  {item.description}
+                                </p>
+                              )}
+                              {item.tools?.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {item.tools.map((tool) => (
+                                    <span
+                                      key={tool}
+                                      className="rounded-full border border-white/40 dark:border-white/[0.05] bg-white/50 dark:bg-white/[0.04] px-2.5 py-0.5 text-[9px] font-bold text-[#0f3b5e]/70 dark:text-gray-400"
+                                    >
+                                      {tool}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                {docs.map((doc) => (
+                                  <a
+                                    key={doc.url}
+                                    href={doc.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 rounded-full border border-[#BFD8EA]/60 dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.04] px-3 py-1 text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] transition-all duration-300 hover:bg-[#1E8DDE] hover:text-white dark:hover:bg-[#3b9eff]"
+                                  >
+                                    {doc.label || "Lihat"}{" "}
+                                    <span className="text-[10px]">↗</span>
+                                  </a>
+                                ))}
+                                {item.relatedPortfolioSlug && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handlePortfolioFocus(
+                                        item.relatedPortfolioSlug,
+                                      )
+                                    }
+                                    className="inline-flex items-center gap-1 rounded-full border border-[#1E8DDE]/30 dark:border-[#5DC3F5]/30 bg-white/70 dark:bg-white/[0.04] px-3 py-1 text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] transition-all duration-300 hover:bg-[#1E8DDE] hover:text-white dark:hover:bg-[#3b9eff]"
+                                  >
+                                    Lihat Portfolio{" "}
+                                    <span className="text-[10px]">→</span>
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* ══ GRID VIEW ══ */
+            <div className="space-y-8">
+              {groups.map(([year, items]) => (
+                <div key={year}>
+                  {/* Year Header */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    className="flex items-center gap-4 mb-5"
+                  >
+                    <div className="rounded-full border border-white/40 bg-white/40 px-5 py-2 shadow-sm backdrop-blur-md dark:border-white/[0.08] dark:bg-white/[0.05]">
+                      <span className="text-xl font-black tracking-widest text-[#1E8DDE] dark:text-[#5DC3F5]">
+                        {year}
+                      </span>
+                    </div>
+                  </motion.div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {items.map((item, i) => {
+                      const docs = getDocuments(item);
+                      const hasPeriod =
+                        item.period && item.period !== item.year;
+                      return (
+                        <motion.div
+                          key={`${activeCategory}-${item.id}`}
+                          variants={itemMotion}
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{
+                            once: false,
+                            amount: 0.08,
+                            margin: "0px 0px 40% 0px",
+                          }}
+                          whileHover={{ y: -4, scale: 1.01 }}
+                          transition={{
+                            duration: 0.42,
+                            ease: [0.22, 1, 0.36, 1],
+                            delay: Math.min(i * 0.04, 0.2),
+                          }}
+                          onClick={() =>
+                            setExpandedId(
+                              expandedId === item.id ? null : item.id,
+                            )
+                          }
+                          className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-white/50 dark:border-white/[0.06] bg-white/80 dark:bg-[#0b1425]/80 p-4 sm:p-5 shadow-sm backdrop-blur-sm ring-1 ring-white/30 dark:ring-slate-800/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(30,141,222,0.12)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.25)] hover:border-[#1E8DDE]/30 dark:hover:border-[#3b9eff]/20"
+                        >
+                          {/* Decorative elements */}
+                          <div className="pointer-events-none absolute -right-10 -top-10 h-20 w-20 rounded-full bg-[#1E8DDE]/6 blur-2xl dark:bg-[#5DC3F5]/4" />
+                          <div className="pointer-events-none absolute -bottom-8 -left-8 h-16 w-16 rounded-full bg-white/25 blur-2xl dark:bg-white/5" />
+                          {/* Image */}
+                          {(item.image || item.thumbnail) && (
+                            <div className="mb-3 h-36 w-full overflow-hidden rounded-[16px] bg-[#eef7fc] shadow-[0_4px_12px_rgba(31,79,122,0.06)]">
+                              <SafeImage
+                                item={item}
+                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                              />
+                            </div>
+                          )}
+
+                          {/* Badges */}
+                          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                            <span className="rounded-full bg-[#e8f2f8] dark:bg-white/[0.06] px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#1a567a] dark:text-gray-300">
+                              {item.type}
+                            </span>
+                            <span className="rounded-full border border-white/40 dark:border-white/[0.05] bg-white/50 dark:bg-white/[0.04] px-2.5 py-0.5 text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5]">
+                              {item.category}
+                            </span>
+                            {hasPeriod && (
+                              <span className="text-[9px] font-bold text-slate-500 dark:text-gray-500">
+                                {item.period}
+                              </span>
+                            )}
                           </div>
 
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-2 flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-extrabold tracking-wide text-[#1a567a] dark:text-gray-300">
-                                {item.year}
-                              </span>
-                              <span className="rounded-full bg-[#e8f2f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1a567a] ring-1 ring-white/80 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]">
-                                {item.type}
-                              </span>
-                            </div>
-                            <h3 className="text-base font-extrabold tracking-tight text-[#0f3b5e] dark:text-white sm:text-lg">
-                              {item.title}
-                            </h3>
-                            <p className="mt-1 text-sm font-bold text-[#1a567a] dark:text-gray-400">
+                          {/* Title */}
+                          <h3 className="text-sm font-extrabold tracking-tight text-[#0f3b5e] dark:text-white leading-snug">
+                            {item.title}
+                          </h3>
+
+                          {/* Org */}
+                          {item.organization && (
+                            <p className="mt-1 text-xs font-bold text-[#1a567a] dark:text-gray-400">
                               {item.organization}
                             </p>
-                            {shouldShowPeriod && (
-                              <p className="mt-0.5 text-xs font-bold text-slate-500 dark:text-gray-500">
-                                {item.period}
+                          )}
+
+                          {/* Description - expandable */}
+                          {item.description && (
+                            <div className="mt-2">
+                              <p
+                                className={`text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-gray-400 ${expandedId === item.id ? "" : "line-clamp-2"}`}
+                              >
+                                {item.description}
                               </p>
-                            )}
-                            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-gray-400">
-                              {item.description}
-                            </p>
-                          </div>
-                        </div>
-                      </button>
-                    </motion.article>
-                  );
-                })
-              ) : (
-                <p className="rounded-[28px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300">
-                  Belum ada data untuk kategori ini.
-                </p>
-              )}
-            </div>
-          </div>
+                              {item.description.length > 100 && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExpandedId(
+                                      expandedId === item.id ? null : item.id,
+                                    );
+                                  }}
+                                  className="mt-1 text-[10px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] hover:opacity-80 transition-opacity"
+                                >
+                                  {expandedId === item.id
+                                    ? "Show less ▲"
+                                    : "Read more ▼"}
+                                </button>
+                              )}
+                            </div>
+                          )}
 
-          <motion.aside
-            key={selectedAchievement?.id || "achievement-preview"}
-            initial={{
-              opacity: 0.92,
-              y: 12,
-              scale: 0.994,
-              filter: "blur(6px)",
-            }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-            transition={{
-              duration: 0.32,
-              ease: [0.22, 1, 0.36, 1],
-              filter: { duration: 0.08 },
-            }}
-            className="group rounded-[28px] border border-white/50 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-[0_12px_32px_rgba(30,141,222,0.15)] dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:hover:shadow-[0_12px_32px_rgba(30,141,222,0.1)] sm:p-5 lg:sticky lg:top-24"
-            onMouseEnter={() => setIsAsideHovered(true)}
-            onMouseLeave={() => {
-              setIsAsideHovered(false);
-              setAsideRot({ x: 0, y: 0 });
-            }}
-            onMouseMove={handleAsideTilt}
-            style={{ perspective: "900px" }}
+                          {/* Tools - show all when expanded, 3 when collapsed */}
+                          {item.tools?.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-1">
+                              {(expandedId === item.id
+                                ? item.tools
+                                : item.tools.slice(0, 3)
+                              ).map((tool) => (
+                                <span
+                                  key={tool}
+                                  className="rounded-full border border-white/40 dark:border-white/[0.05] bg-white/50 dark:bg-white/[0.04] px-2 py-0.5 text-[9px] font-bold text-[#0f3b5e]/70 dark:text-gray-400"
+                                >
+                                  {tool}
+                                </span>
+                              ))}
+                              {expandedId !== item.id &&
+                                item.tools.length > 3 && (
+                                  <span className="text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] self-center">
+                                    +{item.tools.length - 3}
+                                  </span>
+                                )}
+                            </div>
+                          )}
+
+                          {/* Documents */}
+                          {docs.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {docs.map((doc) => (
+                                <a
+                                  key={doc.url}
+                                  href={doc.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="inline-flex items-center gap-1 rounded-full border border-[#BFD8EA]/60 dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.04] px-3 py-1 text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] transition-all duration-300 hover:bg-[#1E8DDE] hover:text-white dark:hover:bg-[#3b9eff] active:scale-95"
+                                >
+                                  {doc.label || "Lihat"}
+                                  <span className="text-[10px]">↗</span>
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                          {item.relatedPortfolioSlug && (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePortfolioFocus(
+                                    item.relatedPortfolioSlug,
+                                  );
+                                }}
+                                className="inline-flex items-center gap-1 rounded-full border border-[#1E8DDE]/30 dark:border-[#5DC3F5]/30 bg-white/70 dark:bg-white/[0.04] px-3 py-1 text-[9px] font-bold text-[#1E8DDE] dark:text-[#5DC3F5] transition-all duration-300 hover:bg-[#1E8DDE] hover:text-white dark:hover:bg-[#3b9eff] active:scale-95"
+                              >
+                                Lihat Portfolio
+                                <span className="text-[10px]">→</span>
+                              </button>
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          <motion.p
+            variants={itemMotion}
+            initial="hidden"
+            whileInView="visible"
+            className="rounded-[24px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300"
           >
-            <div
-              className="transform-gpu transition-transform duration-[250ms] ease-out will-change-transform"
-              style={{
-                transform: `
-                  translateY(${isAsideHovered ? -3 : 0}px)
-                  scale(${isAsideHovered ? 1.004 : 1})
-                  rotateX(${asideRot.x}deg)
-                  rotateY(${asideRot.y}deg)
-                `,
-              }}
-            >
-              <div className="overflow-hidden rounded-[24px] border border-[#D7EAF5] bg-white/70 shadow-[0_18px_50px_rgba(31,79,122,0.08)] dark:border-white/[0.06] dark:bg-[#0b1425]/50 dark:shadow-[0_18px_50px_rgba(0,0,0,0.3)]">
-                <div className="h-[240px] bg-[#eef7fc] sm:h-[320px] lg:h-[360px]">
-                  <SafeAchievementImage
-                    item={selectedAchievement}
-                    className="h-full w-full bg-[#f8fbff] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
-
-                <div className="p-5 md:p-6">
-                  <div className="flex flex-wrap gap-2">
-                    <span className="font-ui inline-flex rounded-full bg-[#E8F4FB] dark:bg-white/[0.06] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#1a567a] ring-1 ring-white/80">
-                      {selectedAchievement.type}
-                    </span>
-                    {selectedAchievement.period &&
-                      selectedAchievement.period !==
-                        selectedAchievement.year && (
-                        <span className="font-ui rounded-full border border-[#D7EAF5] bg-white/80 dark:border-white/[0.06] dark:bg-[#0f1a2e]/50 px-3 py-1.5 text-[10px] font-black tracking-[0.18em] text-[#1a567a]">
-                          {selectedDisplayPeriod}
-                        </span>
-                      )}
-                  </div>
-
-                  <h3 className="mt-4 text-2xl font-black leading-tight tracking-tight text-[#0f3b5e] dark:text-white md:text-3xl">
-                    {selectedAchievement.title}
-                  </h3>
-                  <p className="mt-2 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#5F7FA0] dark:text-gray-500 md:text-xs">
-                    {selectedAchievement.organization}
-                  </p>
-
-                  <p className="mt-5 text-sm leading-7 text-[#0f3b5e] dark:text-gray-300 md:text-[15px]">
-                    {selectedAchievement.description}
-                  </p>
-
-                  {selectedAchievement.tools?.length > 0 && (
-                    <div className="mt-5">
-                      <h4 className="font-ui text-[11px] font-black uppercase tracking-[0.18em] text-[#1a567a] dark:text-gray-300">
-                        Tools & Fokus
-                      </h4>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {selectedAchievement.tools.map((tool) => (
-                          <ToolPill key={tool} tool={tool} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    {selectedAchievement.relatedPortfolioSlug && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handlePortfolioFocus(
-                            selectedAchievement.relatedPortfolioSlug,
-                          )
-                        }
-                        className={primaryActionClass}
-                      >
-                        Lihat Portfolio
-                        <span className={arrowClass}>→</span>
-                      </button>
-                    )}
-
-                    {selectedDocuments.map((document) => (
-                      <a
-                        key={`${selectedAchievement.id}-${document.url}`}
-                        href={document.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={secondaryActionClass}
-                      >
-                        {document.label || "Lihat Sertifikat"}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.aside>
-        </motion.div>
+            Belum ada data untuk kategori ini.
+          </motion.p>
+        )}
       </div>
     </section>
   );
