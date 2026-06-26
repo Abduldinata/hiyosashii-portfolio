@@ -98,6 +98,10 @@ export default function ContactSection() {
               </a>
               <a
                 href="#intro"
+                onClick={(e) => {
+                  // Dispatch custom event so IntroSection auto-opens CV dropdown
+                  window.dispatchEvent(new CustomEvent("openCV"));
+                }}
                 className="inline-flex items-center gap-1.5 rounded-full border border-indigo-400/40 dark:border-indigo-400/20 bg-white/40 dark:bg-white/[0.05] px-5 py-2.5 text-sm font-bold text-indigo-600 dark:text-indigo-300 transition-all duration-300 hover:-translate-y-1 hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 active:scale-95"
               >
                 <svg
