@@ -98,7 +98,7 @@ function CategoryPills({ categories, className = "" }) {
       {visibleCategories.map((category) => (
         <span
           key={category}
-          className="font-ui rounded-full bg-[#e8f2f8] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1a567a] ring-1 ring-white/80 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
+          className="font-ui rounded-full border border-white/50 bg-white/40 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.08] dark:bg-white/[0.05] dark:text-gray-300"
         >
           {category}
         </span>
@@ -283,11 +283,12 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
         ease: [0.22, 1, 0.36, 1],
         delay: Math.min(index * 0.035, 0.16),
       }}
+      whileHover={{ y: -5, scale: 1.01 }}
       whileTap={{
         scale: 0.98,
         transition: { duration: 0.12 },
       }}
-      className="group rounded-[28px] border border-white/50 bg-white/40 p-4 shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] sm:p-5"
+      className="group relative overflow-hidden rounded-[28px] border border-white/50 bg-white/40 p-4 shadow-sm backdrop-blur-sm ring-1 ring-white/30 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] dark:ring-slate-800/30 sm:p-5"
       onMouseEnter={!isTouchDevice ? () => setIsCardHovered(true) : undefined}
       onMouseLeave={
         !isTouchDevice
@@ -300,6 +301,11 @@ function PortfolioCard({ project, onOpenDetails, setActiveImageIndex, index }) {
       onMouseMove={!isTouchDevice ? handleTilt : undefined}
       style={{ perspective: "900px" }}
     >
+      {/* Decorative elements */}
+      <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-[#1E8DDE]/8 blur-2xl dark:bg-[#5DC3F5]/5" />
+      <div className="pointer-events-none absolute -bottom-10 -left-10 h-20 w-20 rounded-full bg-white/30 blur-2xl dark:bg-white/5" />
+      <div className="hiyo-orbit pointer-events-none absolute right-6 top-6 h-2 w-2 rounded-full bg-[#1E8DDE]/35 shadow-[0_0_14px_rgba(30,141,222,0.3)] dark:bg-[#5DC3F5]/30" />
+
       <div
         ref={cardInnerRef}
         className="transform-gpu transition-transform duration-[250ms] ease-out"
@@ -645,6 +651,10 @@ export default function PortfolioSection() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const portfolioRef = useRef(null);
+  const carouselRef = useRef(null);
   const filteredProjects =
     activeCategory === "All"
       ? portfolioData
@@ -665,6 +675,51 @@ export default function PortfolioSection() {
     setSelectedProject(null);
   };
 
+  // Reset on filter change
+  useEffect(() => {
+    setCurrentIndex(0);
+    setShowMore(false);
+    if (carouselRef.current) carouselRef.current.scrollLeft = 0;
+  }, [activeCategory]);
+
+  // Track currentIndex from scroll position
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el || filteredProjects.length === 0) return;
+    const cards = Array.from(el.children);
+    if (cards.length === 0) return;
+    const update = () => {
+      const cx = el.scrollLeft + el.clientWidth / 2;
+      let closest = 0;
+      let closestDist = Infinity;
+      for (let i = 0; i < cards.length; i++) {
+        const d = Math.abs(
+          cx - (cards[i].offsetLeft + cards[i].offsetWidth / 2),
+        );
+        if (d < closestDist) {
+          closestDist = d;
+          closest = i;
+        }
+      }
+      setCurrentIndex(closest);
+    };
+    el.addEventListener("scroll", update, { passive: true });
+    return () => el.removeEventListener("scroll", update);
+  }, [filteredProjects.length]);
+
+  const scrollTo = (index) => {
+    const total = filteredProjects.length;
+    const safe = ((index % total) + total) % total;
+    if (!carouselRef.current) return;
+    const el = carouselRef.current;
+    const child = el.children[safe];
+    if (!child) return;
+    const scrollLeft =
+      child.offsetLeft + child.offsetWidth / 2 - el.clientWidth / 2;
+    el.scrollTo({ left: scrollLeft, behavior: "smooth" });
+    setCurrentIndex(safe);
+  };
+
   // Lock body scroll when modal is open
   useEffect(() => {
     if (selectedProject) {
@@ -680,6 +735,7 @@ export default function PortfolioSection() {
   return (
     <section
       id="portfolio"
+      ref={portfolioRef}
       className="hiyo-section-surface relative flex min-h-screen w-full scroll-mt-24 items-center justify-center overflow-visible bg-transparent px-4 py-24 text-slate-900 dark:text-white sm:px-6 lg:px-8"
     >
       <div className="relative z-10 mx-auto w-full max-w-[1200px]">
@@ -688,7 +744,7 @@ export default function PortfolioSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
-          className="mb-6 text-center"
+          className="mb-6 flex flex-col items-center text-center"
         >
           <h2 className="font-ui text-3xl font-extrabold tracking-tight text-[#0f3b5e] dark:text-white/90 md:text-4xl">
             Portfolio
@@ -703,7 +759,7 @@ export default function PortfolioSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
             transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3"
+            className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3"
           >
             {filters.map((filter) => {
               const isActive = filter === activeCategory;
@@ -713,10 +769,10 @@ export default function PortfolioSection() {
                   key={filter}
                   type="button"
                   onClick={() => handleCategoryChange(filter)}
-                  className={`font-ui rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:bg-[#1E8DDE] dark:hover:bg-[#3b9eff] hover:text-white active:scale-95 sm:text-xs ${
+                  className={`font-ui rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] active:scale-95 sm:text-xs ${
                     isActive
-                      ? "bg-[#1f4f7a] text-white shadow-[0_8px_22px_rgba(31,79,122,0.2)] dark:bg-[#1a567a] dark:shadow-[0_8px_22px_rgba(0,0,0,0.3)]"
-                      : "bg-white/80 text-[#1a567a] ring-1 ring-white/70 dark:bg-white/[0.06] dark:text-gray-300 dark:ring-white/[0.05]"
+                      ? "border border-transparent bg-[#1E8DDE] text-white shadow-[0_8px_22px_rgba(30,141,222,0.3)] dark:bg-[#3b9eff] dark:shadow-[0_8px_22px_rgba(59,158,255,0.3)]"
+                      : "border border-white/60 bg-white/50 text-[#1a567a] shadow-sm hover:bg-white/80 dark:border-white/[0.08] dark:bg-white/[0.05] dark:text-gray-300 dark:hover:bg-white/10"
                   }`}
                 >
                   {filter}
@@ -726,37 +782,197 @@ export default function PortfolioSection() {
           </motion.div>
         </motion.div>
 
-        <div
-          key={activeCategory}
-          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6 pt-4"
-        >
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project, index) => (
-              <PortfolioCard
-                key={`${activeCategory}-${project.id}`}
-                project={project}
-                onOpenDetails={openDetails}
-                setActiveImageIndex={setActiveImageIndex}
-                index={index}
-              />
-            ))
-          ) : (
-            <motion.p
-              variants={itemMotion}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{
-                once: false,
-                amount: 0.15,
-                margin: "10% 0px 10% 0px",
-              }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-[24px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300 md:col-span-2"
-            >
-              Belum ada portfolio untuk kategori ini.
-            </motion.p>
-          )}
-        </div>
+        <style>{`.ps-hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; } .ps-hide-scrollbar::-webkit-scrollbar { display: none; }`}</style>
+
+        {showMore ? (
+          /* ── GRID VIEW (Show More) ── */
+          <div
+            key={activeCategory + "-grid"}
+            className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6 pt-4"
+          >
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project, index) => (
+                <PortfolioCard
+                  key={`${activeCategory}-${project.id}`}
+                  project={project}
+                  onOpenDetails={openDetails}
+                  setActiveImageIndex={setActiveImageIndex}
+                  index={index}
+                />
+              ))
+            ) : (
+              <motion.p
+                variants={itemMotion}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{
+                  once: false,
+                  amount: 0.15,
+                  margin: "10% 0px 10% 0px",
+                }}
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                className="rounded-[24px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300 md:col-span-2"
+              >
+                Belum ada portfolio untuk kategori ini.
+              </motion.p>
+            )}
+          </div>
+        ) : (
+          /* ── CAROUSEL VIEW (ML style) ── */
+          <div key={activeCategory + "-carousel"} className="relative pt-4">
+            {filteredProjects.length > 0 ? (
+              <>
+                {/* Left arrow */}
+                <button
+                  onClick={() => scrollTo(currentIndex - 1)}
+                  className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 dark:bg-[#0f1a2e]/90 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-white/60 dark:border-white/[0.08] flex items-center justify-center text-[#1E8DDE] transition-all duration-300 hover:bg-white dark:hover:bg-[#0f1a2e] hover:shadow-[0_6px_24px_rgba(30,141,222,0.2)] hover:scale-105 active:scale-95"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+
+                {/* Carousel */}
+                <div
+                  ref={carouselRef}
+                  className="flex gap-4 overflow-x-auto snap-x snap-proximity scroll-smooth ps-hide-scrollbar py-2 px-4 md:px-16"
+                >
+                  {filteredProjects.map((project, i) => {
+                    const dist = Math.abs(currentIndex - i);
+                    return (
+                      <div
+                        key={`${activeCategory}-${project.id}`}
+                        className="snap-center shrink-0 w-[80vw] sm:w-[400px] lg:w-[480px] transition-all duration-500 ease-out"
+                        style={{
+                          opacity: dist === 0 ? 1 : dist === 1 ? 0.55 : 0.15,
+                          transform:
+                            dist === 0
+                              ? "scale(1)"
+                              : dist === 1
+                                ? "scale(0.88)"
+                                : "scale(0.75)",
+                        }}
+                      >
+                        <PortfolioCard
+                          project={project}
+                          onOpenDetails={openDetails}
+                          setActiveImageIndex={setActiveImageIndex}
+                          index={i}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Right arrow */}
+                <button
+                  onClick={() => scrollTo(currentIndex + 1)}
+                  className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 dark:bg-[#0f1a2e]/90 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-white/60 dark:border-white/[0.08] flex items-center justify-center text-[#1E8DDE] transition-all duration-300 hover:bg-white dark:hover:bg-[#0f1a2e] hover:shadow-[0_6px_24px_rgba(30,141,222,0.2)] hover:scale-105 active:scale-95"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <motion.p
+                variants={itemMotion}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{
+                  once: false,
+                  amount: 0.15,
+                  margin: "10% 0px 10% 0px",
+                }}
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                className="rounded-[24px] border border-white/50 bg-white/80 px-5 py-8 text-center text-sm font-bold text-[#1a567a] shadow-sm backdrop-blur-sm dark:border-white/[0.06] dark:bg-[#0b1425]/80 dark:text-gray-300"
+              >
+                Belum ada portfolio untuk kategori ini.
+              </motion.p>
+            )}
+
+            {/* Show More toggle */}
+            {filteredProjects.length > 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="mt-6 flex justify-center">
+                  <button
+                    onClick={() => setShowMore(true)}
+                    className="font-ui inline-flex items-center gap-2 rounded-full border border-white/50 dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.05] px-6 py-2.5 text-sm font-bold text-[#0f3b5e] dark:text-gray-300 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white dark:hover:bg-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,141,222,0.12)] active:scale-95"
+                  >
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Show More
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        )}
+
+        {/* Show Less button (when in grid view) */}
+        {showMore && filteredProjects.length > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          >
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => {
+                  setShowMore(false);
+                  setTimeout(() => scrollTo(currentIndex), 50);
+                  portfolioRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+                className="font-ui inline-flex items-center gap-2 rounded-full border border-white/50 dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.05] px-6 py-2.5 text-sm font-bold text-[#0f3b5e] dark:text-gray-300 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white dark:hover:bg-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,141,222,0.12)] active:scale-95"
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="19" x2="12" y2="5" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Show Less
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {typeof document !== "undefined" &&
