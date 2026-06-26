@@ -31,7 +31,7 @@ export default function Navbar() {
       // Hide navbar when scrolling down past threshold, show when scrolling up
       if (currentY > 80 && currentY > prevScrollY) {
         setNavbarHidden(true);
-      } else {
+      } else if (currentY < prevScrollY || currentY <= 80) {
         setNavbarHidden(false);
       }
 
@@ -67,7 +67,7 @@ export default function Navbar() {
       } ${
         scrolled
           ? "bg-white/70 dark:bg-[#0a1e30]/75 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/20 border-b border-gray-200/50 dark:border-white/5"
-          : "bg-white/10 md:bg-transparent dark:bg-[#0a1e30]/20 backdrop-blur-md"
+          : "bg-white/40 md:bg-transparent dark:bg-[#0a1e30]/30 backdrop-blur-lg"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
