@@ -176,9 +176,9 @@ function SkillPill({ skill, floatDelay }) {
         onBlur={() => setTipOpen(false)}
       >
         <span
-          className={`relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border px-2.5 py-1 text-xs font-semibold leading-none transition-all duration-200 hover:scale-105 ${
+          className={`relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-white/40 px-3.5 py-2 text-sm font-semibold leading-none shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 dark:border-white/[0.08] ${
             tipOpen ? "scale-105" : ""
-          } ${categoryColors[skill._cat]?.pill || categoryColors.foundation.pill}`}
+          } ${categoryColors[skill._cat]?.pill || categoryColors.foundation.pill} bg-white/40 dark:bg-white/[0.04]`}
         >
           {/* Shimmer overlay */}
           <span className="pointer-events-none absolute inset-0 -translate-x-full rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-[600ms] group-hover/pill:translate-x-full" />
@@ -187,7 +187,7 @@ function SkillPill({ skill, floatDelay }) {
             <img
               src={skill.icon}
               alt=""
-              className="relative z-10 h-3.5 w-3.5 object-contain"
+              className="relative z-10 h-4 w-4 object-contain"
               onError={() => setHasError(true)}
             />
           ) : (
@@ -206,13 +206,13 @@ function SkillPill({ skill, floatDelay }) {
               : "translate-y-1 opacity-0 group-hover/pill:translate-y-0 group-hover/pill:opacity-100"
           }`}
         >
-          <div className="rounded-xl border border-white/60 bg-white p-2.5 text-left shadow-xl dark:border-white/[0.08] dark:bg-[#0f1a2e]">
+          <div className="rounded-xl border border-white/60 bg-white/80 p-2.5 text-left shadow-xl backdrop-blur-md dark:border-white/[0.1] dark:bg-[#0f1a2e]/80">
             <p className="text-xs font-bold text-[#0f3b5e] dark:text-white">
               {label}
             </p>
             {skill.level && (
               <>
-                <div className="mt-1.5 h-1 w-full rounded-full bg-gray-200 dark:bg-white/10">
+                <div className="mt-1.5 h-1 w-full rounded-full bg-gray-200/80 dark:bg-white/10">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: barWidth + "%", backgroundColor: barColor }}
@@ -227,7 +227,7 @@ function SkillPill({ skill, floatDelay }) {
               </>
             )}
           </div>
-          <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-white/60 bg-white dark:border-white/[0.08] dark:bg-[#0f1a2e]" />
+          <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-white/60 bg-white/80 backdrop-blur-md dark:border-white/[0.1] dark:bg-[#0f1a2e]/80" />
         </div>
       </div>
     </FloatBox>
@@ -245,8 +245,11 @@ function SkillGroup({ title, subtitle, skills, index, catKey }) {
       viewport={{ once: false, amount: 0.15, margin: "0px 0px -20% 0px" }}
       transition={{ delay: index * 0.1 }}
       whileHover={{ y: -3, scale: 1.003 }}
-      className="group/card rounded-2xl border border-white/60 bg-white/45 px-5 py-5 shadow-lg shadow-[#1E8DDE]/6 ring-1 ring-white/50 backdrop-blur-sm transition-shadow duration-400 hover:shadow-[0_0_30px_rgba(30,141,222,0.12)] hover:ring-[#1E8DDE]/30 dark:border-white/[0.06] dark:bg-white/[0.03] dark:shadow-[0_24px_60px_rgba(0,0,0,0.3)] dark:ring-white/[0.03] dark:hover:shadow-[0_0_40px_rgba(59,158,255,0.08)] dark:hover:ring-[#5DC3F5]/20 sm:px-7"
+      className="group/card relative overflow-hidden rounded-2xl border border-white/60 bg-white/45 px-5 py-5 shadow-lg shadow-[#1E8DDE]/6 ring-1 ring-white/50 backdrop-blur-sm transition-shadow duration-400 hover:shadow-[0_0_30px_rgba(30,141,222,0.12)] hover:ring-[#1E8DDE]/30 dark:border-white/[0.06] dark:bg-white/[0.03] dark:shadow-[0_24px_60px_rgba(0,0,0,0.3)] dark:ring-white/[0.03] dark:hover:shadow-[0_0_40px_rgba(59,158,255,0.08)] dark:hover:ring-[#5DC3F5]/20 sm:px-7"
     >
+      {/* Decorative elements */}
+      <div className="pointer-events-none absolute -right-10 -top-10 h-20 w-20 rounded-full bg-[#1E8DDE]/6 blur-2xl dark:bg-[#5DC3F5]/4" />
+      <div className="pointer-events-none absolute -bottom-8 -left-8 h-16 w-16 rounded-full bg-white/25 blur-2xl dark:bg-white/5" />
       <div className="mb-3 flex items-center gap-3 sm:mb-3">
         <div className={`h-px flex-1 bg-gradient-to-r ${c.line}`} />
         <h3
@@ -546,9 +549,14 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
             <h2 className="font-ui text-3xl font-black tracking-[-0.045em] text-[#1a567a] dark:text-white sm:text-4xl lg:text-5xl">
               {isTech ? "Tech & AI Workflow" : "Creative Skills"}
             </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm font-semibold leading-relaxed text-[#1a567a]/80 dark:text-white/50">
+              {isTech
+                ? "Teknologi dan tools yang saya gunakan untuk pengembangan digital, AI-assisted, dan deployment."
+                : "Creative tools untuk editing, motion, desain, dan eksplorasi visual."}
+            </p>
 
             {/* Segmented control */}
-            <div className="inline-flex items-center rounded-full border border-white/60 bg-white/30 p-0.5 shadow-sm ring-1 ring-white/50 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.03] dark:ring-white/[0.03]">
+            <div className="mt-2 inline-flex items-center rounded-full border border-white/60 bg-white/30 p-1 shadow-sm ring-1 ring-white/50 backdrop-blur-md dark:border-white/[0.08] dark:bg-white/[0.04] dark:ring-white/[0.04]">
               <button
                 type="button"
                 onClick={() => onModeChange?.("tech")}
@@ -558,7 +566,7 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
                     : "text-[#1a567a]/60 hover:text-[#1a567a] dark:text-white/40 dark:hover:text-white/70"
                 }`}
               >
-                <CodeIcon className={isTech ? "h-3.5 w-3.5" : "h-3 w-3"} />
+                <CodeIcon className={isTech ? "h-4 w-4" : "h-3.5 w-3.5"} />
                 Tech & AI
               </button>
               <button
@@ -571,17 +579,11 @@ export default function SkillsSection({ mode = "tech", onModeChange }) {
                 }`}
               >
                 <SparkleIcon
-                  className={isCreative ? "h-3.5 w-3.5" : "h-3 w-3"}
+                  className={isCreative ? "h-4 w-4" : "h-3.5 w-3.5"}
                 />
                 Creative
               </button>
             </div>
-
-            <p className="max-w-2xl text-center text-sm font-semibold leading-relaxed text-[#1a567a]/80 dark:text-white/50">
-              {isTech
-                ? "Teknologi dan tools yang saya gunakan untuk pengembangan digital, AI-assisted, dan deployment."
-                : "Creative tools untuk editing, motion, desain, dan eksplorasi visual."}
-            </p>
           </motion.div>
 
           {/* Skill cards */}
