@@ -263,7 +263,7 @@ export default function IntroSection() {
                         className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl border border-white/70 bg-white/95 shadow-xl backdrop-blur-md dark:border-white/[0.1] dark:bg-[#0f1a2e]/95"
                       >
                         <a
-                          href="/assets/cv/cv_ats_tech.pdf"
+                          href="https://drive.google.com/file/d/1k8nHk4PUK9KIoKVGhWwHWL2BZN3nMPv1/view?usp=drive_link"
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setCvOpen(false)}
@@ -287,7 +287,7 @@ export default function IntroSection() {
                           </svg>
                         </a>
                         <a
-                          href="/assets/cv/cv_ats_multimedia.pdf"
+                          href="https://drive.google.com/file/d/151FpoPUVge0KK2u81iPOtbT97oe-Hcxo/view?usp=drive_link"
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setCvOpen(false)}
