@@ -59,7 +59,71 @@ export default function IntroSection() {
   const [isIntroCardHovered, setIsIntroCardHovered] = useState(false);
   const [cvOpen, setCvOpen] = useState(false);
   const [gitExpand, setGitExpand] = useState(false);
+  const [commits, setCommits] = useState([
+    {
+      msg: "Fix mobile avatar clipping and adjust profile layout",
+      date: "Jun 24",
+      repo: "hiyosashii-portfolio",
+      url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/e4111c181d28b183e575772ef6d2b1c3c6e8f9d7",
+    },
+    {
+      msg: "Refactor 3D assets into global slideshow with scroll-reactive effects",
+      date: "Jun 24",
+      repo: "hiyosashii-portfolio",
+      url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/1c203dbc35e69d3e0a951c17ed279abc3a752de1",
+    },
+    {
+      msg: "Update CV and replace liquid orbs with fluid mesh gradients",
+      date: "Jun 19",
+      repo: "hiyosashii-portfolio",
+      url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/648c6b4e9dfd04144cc1e3e1d97fa8ea15acac0f",
+    },
+    {
+      msg: "redeploy with env vars",
+      date: "Jun 15",
+      repo: "hiyosashii-portfolio",
+      url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/918a8f6318b4b3d6cf7b985694d68c497fd07e8e",
+    },
+    {
+      msg: "Refactor file structure",
+      date: "Jun 9",
+      repo: "hiyosashii-portfolio",
+      url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/de0cc58e0c7fcb61cd15d20cd574647e6c1a264d",
+    },
+  ]);
   const cvRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCommits = async () => {
+      try {
+        const res = await fetch(
+          "https://api.github.com/repos/Abduldinata/hiyosashii-portfolio/commits?per_page=5",
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const formatted = data.map((item) => {
+            const dateObj = new Date(item.commit.author.date);
+            const formattedDate = dateObj.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+            return {
+              msg: item.commit.message.split("\n")[0],
+              date: formattedDate,
+              repo: "hiyosashii-portfolio",
+              url: item.html_url,
+            };
+          });
+          setCommits(formatted);
+        }
+      } catch (err) {
+        console.error("Error fetching commits:", err);
+      }
+    };
+
+    fetchCommits();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -398,38 +462,7 @@ export default function IntroSection() {
                             <div className="relative">
                               <div className="absolute left-[11px] top-2 bottom-2 w-px bg-gradient-to-b from-emerald-400/40 via-indigo-400/20 to-transparent" />
                               <div className="space-y-0">
-                                {[
-                                  {
-                                    msg: "Fix mobile avatar clipping and adjust profile layout",
-                                    date: "Jun 24",
-                                    repo: "hiyosashii-portfolio",
-                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/e4111c181d28b183e575772ef6d2b1c3c6e8f9d7",
-                                  },
-                                  {
-                                    msg: "Refactor 3D assets into global slideshow with scroll-reactive effects",
-                                    date: "Jun 24",
-                                    repo: "hiyosashii-portfolio",
-                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/1c203dbc35e69d3e0a951c17ed279abc3a752de1",
-                                  },
-                                  {
-                                    msg: "Update CV and replace liquid orbs with fluid mesh gradients",
-                                    date: "Jun 19",
-                                    repo: "hiyosashii-portfolio",
-                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/648c6b4e9dfd04144cc1e3e1d97fa8ea15acac0f",
-                                  },
-                                  {
-                                    msg: "redeploy with env vars",
-                                    date: "Jun 15",
-                                    repo: "hiyosashii-portfolio",
-                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/918a8f6318b4b3d6cf7b985694d68c497fd07e8e",
-                                  },
-                                  {
-                                    msg: "Refactor file structure",
-                                    date: "Jun 9",
-                                    repo: "hiyosashii-portfolio",
-                                    url: "https://github.com/Abduldinata/hiyosashii-portfolio/commit/de0cc58e0c7fcb61cd15d20cd574647e6c1a264d",
-                                  },
-                                ].map((c, i) => (
+                                {commits.map((c, i) => (
                                   <a
                                     key={i}
                                     href={c.url}
